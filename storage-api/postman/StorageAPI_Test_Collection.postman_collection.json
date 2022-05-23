@@ -1,0 +1,476 @@
+{
+	"info": {
+		"_postman_id": "696d71a8-763c-433a-98b0-79e28333fe5f",
+		"name": "StorageAPI Test Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Auth Check",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Count the number of Flows",
+							"pm.test(\"Auth OK\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.auth).to.eq('admin')",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{server_url}}/auth/check",
+					"host": [
+						"{{server_url}}"
+					],
+					"path": [
+						"auth",
+						"check"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Flows",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Count the number of Flows",
+							"pm.test(\"Flow Count\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    const flowCount = jsonData.flows.length;",
+							"    console.log('Found ' + flowCount +' flows')",
+							"    pm.environment.set(\"originalFlowCount\", flowCount);",
+							"    pm.environment.set(\"currentFlowCount\", flowCount);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{server_url}}/flows",
+					"host": [
+						"{{server_url}}"
+					],
+					"path": [
+						"flows"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a new Flow",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"uniqFlow\", pm.variables.replaceIn('{{$guid}}'));"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let moment = require ('moment');",
+							"",
+							"const uniqFlow = pm.environment.get(\"uniqFlow\");",
+							"",
+							"var jsonData = pm.response.json();",
+							"var flow = jsonData.flow",
+							"",
+							"pm.test(\"Flow was assigned an ID\", function () {",
+							"    pm.expect(flow.id).to.exist;",
+							"    pm.environment.set(\"newFlowId\", flow.id)",
+							"});",
+							"",
+							"pm.test(\"Name is correct\", function () {",
+							"    pm.expect(flow.name).to.eql('Test Flow - '+uniqFlow);",
+							"});",
+							"",
+							"pm.test(\"Title is correct\", function () {",
+							"    pm.expect(flow.title).to.eql('Test Flow Title - '+uniqFlow);",
+							"});",
+							"",
+							"pm.test(\"createdAt is valid\", function () {",
+							"    pm.expect(moment(flow.createdAt, true).isValid()).is.true;",
+							"});",
+							"",
+							"pm.test(\"updatedAt is null string\", function () {",
+							"    pm.expect(flow.updatedAt).to.eq(\"\")",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Test Flow - {{uniqFlow}}\",\n    \"title\": \"Test Flow Title - {{uniqFlow}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{server_url}}/flows",
+					"host": [
+						"{{server_url}}"
+					],
+					"path": [
+						"flows"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Current Flows",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let moment = require ('moment');",
+							"",
+							"const uniqFlow = pm.environment.get(\"uniqFlow\");",
+							"",
+							"var jsonData = pm.response.json();",
+							"var flows = jsonData.flows",
+							"",
+							"// Count the number of Flows",
+							"pm.test(\"Flow Count is correct\", function () {",
+							"    const flowCount = flows.length;",
+							"",
+							"    const startCount = pm.environment.get(\"currentFlowCount\");",
+							"    // update count to what ew just found",
+							"    pm.variables.set(\"currentFlowCount\", flowCount);",
+							"    ",
+							"    pm.expect(flowCount).to.eql(startCount + 1);   ",
+							"});",
+							"",
+							"pm.test(\"Correct new flow was found\", function () {",
+							"",
+							"    const newFlowId =  pm.environment.get(\"newFlowId\");",
+							"    ",
+							"    console.log(newFlowId)",
+							"    const flow = flows.find(flow => {",
+							"        return flow.id === newFlowId",
+							"    })",
+							"    ",
+							"    pm.test(\"Name is correct\", function () {",
+							"        pm.expect(flow.name).to.eql('Test Flow - '+uniqFlow);",
+							"    });",
+							"",
+							"    pm.test(\"Title is correct\", function () {",
+							"        pm.expect(flow.title).to.eql('Test Flow Title - '+uniqFlow);",
+							"    });",
+							"",
+							"    pm.test(\"createdAt is valid\", function () {",
+							"        pm.expect(moment(flow.createdAt, true).isValid()).is.true;",
+							"    });",
+							"",
+							"    pm.test(\"updatedAt is null string\", function () {",
+							"        pm.expect(flow.updatedAt).to.eq(\"\")",
+							"    });",
+							"",
+							"    ",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{server_url}}/flows",
+					"host": [
+						"{{server_url}}"
+					],
+					"path": [
+						"flows"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Partial update for a Flow",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"uniqFlow2\", pm.variables.replaceIn('{{$guid}}'));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"New Name Change {{uniqFlow2}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{server_url}}/flows/{{newFlowId}}",
+					"host": [
+						"{{server_url}}"
+					],
+					"path": [
+						"flows",
+						"{{newFlowId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get a single flow",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{server_url}}/flows/{{newFlowId}}",
+					"host": [
+						"{{server_url}}"
+					],
+					"path": [
+						"flows",
+						"{{newFlowId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a new Nugget",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let moment = require ('moment');",
+							"",
+							"const uniqNug1 = pm.environment.get(\"uniqNug1\");",
+							"",
+							"var jsonData = pm.response.json();",
+							"var nugget = jsonData.nugget",
+							"",
+							"pm.test(\"Nugget was assigned an ID\", function () {",
+							"    pm.expect(nugget.id).to.exist;",
+							"    pm.environment.set(\"newNuggetId\", nugget.id)",
+							"});",
+							"",
+							"pm.test(\"Name is correct\", function () {",
+							"    pm.expect(nugget.name).to.eql('Test Nugget - '+ uniqNug1);",
+							"});",
+							"",
+							"pm.test(\"Title is correct\", function () {",
+							"    pm.expect(nugget.title).to.eql('Test Nugget Title - '+ uniqNug1);",
+							"});",
+							"",
+							"pm.test(\"createdAt is valid\", function () {",
+							"    pm.expect(moment(nugget.createdAt, true).isValid()).is.true;",
+							"});",
+							"",
+							"pm.test(\"updatedAt is null string\", function () {",
+							"    pm.expect(nugget.updatedAt).to.eq(\"\")",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"uniqNug1\", pm.variables.replaceIn('{{$guid}}'));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Test Nugget - {{uniqNug1}}\",\n    \"title\": \"Test Nugget Title - {{uniqNug1}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{server_url}}/nuggets",
+					"host": [
+						"{{server_url}}"
+					],
+					"path": [
+						"nuggets"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Partial update for a Nugget",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.environment.set(\"uniqNug2\", pm.variables.replaceIn('{{$guid}}'));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"New Name Change {{uniqNug2}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{server_url}}/nuggets/{{newNuggetId}}",
+					"host": [
+						"{{server_url}}"
+					],
+					"path": [
+						"nuggets",
+						"{{newNuggetId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Flow",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"New Name Change7\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{server_url}}/flows/{{newFlowId}}",
+					"host": [
+						"{{server_url}}"
+					],
+					"path": [
+						"flows",
+						"{{newFlowId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Nugget",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"New Name Change7\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{server_url}}/nuggets/{{newNuggetId}}",
+					"host": [
+						"{{server_url}}"
+					],
+					"path": [
+						"nuggets",
+						"{{newNuggetId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "password",
+				"value": "TachyonCMS",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "admin",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
