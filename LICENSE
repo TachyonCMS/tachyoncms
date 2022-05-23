@@ -1,0 +1,30 @@
+=============================================
+ALL SOFTWARE IS OFFERED UNDER A DUAL LICENSE
+=============================================
+
+
+OPEN SOURCE LICENSES
+====================
+
+GPLv3 - Use for most SOFTWARE
+https://www.gnu.org/licenses/quick-guide-gplv3.en.html
+
+* TachyonCMS File System (FS) module
+* TachyonCMS Editor UI
+
+
+Affero GPLv3 - Used for network server components
+https://www.gnu.org/licenses/agpl-3.0.html
+
+* TachyonCMS Flow Server
+* TachyonCMS Storage Server
+
+
+COMMERCIAL LICENSE
+==================
+
+A commercial license is available if the Open Source version is too restrictive.
+
+All commercial licenses are specific to the licensee and details will be negotiated individually.
+
+* ANY or ALL of the software
