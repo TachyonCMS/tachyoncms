@@ -1,0 +1,15 @@
+// app global css in SCSS form
+
+a:-webkit-any-link {
+  text-decoration: none !important;
+  color: white;
+}
+
+h1 {
+  color: black;
+  font-size: 4em;
+  font-weight: bold;
+  margin-top: 0px;
+  margin-bottom: 1px;
+  text-align: center;
+}

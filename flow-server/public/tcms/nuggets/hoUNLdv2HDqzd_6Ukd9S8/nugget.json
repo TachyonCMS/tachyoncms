@@ -1,0 +1,8 @@
+{
+  "name": "Nugget 1",
+  "title": "",
+  "id": "hoUNLdv2HDqzd_6Ukd9S8",
+  "createdAt": "2022-05-02T11:08:20.648Z",
+  "updatedAt": "2022-05-02T14:46:06.148Z",
+  "blockData": "[{\"id\":\"6PQgGcEV\",\"type\":\"h2\",\"displayData\":{\"level\":\"2\",\"heading\":\"Flow 1 Nug 1\"}},{\"id\":\"KfNMuNPk\",\"type\":\"richText\",\"displayData\":\"<b>My Rich<i> Text <strike>Block</strike></i></b>\"},{\"id\":\"boFwJszy\",\"type\":\"image\",\"displayData\":{\"url\":\"http://www.bikesdirect.com/products/windsor/flat-bar-hybrid-road-bikes/rapide-yel-21.jpg\",\"ratio\":\"1.333\",\"fit\":\"contain\",\"captionPosition\":\"absolute-bottom text-subtitle1 text-center\",\"captionText\":\"Holy Moly\",\"fontColor\":\"#a62929\",\"fontWeight\":\"text-weight-bold\",\"fontStyle\":\"Normal\",\"font\":\"Impact\"}}]"
+}
