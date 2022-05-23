@@ -1,0 +1,143 @@
+// app
+:root {
+  --color-primary-h: 210;
+  --color-primary-s: 79%;
+  --color-primary-l: 46%;
+}
+
+// Call-to-action button styling
+.cta {
+  background-color: $cta;
+  color: white;
+}
+
+// Collection form header
+.form-header {
+  text-align: center;
+  font-weight: 500;
+  background-color: hsl(
+    var(--color-primary-h),
+    var(--color-primary-s),
+    calc(var(--color-primary-l) + 10%)
+  );
+  color: white;
+}
+
+.secondary-form-header {
+  text-align: center;
+  font-weight: 400;
+  background-color: hsl(
+    var(--color-primary-h),
+    var(--color-primary-s),
+    calc(var(--color-primary-l) + 20%)
+  );
+  color: white;
+  border: 1px;
+  border-radius: 3px;
+}
+
+.optional-form-header {
+  text-align: center;
+  font-weight: 400;
+  background-color: hsl(
+    var(--color-primary-h),
+    calc(var(--color-primary-s) - 5%),
+    calc(var(--color-primary-l) + 50%)
+  );
+  border: 1px;
+  border-radius: 8px;
+}
+
+// Collection form header
+.item-body {
+  text-align: left;
+}
+
+// Collection item header
+.item-header {
+  text-align: center;
+  font-weight: 300;
+  background-color: hsl(
+    var(--color-primary-h),
+    calc(var(--color-primary-s) - 3%),
+    calc(var(--color-primary-l) + 40%)
+  );
+}
+
+.page-title {
+  background-color: hsl(
+    var(--color-primary-h),
+    var(--color-primary-s),
+    calc(var(--color-primary-l) - 10%)
+  );
+}
+
+.router-link {
+  text-decoration: none;
+}
+
+.navbar-title {
+  font-weight: 900;
+}
+
+a.navbar-title:visited {
+  color: white;
+}
+
+.nugget-container {
+  border: dotted 2px;
+  border-color: hsl(
+    var(--color-primary-h),
+    var(--color-primary-s),
+    calc(var(--color-primary-l) + 40%)
+  );
+  border-radius: 5px;
+  padding: 1px;
+  margin: 0.5em 0.5em 1em 0.5em;
+  position: relative;
+}
+
+.nugget-content {
+  border: dashed 2px;
+  border-color: hsl(
+    var(--color-primary-h),
+    var(--color-primary-s),
+    calc(var(--color-primary-l) + 40%)
+  );
+  border-radius: 5px;
+  padding: 0.5em 0.5em 0 0.5em;
+  margin-bottom: 1em;
+  position: relative;
+}
+
+.collection-item-header {
+  background-color: hsl(
+    var(--color-primary-h),
+    var(--color-primary-s),
+    calc(var(--color-primary-l) + 40%)
+  );
+}
+
+.blocks-container {
+  padding: 0.5em;
+}
+
+.top-right {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  opacity: 60%;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.top-left {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  opacity: 60%;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.toolbar-text {
+  color: white;
+}
