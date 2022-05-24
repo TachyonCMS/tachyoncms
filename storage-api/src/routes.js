@@ -38,7 +38,7 @@ router.get(
     try {
       console.log("GET - Auth Status");
       res.setHeader("Content-Type", "application/json");
-      res.json({ auth: req.auth.user });
+      res.json({ user: req.auth.user });
     } catch (e) {
       console.error(e);
       res.status(500).send({ error: "Failed to load Auth Check" });
