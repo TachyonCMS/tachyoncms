@@ -1,14 +1,17 @@
 const path = require("path");
-const fs = require("fs-extra");
+const fs = require("fs");
 const { nanoid } = require("nanoid");
 
 const contentDataRootIx = process.argv.indexOf("--contentDataRoot");
 let contentDataRoot;
 
-if (contentDataRootIx > -1) {
+if (contentDataRootIx && contentDataRootIx > -1) {
   const contentDataRootIn = process.argv[contentDataRootIx + 1];
   contentDataRoot = path.resolve(contentDataRootIn);
+} else {
+  contentDataRoot = path.resolve("../shared/content/dev");
 }
+
 console.debug("Managing content in " + contentDataRoot);
 
 // OS specific path separator
@@ -120,11 +123,13 @@ const writeJson = async (pathSegments = [], fileData) => {
 
       const jsonString = JSON.stringify(fileData, null, 2);
 
-      fs.mkdir(path.resolve(...pathDirs), { recursive: true }).then(() => {
-        fs.writeFile(fullPath, jsonString).then(() => {
-          resolve({ status: "success", data: fileData });
+      fs.promises
+        .mkdir(path.resolve(...pathDirs), { recursive: true })
+        .then(() => {
+          fs.promises.writeFile(fullPath, jsonString).then(() => {
+            resolve({ status: "success", data: fileData });
+          });
         });
-      });
     } catch (e) {
       console.error(e);
       reject({ status: "failure" });
@@ -140,7 +145,9 @@ const getDirsIn = async (dirSegments) => {
   const dirPath = path.resolve(...dirSegments);
 
   // All filesystem entries in that directory
-  const dirEntries = await fs.readdir(dirPath, { withFileTypes: true });
+  const dirEntries = await fs.promises.readdir(dirPath, {
+    withFileTypes: true,
+  });
 
   // Filter out the directories.
   const dirs = dirEntries.filter((de) => de.isDirectory()).map((de) => de.name);
@@ -151,7 +158,7 @@ const getDirsIn = async (dirSegments) => {
 const deleteDir = async (dirs = []) => {
   try {
     const dirPath = dirs.join(osSep);
-    fs.rm(dirPath, { recursive: true }).then(() => {
+    fs.promises.rm(dirPath, { recursive: true }).then(() => {
       return { status: "success", deleted: dirPath };
     });
   } catch (e) {
@@ -217,8 +224,8 @@ const getFlowData = async (flowId, dataType) => {
       return flow;
     }
   } catch (e) {
-    console.error(e);
     throw new Error("Invalid Request for " + flowId);
+    console.error(e);
   }
 };
 
