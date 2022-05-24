@@ -1,6 +1,7 @@
 const path = require("path");
 const fs = require("fs");
 const { nanoid } = require("nanoid");
+const writeFileAtomic = require("write-file-atomic");
 
 const contentDataRootIx = process.argv.indexOf("--contentDataRoot");
 let contentDataRoot;
@@ -111,8 +112,11 @@ const writeJson = async (pathSegments = [], fileData) => {
       fs.promises
         .mkdir(path.resolve(...pathDirs), { recursive: true })
         .then(() => {
-          fs.promises.writeFile(fullPath, jsonString).then(() => {
-            resolve({ status: "success", data: fileData });
+          writeFileAtomic(fullPath, jsonString).then((err) => {
+            if (err) {
+              throw err;
+            }
+            resolve(fileData);
           });
         });
     } catch (e) {
