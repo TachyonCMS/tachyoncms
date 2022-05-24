@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const path = require("path");
 
 // Get the business logic functions from the lib
 const {
@@ -11,7 +12,20 @@ const {
   createNugget,
   deleteNugget,
   getNugget,
+  setContentDataRoot,
 } = require("../../shared/modules/tachyoncms-fs");
+
+const contentDataRootIx = process.argv.indexOf("--contentDataRoot");
+let contentDataRoot;
+
+if (contentDataRootIx && contentDataRootIx > -1) {
+  const contentDataRootIn = process.argv[contentDataRootIx + 1];
+  contentDataRoot = path.resolve(contentDataRootIn);
+} else {
+  contentDataRoot = path.resolve("../shared/content/dev");
+}
+
+setContentDataRoot(contentDataRoot);
 
 /**
  * ROUTER DEFINITION

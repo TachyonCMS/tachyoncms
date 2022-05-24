@@ -3,6 +3,7 @@ const fs = require("fs");
 const { nanoid } = require("nanoid");
 const writeFileAtomic = require("write-file-atomic");
 
+/*
 const contentDataRootIx = process.argv.indexOf("--contentDataRoot");
 let contentDataRoot;
 
@@ -14,6 +15,7 @@ if (contentDataRootIx && contentDataRootIx > -1) {
 }
 
 console.debug("Managing content in " + contentDataRoot);
+*/
 
 // OS specific path separator
 const osSep = path.sep;
@@ -45,6 +47,11 @@ const setUpdatedAt = (data) => {
 const addId = (data) => {
   data.id = nanoid();
   return data;
+};
+
+const setContentDataRoot = (dir) => {
+  console.log("Setting contentDataRoot to " + dir);
+  contentDataRoot = dir;
 };
 
 const getJsonMulti = async (dirSegmentsArray) => {
@@ -428,6 +435,42 @@ const objLink = async (fromObjType, fromObjId, toObjType, toObjId) => {
   const fileName = toObjId;
 };
 
+const ensureSubDir = async (rootDir, subDir) => {
+  const fullPath = rootDir + osSep + subDir;
+  try {
+    if (existsSync(fullPath)) {
+      return { lastLoadedAt: currentTime };
+    }
+
+    mkdirSync(fullPath);
+  } catch (e) {
+    return { error: "failed to create " + fullPath };
+  }
+};
+
+const initRootDir = async (selectedDir) => {
+  ensureSubDir(selectedDir, "flows");
+  ensureSubDir(selectedDir, "nuggets");
+};
+
+const dirAccessible = async (dirSegments) => {
+  try {
+    const dir = dirSegments.join(osSep);
+    return new Promise((resolve, reject) => {
+      fs.promises.access(
+        dir,
+        fs.constants.R_OK | fs.constants.W_OK,
+        (error) => {
+          resolve(!error);
+        }
+      );
+    });
+  } catch (e) {
+    console.log("ERROR: " + e);
+    return false;
+  }
+};
+
 //exports.osSep = osSep;
 //exports.getNow = getNow;
 //exports.initTimestamps = initTimestamps;
@@ -445,3 +488,7 @@ exports.getFlowData = getFlowData;
 exports.createNugget = createNugget;
 exports.deleteNugget = deleteNugget;
 exports.getNugget = getNugget;
+exports.ensureSubDir = ensureSubDir;
+exports.dirAccessible = dirAccessible;
+exports.osSep = osSep;
+exports.setContentDataRoot = setContentDataRoot;
