@@ -10,6 +10,7 @@ const {
   getFlowData,
   createNugget,
   deleteNugget,
+  getNugget,
 } = require("../../shared/modules/tachyoncms-fs");
 
 /**
@@ -119,7 +120,7 @@ router.get(
       const flowId = req.params.flowId;
       console.log("GET - Get Flow: " + flowId);
       const flow = await getFlowData(flowId, "flow");
-      res.json({ flow: flow.data });
+      res.json({ flow: flow });
     } catch (e) {
       console.error(e);
       res.status(404).send({ error: "Not Found" });
@@ -138,7 +139,7 @@ router.post(
       console.log("POST - Create Nugget");
       const data = req.body;
       const result = await createNugget(data);
-      res.json({ nugget: result });
+      res.json(result);
     } catch (e) {
       console.error(e);
       throw new Error("Unable to process request");
@@ -157,6 +158,24 @@ router.post(
       const nuggetId = req.params.nuggetId;
       const partialData = req.body;
       const result = await mergeUpdate("nugget", nuggetId, partialData);
+      res.json({ nugget: result });
+    } catch (e) {
+      console.error(e);
+      throw new Error("Unable to process request");
+    }
+  },
+  (error, req, res, next) => {
+    res.status(400).send({ error: error.message });
+  }
+);
+
+// Return a single nugget
+router.get(
+  "/nuggets/:nuggetId",
+  async (req, res) => {
+    try {
+      const nuggetId = req.params.nuggetId;
+      const result = await getNugget(nuggetId);
       res.json({ nugget: result });
     } catch (e) {
       console.error(e);

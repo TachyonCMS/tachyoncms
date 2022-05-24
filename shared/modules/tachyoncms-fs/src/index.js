@@ -90,19 +90,20 @@ const readJson = async (pathSegments = []) => {
       const dirPath = path.resolve(...pathSegments);
 
       const fullPath = dirPath + ".json";
-
+      console.log(fullPath);
       fs.readFile(fullPath, "utf8", (err, fileData) => {
         if (err) {
           console.error(err);
-          reject({ status: "failure" });
+          resolve(null);
         } else {
           const parsedData = JSON.parse(fileData);
-          resolve({ status: "success", data: parsedData });
+          console.log(parsedData);
+          resolve(parsedData);
         }
       });
     } catch (e) {
       console.error(e);
-      reject({ status: "failure" });
+      resolve(null);
     }
   });
 };
@@ -255,24 +256,81 @@ const mergeUpdate = async (objType, objId, partialData) => {
 };
 
 // Create a new Nugget
-const createNugget = async (data, flowIds = null) => {
+const createNugget = async (data) => {
   try {
-    addId(data);
-    initTimestamps(data);
-    const pathSegments = ["nuggets", data.id, "nugget"];
-    await writeJson(pathSegments, data);
-    if (flowIds) {
-      // Get a shared linkedAt datetime
-      const nowStr = getNow();
-      const linkedAt = { linkedAt: nowStr };
+    const newNugget = data.nugget;
+    addId(newNugget);
+    initTimestamps(newNugget);
+    const pathSegments = ["nuggets", newNugget.id, "nugget"];
+    await writeJson(pathSegments, newNugget);
 
+    const out = { nugget: newNugget };
+
+    if (data.flowId) {
+      out.flowId = data.flowId;
+      // Add to the Flow's nuggetSeq
+      //     ...but first determine if an index was provided
+      //const nowStr = getNow();
+      ///const linkedAt = { linkedAt: nowStr };
       // Add link in nugget to flow
       // Add link in flow to nugget
+
+      const nuggetId = newNugget.id;
+
+      const seqInput = {
+        objType: "flow",
+        objId: out.flowId,
+        dataElement: "nuggetSeq",
+        insertVal: nuggetId,
+        relId: data.prevNuggetId,
+        relType: "prev",
+      };
+      console.log(seqInput);
+      out.nuggetSeq = await insertIntoSeq(seqInput);
     }
-    return data;
+    return out;
   } catch (e) {
     console.log("Failed to create Nugget");
-    throw new Error("Unable to create Nugget " + data.id);
+    throw new Error("Unable to create Nugget");
+  }
+};
+
+const getNugget = async (nuggetId) => {
+  const pathSegments = ["nuggets", nuggetId, "nugget"];
+  return await readJson(pathSegments);
+};
+
+const insertIntoSeq = async (seqInput) => {
+  try {
+    // Breakup the input
+    const { objType, objId, dataElement, insertVal, relId, relType } = {
+      ...seqInput,
+    };
+
+    // Determine the path of the target file
+    const pathSegments = [objDirs[objType], objId, dataElement];
+    console.log(pathSegments);
+
+    // Read the current sequence
+    const currentSeq = await readJson(pathSegments);
+    console.log(currentSeq.nuggetSeq[0]);
+
+    let newSeq = [insertVal];
+
+    if (currentSeq) {
+      console.log(typeof currentSeq.nuggetSeq);
+      // Determine insert index
+      // Splice in the record
+      newSeq = [...newSeq, ...currentSeq.nuggetSeq];
+    }
+    console.log(newSeq);
+    // Write the new sequence out to same path
+    const writeResult = await writeJson(pathSegments, { nuggetSeq: newSeq });
+    console.log(writeResult);
+    // Return the new sequence
+    return newSeq;
+  } catch (e) {
+    console.error(e);
   }
 };
 
@@ -332,3 +390,4 @@ exports.deleteFlow = deleteFlow;
 exports.getFlowData = getFlowData;
 exports.createNugget = createNugget;
 exports.deleteNugget = deleteNugget;
+exports.getNugget = getNugget;

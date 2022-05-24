@@ -2,7 +2,7 @@
   "name": "storage-api",
   "version": "0.1.0",
   "description": "Provides a REST API for storing TachyonCMS JSON objects",
-  "main": "server.js",
+  "main": "src/server.js",
   "author": "Brian Winkers <bwinkers@gmail.com>",
   "license": "MIT",
   "private": false,
