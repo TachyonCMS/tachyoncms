@@ -55,9 +55,8 @@ const getJsonMulti = async (dirSegmentsArray) => {
 
       try {
         readResult = await readJson(dirSegments);
-
-        if (readResult.status === "success") {
-          objects.push(readResult.data);
+        if (readResult) {
+          objects.push(readResult);
         }
       } catch (e) {
         console.error(e);
@@ -67,20 +66,7 @@ const getJsonMulti = async (dirSegmentsArray) => {
 
   return objects;
 };
-/**
-const ensureSubDir = async (contentDataRoot, subDir) => {
-  const fullPath = contentDataRoot + osSep + subDir;
-  try {
-    if (existsSync(fullPath)) {
-      return { lastLoadedAt: currentTime };
-    }
 
-    mkdirSync(fullPath);
-  } catch (e) {
-    return { error: "failed to create " + fullPath };
-  }
-};
- */
 const readJson = async (pathSegments = []) => {
   return new Promise((resolve, reject) => {
     try {
@@ -90,14 +76,12 @@ const readJson = async (pathSegments = []) => {
       const dirPath = path.resolve(...pathSegments);
 
       const fullPath = dirPath + ".json";
-      console.log(fullPath);
       fs.readFile(fullPath, "utf8", (err, fileData) => {
         if (err) {
           console.error(err);
           resolve(null);
         } else {
           const parsedData = JSON.parse(fileData);
-          console.log(parsedData);
           resolve(parsedData);
         }
       });
@@ -214,15 +198,44 @@ const deleteFlow = async (flowId) => {
 };
 
 // Get a single Flow with its associated data
-const getFlowData = async (flowId, dataType) => {
+const getFlowData = async (flowId, dataType, withNuggets) => {
   try {
+    const out = {};
+
     // Define valid types to scrub input
     const validDataType = ["flow", "nuggetSeq"];
     // Only load known types
     if (validDataType.includes(dataType)) {
       const pathSegments = ["flows", flowId, dataType];
-      flow = await readJson(pathSegments);
-      return flow;
+      const flow = await readJson(pathSegments);
+      out.flow = flow;
+
+      if (withNuggets) {
+        try {
+          // Determine the path of the nuggetSequence file
+          const pathSegments = ["flows", flowId, "nuggetSeq"];
+
+          // Read the current sequence
+          const currentSeq = await readJson(pathSegments);
+          const nuggetSeq = currentSeq.nuggetSeq;
+
+          // Set the sequence in the output
+          out.flow.nuggetSeq = nuggetSeq;
+
+          const filePaths = [];
+
+          nuggetSeq.map((dirName) => {
+            const pathSegments = ["nuggets", dirName, "nugget"];
+            filePaths.push(pathSegments);
+          });
+
+          out.nuggets = await getJsonMulti(filePaths);
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      return out;
     }
   } catch (e) {
     throw new Error("Invalid Request for " + flowId);
@@ -309,19 +322,56 @@ const insertIntoSeq = async (seqInput) => {
 
     // Determine the path of the target file
     const pathSegments = [objDirs[objType], objId, dataElement];
-    console.log(pathSegments);
 
     // Read the current sequence
     const currentSeq = await readJson(pathSegments);
-    console.log(currentSeq.nuggetSeq[0]);
+    console.log(currentSeq);
 
     let newSeq = [insertVal];
 
     if (currentSeq) {
-      console.log(typeof currentSeq.nuggetSeq);
+      console.log("Current sequence found");
+      console.log(currentSeq.nuggetSeq);
       // Determine insert index
-      // Splice in the record
-      newSeq = [...newSeq, ...currentSeq.nuggetSeq];
+      if (relId || relId === 0) {
+        console.log("RelId: " + relId);
+        // A related nuggetId was passed, the new one is positioned relative to it.
+        if (relId === 0) {
+          // The new nugget is either first or last in sequence
+          switch (relType) {
+            case "prev":
+              // There is zero nugget previous. so this new nugget is first
+              newSeq = [...newSeq, ...currentSeq.nuggetSeq];
+              break;
+
+            case "next":
+              // There is no "next" nugget, the new nugget belongs on the end.
+              newSeq = [...currentSeq.nuggetSeq, ...newSeq];
+              break;
+          }
+        } else {
+          // An existing item was provided.
+          // It is either the prev or next, relative to the new one.
+          let insertIx;
+
+          switch (relType) {
+            case "prev":
+              // The related nugget is previous. The new  nugget is immediately after it.
+              insertIx = currentSeq.nuggetSeq.indexOf(relId) + 1;
+              break;
+
+            case "next":
+              // The related nugget is "next", the new nugget belongs immediately before it.
+              insertIx = currentSeq.nuggetSeq.indexOf(relId) + 1;
+              break;
+          }
+          newSeq = [
+            ...currentSeq.nuggetSeq.slice(0, insertIx),
+            ...newSeq,
+            ...currentSeq.nuggetSeq.slice(insertIx),
+          ];
+        }
+      }
     }
     console.log(newSeq);
     // Write the new sequence out to same path

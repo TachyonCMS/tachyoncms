@@ -118,9 +118,10 @@ router.get(
   async (req, res) => {
     try {
       const flowId = req.params.flowId;
+      const withNuggets = req.query.nuggets;
       console.log("GET - Get Flow: " + flowId);
-      const flow = await getFlowData(flowId, "flow");
-      res.json({ flow: flow });
+      const flowResult = await getFlowData(flowId, "flow", true);
+      res.json(flowResult);
     } catch (e) {
       console.error(e);
       res.status(404).send({ error: "Not Found" });
