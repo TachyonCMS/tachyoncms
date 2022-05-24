@@ -675,11 +675,11 @@ export default defineComponent({
       const selectedDir = selection[0];
       console.log(selectedDir);
       if (selectedDir) {
-        const hasFlowsDir = await electronApi.dirAccessible([
+        const hasFlowsDir = await electronApi.checkDirAccessible([
           selectedDir,
           "flows",
         ]);
-        const hasNuggetsDir = await electronApi.dirAccessible([
+        const hasNuggetsDir = await electronApi.checkDirAccessible([
           selectedDir,
           "nuggets",
         ]);

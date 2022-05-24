@@ -15,7 +15,7 @@ export default () => {
   const loadFlows = async () => {
     try {
       console.log("Electron Flows");
-      const flows = await electronApi.getElectronFlows(rootDir.value);
+      const flows = await electronApi.loadFlows(rootDir.value);
       return { flows: flows };
     } catch (e) {
       console.log("Error Loading Electron Flows");
