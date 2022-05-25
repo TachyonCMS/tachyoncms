@@ -107,14 +107,6 @@ export default () => {
     }
   };
 
-  const getNuggetArray = async (idArray) => {
-    try {
-    } catch (e) {
-      console.log("Error Loading Electron Flow: " + flowId);
-      console.log(e);
-    }
-  };
-
   const getFlowNuggetSeqById = async (flowId) => {
     try {
       let nuggetSeq = await electronApi.getFlowData(
