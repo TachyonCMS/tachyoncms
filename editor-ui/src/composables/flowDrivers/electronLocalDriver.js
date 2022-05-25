@@ -100,44 +100,7 @@ export default () => {
 
   const getFlowById = async (flowId, withNuggets = false) => {
     try {
-      const flowResult = await electronApi.getElectronFlowById(
-        rootDir.value,
-        flowId
-      );
-
-      if (flowResult.status != "success") {
-        return null;
-      }
-
-      const flow = flowResult.data;
-
-      let out = null;
-
-      if (withNuggets) {
-        try {
-          const sequencedIds = await getFlowNuggetSeqById(flowId);
-          console.log(sequencedIds.nuggetSeq);
-          if (sequencedIds.nuggetSeq) {
-            flow.nuggetSeq = sequencedIds.nuggetSeq;
-
-            const nugs = await electronApi.getJsonMulti(
-              rootDir.value,
-              "nugget",
-              sequencedIds.nuggetSeq
-            );
-            console.log(nugs);
-            //flow["nuggets"] = nugs;
-
-            out = { flow: flow, nuggets: nugs };
-          }
-        } catch (e) {
-          console.error(e);
-        }
-      }
-
-      console.log(out);
-
-      return out;
+      return await electronApi.getElectronFlowById(flowId, withNuggets);
     } catch (e) {
       console.log("Error Loading Electron Flow: " + flowId);
       console.log(e);

@@ -426,6 +426,7 @@ export default defineComponent({
     };
 
     onMounted(async () => {
+      console.log("FLOWID: " + flowId.value);
       loadFlow(flowId.value, true); // second param is `true` to return Nuggets in response
     });
 

@@ -26,7 +26,9 @@ contextBridge.exposeInMainWorld("electronApi", {
       properties: ["openDirectory"],
     });
     //console.log("Directory selected: " + response.filePaths);
-    return response.filePaths;
+    const selectedDir = response.filePaths;
+    setContentDataRoot(selectedDir[0]);
+    return selectedDir;
   },
 
   checkDirAccessible: async (dirSegments) => {
@@ -37,23 +39,21 @@ contextBridge.exposeInMainWorld("electronApi", {
     try {
       console.log("GET - All Flows from " + rootDir);
 
-      return fileFlows;
+      const flows = await getAllFlows();
+
+      return flows;
     } catch (e) {
       console.log(e);
       return [];
     }
   },
 
-  getElectronFlowById: async (rootDir, flowId) => {
+  getElectronFlowById: async (flowId, withNuggets = false) => {
     try {
       console.log("GET - Flow ID: " + flowId);
-
-      // The parent directory that we expect to find Flows defined in sub-directories.
-      const flowDir = rootDir + osSep + "flows" + osSep + flowId + osSep;
-
       try {
-        const flow = readJson([flowDir], "flow");
-        return flow;
+        const flowData = await getFlowData(flowId, "flow", withNuggets);
+        return flowData;
       } catch (e) {
         console.log(e);
         return null;

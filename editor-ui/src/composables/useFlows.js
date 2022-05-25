@@ -139,18 +139,14 @@ export default function useFlows() {
   };
 
   // Get a single Flow for display in the App page
-  const loadFlow = async (
-    flowId,
-    withNuggets = false,
-    withNuggetSeq = false
-  ) => {
+  const loadFlow = async (flowId, withNuggets = false) => {
     try {
       if (flowConnector.value && flowSource.value) {
         // Use the defined connector
         return flowConnectors[flowConnector.value]
           .getFlowById(flowId, withNuggets)
           .then((flowData) => {
-            console.log(flowData);
+            console.log("FLOWDATA: " + flowData);
             const flow = flowData.flow;
             if (flowData.nuggets) {
               console.log(flowData.nuggets);

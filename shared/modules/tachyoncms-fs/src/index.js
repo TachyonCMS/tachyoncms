@@ -84,6 +84,7 @@ const readJson = async (pathSegments = []) => {
       const dirPath = path.resolve(...pathSegments);
 
       const fullPath = dirPath + ".json";
+      console.log("FullPath: " + fullPath);
       fs.readFile(fullPath, "utf8", (err, fileData) => {
         if (err) {
           console.error(err);
@@ -134,8 +135,11 @@ const writeJson = async (pathSegments = [], fileData) => {
 };
 
 const getDirsIn = async (dirSegments) => {
+  console.log(dirSegments);
   // Sandbox all file calls to the contentDataRoot
   dirSegments.unshift(contentDataRoot);
+
+  console.log(dirSegments);
 
   // Resolve the fullPath
   const dirPath = path.resolve(...dirSegments);
