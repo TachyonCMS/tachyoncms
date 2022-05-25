@@ -30,18 +30,12 @@ export default () => {
       addId(flowData);
       initTimestamps(flowData);
 
-      const result = await electronApi.writeJson(
-        [rootDir.value, "flows", flowData.id],
-        "flow",
-        flowData
-      );
+      const result = await electronApi.createFlow(flowData);
       console.log(result);
-      if (result.status === "success") {
-        return { flow: result.data };
-      }
-      return result.status;
+      return { flow: result };
     } catch (e) {
-      console.log("Error Creating Flow");
+      console.error("Error Creating Flow");
+      console.error(e);
     }
   };
 

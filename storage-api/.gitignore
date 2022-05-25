@@ -102,3 +102,6 @@ dist
 
 # TernJS port file
 .tern-port
+
+# TachyonCMS dev files
+content/dev
