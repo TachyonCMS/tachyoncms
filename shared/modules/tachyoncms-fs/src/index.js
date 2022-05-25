@@ -84,7 +84,9 @@ const readJson = async (pathSegments = []) => {
       const dirPath = path.resolve(...pathSegments);
 
       const fullPath = dirPath + ".json";
-      console.log("FullPath: " + fullPath);
+
+      console.log("Reading from: " + fullPath);
+
       fs.readFile(fullPath, "utf8", (err, fileData) => {
         if (err) {
           console.error(err);
@@ -116,6 +118,7 @@ const writeJson = async (pathSegments = [], fileData) => {
       console.log("writing to: " + fullPath);
 
       const jsonString = JSON.stringify(fileData, null, 2);
+      console.log(fileData);
 
       fs.promises
         .mkdir(path.resolve(...pathDirs), { recursive: true })
@@ -260,23 +263,27 @@ const getFlowData = async (flowId, dataType, withNuggets) => {
 
 // Merge an update into a well named object file
 const mergeUpdate = async (objType, objId, partialData) => {
-  // A guard to make sure the id in the object doesn't get used.
-  delete partialData.id;
+  console.log(partialData);
+  // A guard to make sure the id in the object matches the ID provided
+  partialData.id = objId;
 
   // Updated the updatedAt timestamp
   setUpdatedAt(partialData);
 
   // All data requests are sandboxed to the root
   const pathSegments = [contentDataRoot, objDirs[objType], objId, objType];
-
+  console.log(pathSegments);
   try {
     // Fetch current data
     const currentData = await readJson(pathSegments);
-    // Merge old and new data
-    const mergedData = { ...currentData.data, ...partialData };
-    // Write the JSON file
-    await writeJson(pathSegments, mergedData);
-    return mergedData;
+    if (currentData) {
+      // Merge old and new data
+      const mergedData = await { ...currentData, ...partialData };
+      // Write the JSON file
+      await writeJson(pathSegments, mergedData);
+      return mergedData;
+    }
+    throw new Error("Unable to update data.");
   } catch (e) {
     console.error(e);
     throw new Error(e);
