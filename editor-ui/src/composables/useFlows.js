@@ -253,7 +253,7 @@ export default function useFlows() {
       flowConnectors[flowConnector.value]
         .updateFlowProp(flowId, propName, propValue)
         .then((flowResult) => {
-          flowMap.set(flowId, flowResult.flow);
+          flowMap.set(flowId, flowResult);
         });
     } catch (e) {
       console.log("Error Updating Flow");

@@ -73,4 +73,16 @@ contextBridge.exposeInMainWorld("electronApi", {
       return null;
     }
   },
+
+  updateFlowProp: async (flowId, propName, propValue) => {
+    try {
+      const flowData = await mergeUpdate("flow", flowId, {
+        [propName]: propValue,
+      });
+      return flowData;
+    } catch (e) {
+      console.log(e);
+      return null;
+    }
+  },
 });

@@ -63,29 +63,13 @@ export default () => {
       console.log("Updating Flow");
       console.log(propName);
       console.log(propValue);
-
-      // Fetch the current Flow
-      const flowDataResult = await getFlowById(flowId, false);
-
-      console.log(flowDataResult);
-      const flowData = flowDataResult.flow;
-      // Merge the change in
-      flowData[propName] = propValue;
-
-      // Update the modified date
-      setUpdated(flowData);
-
-      // Save the updated Object
-      const result = await electronApi.writeJson(
-        [rootDir.value, "flows", flowData.id],
-        "flow",
-        flowData
+      const result = await electronApi.updateFlowProp(
+        flowId,
+        propName,
+        propValue
       );
       console.log(result);
-      if (result.status === "success") {
-        return { flow: result.data };
-      }
-      return result.status;
+      return result;
     } catch (e) {
       console.log("Error Updating Flow");
       console.log(e);
