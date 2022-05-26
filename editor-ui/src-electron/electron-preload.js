@@ -51,15 +51,10 @@ contextBridge.exposeInMainWorld("electronApi", {
   getElectronFlowById: async (flowId, withNuggets = false) => {
     try {
       console.log("GET - Flow ID: " + flowId);
-      try {
-        const flowData = await getFlowData(flowId, "flow", withNuggets);
-        return flowData;
-      } catch (e) {
-        console.log(e);
-        return null;
-      }
+      const flowData = await getFlowData(flowId, "flow", withNuggets);
+      return flowData;
     } catch (e) {
-      console.log(e);
+      console.error(e);
       return null;
     }
   },
@@ -69,7 +64,7 @@ contextBridge.exposeInMainWorld("electronApi", {
       const flowData = await createFlow(flow);
       return flowData;
     } catch (e) {
-      console.log(e);
+      console.error(e);
       return null;
     }
   },
@@ -81,7 +76,17 @@ contextBridge.exposeInMainWorld("electronApi", {
       });
       return flowData;
     } catch (e) {
-      console.log(e);
+      console.error(e);
+      return null;
+    }
+  },
+
+  createNugget: async (nuggetData) => {
+    try {
+      const resultData = await createNugget(nuggetData);
+      return resultData;
+    } catch (e) {
+      console.error(e);
       return null;
     }
   },

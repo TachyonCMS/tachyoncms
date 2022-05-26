@@ -209,20 +209,16 @@ export default function useFlows() {
         .createNugget(flowId, nuggetData, prevNugId)
         .then((nuggetResult) => {
           console.log(nuggetResult);
-          try {
-            // Update the nugget data in nuggetMap
-            nuggetMap.set(nuggetResult.nugget.id, nuggetResult.nugget);
-            console.log(nuggetMap);
 
-            // Update nuggetSeq in the app
-            nuggetSeqMap.set(flowId, nuggetResult.nuggetSeq);
-            console.log(nuggetSeqMap);
+          // Update the nugget data in nuggetMap
+          nuggetMap.set(nuggetResult.nugget.id, nuggetResult.nugget);
+          console.log(nuggetMap);
 
-            return nuggetResult.nugget;
-          } catch (e) {
-            console.error("");
-            console.error(e);
-          }
+          // Update nuggetSeq in the app
+          nuggetSeqMap.set(flowId, nuggetResult.nuggetSeq);
+          console.log(nuggetSeqMap);
+
+          return nuggetResult;
         });
     } catch (e) {
       console.log("Error Creating Nugget");
@@ -282,7 +278,6 @@ export default function useFlows() {
                 ...newSeq,
                 ...seqResult.nuggetSeq.slice(insertIx),
               ];
-              //seqResult.nuggetSeq.splice(insertIx, 0, nuggetId);
             }
           }
           flowConnectors[flowConnector.value].updateFlowData(
