@@ -149,21 +149,15 @@ export default () => {
       addId(nugget);
       initTimestamps(nugget);
 
-      const nuggetResult = await electronApi.writeJson(
-        [rootDir.value, "nuggets", nugget.id],
-        "nugget",
-        nugget
-      );
+      const nugObj = {
+        nugget: nugget,
+        flowId: flowId,
+        prevNuggetId: prevNuggetId,
+      };
 
-      if (nuggetResult.status === "success") {
-        // Add to the related flow's nuggetSeq
-        const seqResult = addToNuggetSeq(flowId, nuggetResult.id, prevNugId);
+      const nuggetResult = await electronApi.createNugget(nugObj);
 
-        // Create a structured result
-        const result = { nugget: nuggetResult, ...seqResult };
-
-        return result;
-      }
+      return nuggetResult;
     } catch (e) {
       console.error("Error Creating Electron Nugget");
       console.error(e);
