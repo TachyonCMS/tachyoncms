@@ -52,13 +52,14 @@
         caption="Requires credentials"
         v-model="formExpanded"
         v-show="!flowConnector"
-        data-cy="expand-storage-api-login"
+        data-cy="drawer-storage-api-login-toggle-btn"
       >
         <api-credentials-form
           @isSubmitted="
             formExpanded = false;
             onSelectConnector('storageApi');
           "
+          dataCySlug="drawer"
         ></api-credentials-form>
       </q-expansion-item>
 
@@ -105,13 +106,15 @@
         icon="mdi-briefcase-plus"
         label="New Flow"
         caption="Share a new flow"
-        v-model="formExpanded"
+        v-model="flowFormExpanded"
         v-if="flowSource"
+        data-cy="drawer-new-flow-form-toggle-btn"
       >
         <new-flow-form
           :condensed="true"
           :openFlowChecked="true"
-          @isSubmitted="formExpanded = false"
+          @isSubmitted="flowFormExpanded = false"
+          dataCySlug="drawer"
         ></new-flow-form>
       </q-expansion-item>
 
@@ -619,6 +622,7 @@ export default defineComponent({
     const outlineNuggets = ref(false);
 
     const formExpanded = ref(false);
+    const flowFormExpanded = ref(false);
 
     return {
       pageFlowId,
@@ -629,6 +633,7 @@ export default defineComponent({
       pageFlowData,
       outlineNuggets,
       formExpanded,
+      flowFormExpanded,
       flowSourceMsg,
       flowSourceDetail,
       flowSource,

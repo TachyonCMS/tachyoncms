@@ -8,6 +8,7 @@
             v-model="name"
             label="Private Name *"
             hint="The internal name for the flow."
+            :data-cy="dataCySlug + '-new-flow-form-name-fld'"
             ><q-tooltip>
               The name is only visible to you, even when published.
             </q-tooltip>
@@ -19,6 +20,7 @@
             v-model="title"
             label="Public Title"
             hint="The public title for published flows."
+            :data-cy="dataCySlug + '-new-flow-form-title-fld'"
             ><q-tooltip>
               A title must be provided to publish the flow.
             </q-tooltip></q-input
@@ -31,12 +33,14 @@
             v-model="notes"
             label="Optional Notes"
             hint="Free form data field."
+            :data-cy="dataCySlug + '-new-flow-form-notes-fld'"
           ></q-input>
           <q-checkbox
             v-model="openFlow"
             label="Open flow"
             hint="Open the new flow after creating it."
             class="float-right"
+            :data-cy="dataCySlug + '-new-flow-form-openFlow-checkbox'"
           ></q-checkbox>
         </div>
       </q-card-section>
@@ -82,7 +86,12 @@
           class="q-ml-sm subdued-btn"
         ></q-btn>
 
-        <q-btn label="Submit" type="submit" class="action-btn"></q-btn>
+        <q-btn
+          label="Submit"
+          type="submit"
+          class="action-btn"
+          :data-cy="dataCySlug + '-new-flow-form-submit-btn'"
+        ></q-btn>
       </q-card-actions>
     </q-form>
   </q-card>
@@ -105,6 +114,10 @@ export default defineComponent({
     openFlowChecked: {
       default: false,
       type: Boolean,
+    },
+    dataCySlug: {
+      default: "tst",
+      type: String,
     },
   },
   emits: ["appNotification", "closeForm"],

@@ -16,7 +16,7 @@ export default () => {
       console.log("Storage API Check Auth for " + flowSource.rootUrl);
       storageApi.defaults.baseURL = flowSource.rootUrl;
       storageApi.defaults.auth = {
-        username: flowSource.apiLogin,
+        username: flowSource.apiUsername,
         password: flowSource.apiPassword,
       };
 

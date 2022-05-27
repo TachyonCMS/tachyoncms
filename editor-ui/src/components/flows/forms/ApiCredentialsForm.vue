@@ -8,6 +8,7 @@
             v-model="nickname"
             label="Nickname"
             hint="A name that is useful to you"
+            :data-cy="dataCySlug + '-storage-api-login-nickname-fld'"
             ><q-tooltip>
               This a name of your choosing, it is not provided by the Storage
               API or backend server.
@@ -20,6 +21,7 @@
             v-model="rootUrl"
             label="Root URL"
             hint="The API server address"
+            :data-cy="dataCySlug + '-storage-api-login-host-fld'"
             ><q-tooltip>
               Requires a valid hostname or IP and optionally a port number and
               subdirectory, all requests are sent here.
@@ -29,9 +31,10 @@
         <div class="q-pb-md">
           <q-input
             filled
-            v-model="apiLogin"
+            v-model="apiUsername"
             label="API Login"
             hint="The API login provided"
+            :data-cy="dataCySlug + '-storage-api-login-apiUsername-fld'"
             ><q-tooltip>
               This credential is managed in the Storage API, or backend server.
             </q-tooltip></q-input
@@ -44,6 +47,7 @@
             v-model="apiPassword"
             label="API Password"
             hint="The API password provided"
+            :data-cy="dataCySlug + '-storage-api-login-apiPassword-fld'"
           ></q-input>
         </div>
       </q-card-section>
@@ -54,9 +58,8 @@
           flat
           class="q-ml-sm subdued-btn"
         ></q-btn>
-
         <q-btn
-          data-cy="storage-api-login-submit"
+          :data-cy="dataCySlug + '-storage-api-login-submit-btn'"
           label="Submit"
           type="submit"
           class="action-btn"
@@ -75,19 +78,19 @@ const { createFlow, setFlowSource, setFlowConnector } = useFlows();
 export default defineComponent({
   name: "ApiCredentialsForm",
   components: {},
-  props: {},
+  props: ["dataCySlug"],
   emits: ["appNotification", "isSubmitted"],
   setup(props) {
     const { createFlow } = useFlows();
     const nickname = ref("Local Storage API");
     const rootUrl = ref("http://localhost:3333");
-    const apiLogin = ref("admin");
+    const apiUsername = ref("admin");
     const apiPassword = ref("TachyonCMS");
 
     return {
       nickname,
       rootUrl,
-      apiLogin,
+      apiUsername,
       apiPassword,
       setFlowSource,
       setFlowConnector,
@@ -95,12 +98,12 @@ export default defineComponent({
   },
   methods: {
     async onSubmit() {
-      const { nickname, rootUrl, apiLogin, apiPassword } = this;
+      const { nickname, rootUrl, apiUsername, apiPassword } = this;
 
       // All are required
-      if (!nickname || !rootUrl || !apiLogin || !apiPassword) return;
+      if (!nickname || !rootUrl || !apiUsername || !apiPassword) return;
 
-      const connDef = { nickname, rootUrl, apiLogin, apiPassword };
+      const connDef = { nickname, rootUrl, apiUsername, apiPassword };
       this.setFlowConnector("storageApi");
       this.setFlowSource(connDef);
 
@@ -111,7 +114,7 @@ export default defineComponent({
     async onReset() {
       (this.nickname = ""),
         (this.rootUrl = ""),
-        (this.apiLogin = ""),
+        (this.apiUsername = ""),
         (this.apiPassword = "");
     },
   },

@@ -8,7 +8,7 @@
           round
           icon="menu"
           @click="toggleLeftDrawer"
-          data-cy="toggle-drawer-btn"
+          data-cy="drawer-toggle-btn"
         />
 
         <q-toolbar-title>

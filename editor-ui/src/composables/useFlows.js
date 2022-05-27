@@ -65,7 +65,7 @@ export default function useFlows() {
         msg = flowSource.value;
         break;
       case "storageApi":
-        msg = flowSource.value.apiLogin + " @ " + flowSource.value.rootUrl;
+        msg = flowSource.value.apiUsername + " @ " + flowSource.value.rootUrl;
         break;
     }
 
@@ -436,7 +436,7 @@ export default function useFlows() {
   };
 
   // Perform whatever is needed to initialize the connection with the backend.
-  // storageApi - verifies the rootUrl, apiLogin amd apiPassword all work together.
+  // storageApi - verifies the rootUrl, apiUsername amd apiPassword all work together.
   const connectSource = (connectionInfo) => {
     console.log(connectionInfo);
   };

@@ -166,36 +166,18 @@ export default () => {
 
   const updateNuggetProp = async (nuggetId, propName, propValue) => {
     try {
-      console.log("Updating Nugget Prop");
+      console.log("Updating Nugget " + nuggetId);
       console.log(propName);
       console.log(propValue);
-      // Fetch the current Data
-      const dataResult = await electronApi.getElectronNuggetById(
-        rootDir.value,
-        nuggetId
-      );
-
-      console.log(dataResult);
-      const currentData = dataResult.data;
-      // Merge the change in
-      currentData[propName] = propValue;
-
-      // Update the modified date
-      setUpdated(currentData);
-
-      // Save the updated Object,
-      const result = await electronApi.writeJson(
-        [rootDir.value, "nuggets", currentData.id],
-        "nugget",
-        currentData
+      const result = await electronApi.updateNuggetProp(
+        nuggetId,
+        propName,
+        propValue
       );
       console.log(result);
-      if (result.status === "success") {
-        return result.data;
-      }
-      return result.status;
+      return result;
     } catch (e) {
-      console.log("Error Updating Nugget " + nuggetId + " " + propName);
+      console.log("Error Updating Flow");
       console.log(e);
     }
   };
