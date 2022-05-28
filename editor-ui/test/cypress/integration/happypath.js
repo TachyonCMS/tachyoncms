@@ -1,5 +1,6 @@
 describe("Editor-UI", () => {
   beforeEach(() => {
+    cy.wait(3000);
     cy.visit("/");
     cy.dataCy("drawer-storage-api-login-toggle-btn").should(
       "contain",
@@ -77,12 +78,16 @@ describe("Editor-UI", () => {
     cy.dataCy("new-block-btn-n0-images-image").click(15, 40, {
       force: true,
     });
-    cy.dataCy("nugget0-block0-url-fld").type("TachyonCMS Rocks!");
-    cy.dataCy("nugget0-block0-save-btn").click(15, 40, {
+    cy.dataCy("nugget0-block1-url-fld").type(
+      "https://raw.githubusercontent.com/TachyonCMS/tachyoncms/d84d11141e32f761494433bffc31bef98c23d629/editor-ui/docs/images/TachyonCMS-High-Level-Component-View.svg"
+    );
+    cy.dataCy("nugget0-block1-caption-fld").type("Big things to come...");
+    cy.dataCy("nugget0-block1-save-btn").click(15, 40, {
       force: true,
     });
-    cy.dataCy("nugget0-block0-close-btn").click(15, 40, {
+    cy.dataCy("nugget0-block1-close-btn").click(15, 40, {
       force: true,
     });
+    cy.scrollTo("top");
   });
 });

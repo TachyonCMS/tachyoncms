@@ -328,7 +328,7 @@
         </template>
       </q-list>
     </template>
-    <template v-else> You must select a root directory </template>
+    <template v-else><NoFlowSourceSetPage></NoFlowSourceSetPage></template>
   </q-page>
 </template>
 
@@ -352,6 +352,7 @@ import NewNuggetForm from "../../components/flows/forms/NewNuggetForm";
 import DateDisplay from "../../components/site/widgets/DateDisplay";
 import BlocksHandler from "../../components/flows/blocks/BlocksHandler";
 import NuggetTextProperty from "../../components/flows/forms/fields/NuggetTextProperty";
+import NoFlowSourceSetPage from "../../pages/flows/NoFlowSourceSetPage";
 
 export default defineComponent({
   name: "PageFlow",
@@ -361,6 +362,7 @@ export default defineComponent({
     DateDisplay,
     BlocksHandler,
     NuggetTextProperty,
+    NoFlowSourceSetPage,
   },
   setup() {
     const route = useRoute();

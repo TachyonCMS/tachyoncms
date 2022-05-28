@@ -35,13 +35,18 @@
 
         <!-- Rich Text Content / HTML block -->
         <q-separator></q-separator>
-        <q-item v-close-popup clickable @click="addBlock('richText')">
+        <q-item
+          v-close-popup
+          clickable
+          @click="addBlock('richText')"
+          :data-cy="dataCySlug + '-richtext'"
+        >
           <q-item-section>Rich Text</q-item-section>
         </q-item>
 
         <!-- Image centric blocks -->
         <q-separator></q-separator>
-        <q-item clickable>
+        <q-item clickable :data-cy="dataCySlug + '-images'">
           <q-item-section>Images</q-item-section>
           <q-item-section side>
             <q-icon name="keyboard_arrow_right"></q-icon>
@@ -49,7 +54,12 @@
           <q-menu anchor="top end" self="top start">
             <q-list>
               <!-- Image Choices -->
-              <q-item v-close-popup clickable @click="addBlock('image')">
+              <q-item
+                v-close-popup
+                clickable
+                @click="addBlock('image')"
+                :data-cy="dataCySlug + '-images-image'"
+              >
                 <q-item-section>Image</q-item-section>
               </q-item>
               <q-item
@@ -65,6 +75,7 @@
                 clickable
                 @click="addBlock('before-and-after')"
                 disabled
+                :data-cy="dataCySlug + '-images-b4after'"
               >
                 <q-item-section>Before & After</q-item-section>
               </q-item>
@@ -74,7 +85,7 @@
 
         <!-- Multimedia Blocks-->
         <q-separator></q-separator>
-        <q-item clickable disabled>
+        <q-item clickable disabled :data-cy="dataCySlug + '-multimedia'">
           <q-item-section>Multimedia</q-item-section>
           <q-item-section side>
             <q-icon name="keyboard_arrow_right"></q-icon>
@@ -87,6 +98,7 @@
                 clickable
                 @click="addBlock('carousel')"
                 disabled
+                :data-cy="dataCySlug + '-multimedia-carousel'"
               >
                 <q-item-section>Carousel</q-item-section>
               </q-item>
@@ -95,6 +107,7 @@
                 clickable
                 @click="addBlock('video')"
                 disabled
+                :data-cy="dataCySlug + '-multimedia-video'"
               >
                 <q-item-section>Video</q-item-section>
               </q-item>
@@ -104,7 +117,7 @@
 
         <!-- In-Nugget Page Separators -->
         <q-separator></q-separator>
-        <q-item clickable>
+        <q-item clickable :data-cy="dataCySlug + '-separator'">
           <q-item-section>Separators</q-item-section>
           <q-item-section side>
             <q-icon name="keyboard_arrow_right"></q-icon>
@@ -116,6 +129,7 @@
                 v-close-popup
                 clickable
                 @click="addBlock('basicSeparator')"
+                :data-cy="dataCySlug + '-separator-basic'"
               >
                 <q-item-section>Basic</q-item-section>
               </q-item>
