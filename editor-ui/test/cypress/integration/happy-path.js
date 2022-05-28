@@ -68,20 +68,55 @@ describe("Editor-UI", () => {
       force: true,
     });
 
-    // Create an Image Block within the Nugget
+    // Click to create a new block
     cy.dataCy("new-block-btn-n0").click(15, 40, {
       force: true,
     });
+    // Choose images
     cy.dataCy("new-block-btn-n0-images").click(15, 40, {
       force: true,
     });
+    // Choose Image
     cy.dataCy("new-block-btn-n0-images-image").click(15, 40, {
       force: true,
     });
+    // Enter image URL
     cy.dataCy("nugget0-block1-url-fld").type(
-      "https://raw.githubusercontent.com/TachyonCMS/tachyoncms/d84d11141e32f761494433bffc31bef98c23d629/editor-ui/docs/images/TachyonCMS-High-Level-Component-View.svg"
+      "https://raw.githubusercontent.com/TachyonCMS/tachyoncms/ededdd04d0a1f95ae782ad14f862af1f4ad31ccf/editor-ui/docs/images/TachyonCMS-High-Level-Component-View.svg"
     );
-    cy.dataCy("nugget0-block1-caption-fld").type("Big things to come...");
+    // Enter a caption
+    cy.dataCy("nugget0-block1-caption-fld").type(
+      "A better way to manage content"
+    );
+    // Set caption position
+    cy.dataCy("nugget0-block1-caption-position-select").click(15, 40, {
+      force: true,
+    });
+    cy.contains("Bottom-right").click();
+    // Set caption font
+    cy.dataCy("nugget0-block1-caption-font-select").click(15, 40, {
+      force: true,
+    });
+    cy.contains("Impact").click();
+    // Set caption font size
+    cy.dataCy("nugget0-block1-caption-font-size-select").click(15, 40, {
+      force: true,
+    });
+    cy.contains("Big").click();
+    // Set caption font style
+    cy.dataCy("nugget0-block1-caption-font-style-select").click(15, 40, {
+      force: true,
+    });
+    cy.contains("Italic").click();
+    // Set caption font weight
+    cy.dataCy("nugget0-block1-caption-font-weight-select").click(15, 40, {
+      force: true,
+    });
+    cy.contains("Medium").click();
+    // Set caption color
+    cy.dataCy("nugget0-block1-caption-font-color-fld").type("#FFFF00", {
+      force: true,
+    });
     cy.dataCy("nugget0-block1-save-btn").click(15, 40, {
       force: true,
     });

@@ -104,7 +104,7 @@
             dense
             options-dense
             options-html
-            :data-cy="dataCySlug + '-font-option-select'"
+            :data-cy="dataCySlug + '-caption-font-select'"
           ></q-select>
         </div>
       </div>
@@ -120,7 +120,7 @@
             dense
             options-dense
             options-html
-            :data-cy="dataCySlug + '-font-size-select'"
+            :data-cy="dataCySlug + '-caption-font-size-select'"
           ></q-select>
         </div>
       </div>
@@ -136,7 +136,7 @@
             dense
             options-dense
             options-html
-            :data-cy="dataCySlug + '-font-style-select'"
+            :data-cy="dataCySlug + '-caption-font-style-select'"
           ></q-select>
         </div>
       </div>
@@ -152,7 +152,7 @@
             dense
             options-dense
             options-html
-            :data-cy="dataCySlug + '-font-weight-select'"
+            :data-cy="dataCySlug + '-caption-font-weight-select'"
           ></q-select>
         </div>
       </div>
@@ -163,7 +163,7 @@
             filled
             v-model="editorData.fontColor"
             :rules="['hexColor']"
-            :data-cy="dataCySlug + '-font-color-fld'"
+            :data-cy="dataCySlug + '-caption-font-color-fld'"
           >
             <template v-slot:append>
               <q-icon name="colorize" class="cursor-pointer">
@@ -336,7 +336,16 @@ export default defineComponent({
       },
     ];
 
-    const fontStyleOptions = ["Normal", "Italic"];
+    const fontStyleOptions = [
+      {
+        label: "Normal",
+        value: "Normal",
+      },
+      {
+        label: "Italic",
+        value: "Italic",
+      },
+    ];
 
     const fontOptions = [
       {
