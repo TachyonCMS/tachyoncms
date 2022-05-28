@@ -45,7 +45,7 @@
               @addBlock="onAddBlock"
               class="top-left"
               :data-cy="'new-block-before-btn-n' + nix + '-b' + bix"
-              :dataCySlug="'new-block-before-n' + nix + '-b' + bix"
+              :dataCySlug="'new-block-before-btn-n' + nix + '-b' + bix"
             ></new-block-button>
             <q-btn
               class="top-right"

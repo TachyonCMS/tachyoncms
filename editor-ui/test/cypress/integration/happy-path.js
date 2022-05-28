@@ -49,7 +49,7 @@ describe("Editor-UI", () => {
     cy.dataCy("nuggets-new-nugget-form-submit-btn").click(15, 40, {
       force: true,
     });
-
+    //=================================================
     // Create an H2 Block within the Nugget
     cy.dataCy("new-block-btn-n0").click(15, 40, {
       force: true,
@@ -67,8 +67,8 @@ describe("Editor-UI", () => {
     cy.dataCy("nugget0-block0-close-btn").click(15, 40, {
       force: true,
     });
-
-    // Click to create a new block
+    //=================================================
+    // Click to create a new image block
     cy.dataCy("new-block-btn-n0").click(15, 40, {
       force: true,
     });
@@ -123,6 +123,16 @@ describe("Editor-UI", () => {
     cy.dataCy("nugget0-block1-close-btn").click(15, 40, {
       force: true,
     });
+    //=================================================
+    // Click to create a new rich-text block above the image (b1)
+    cy.dataCy("new-block-before-btn-n0-b1").click(15, 40, {
+      force: true,
+    });
+    // Choose rich-text
+    cy.dataCy("new-block-before-btn-n0-b1-richtext").click(15, 40, {
+      force: true,
+    });
+    //=================================================
     cy.scrollTo("top");
   });
 });
