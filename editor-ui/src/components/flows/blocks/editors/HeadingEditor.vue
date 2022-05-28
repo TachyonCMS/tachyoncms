@@ -8,6 +8,7 @@
       v-model="editorData.heading"
       :label="label"
       class="col-12"
+      :data-cy="dataCySlug + '-heading-fld'"
     ></q-input>
     <!-- Control buttons -->
     <div class="row col-12">
@@ -20,6 +21,7 @@
         size="sm"
         label="Clear"
         :disabled="!dirtyBit"
+        :data-cy="dataCySlug + '-clear-btn'"
       ></q-btn>
       <q-btn
         @click="
@@ -31,6 +33,7 @@
         size="sm"
         :disabled="!dirtyBit"
         label="Save"
+        :data-cy="dataCySlug + '-save-btn'"
       ></q-btn>
       <q-space></q-space>
       <q-btn
@@ -41,6 +44,7 @@
         size="sm"
         label="Close"
         :disabled="dirtyBit"
+        :data-cy="dataCySlug + '-close-btn'"
       ></q-btn>
     </div>
   </div>
@@ -54,7 +58,7 @@ import Heading from "../renders/Heading";
 
 export default defineComponent({
   name: "HeadingEditor",
-  props: ["displayData"],
+  props: ["displayData", "dataCySlug"],
   emits: ["save", "close", "delete"],
   components: {
     Heading,

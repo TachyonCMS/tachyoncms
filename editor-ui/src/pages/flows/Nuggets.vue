@@ -9,6 +9,7 @@
           :label="collectionFormLabel"
           header-class="form-header text-h6"
           v-model="collectionFormOpen"
+          data-cy="nuggets-new-nugget-form-toggle-btn"
         >
           <q-card class="no-margin full-height">
             <new-nugget-form
@@ -16,6 +17,7 @@
               :condensed="true"
               class="collection-form-body"
               @closeForm="collectionFormOpen = false"
+              dataCySlug="nuggets"
             ></new-nugget-form>
           </q-card>
         </q-expansion-item>
@@ -25,7 +27,7 @@
         <template v-if="flowLoaded">
           <template v-if="nuggetSeq">
             <!-- Reactive list of Nuggets from within the Flow object. -->
-            <q-list v-for="nuggetId in nuggetSeq" :key="nuggetId">
+            <q-list v-for="(nuggetId, nix) in nuggetSeq" :key="nuggetId">
               <div class="nugget-container">
                 <q-expansion-item
                   expand-icon-toggle
@@ -306,6 +308,7 @@
                   <blocks-handler
                     :blockData="nuggetMap.get(nuggetId).blockData"
                     @save="(event) => saveBlocks(nuggetId, event)"
+                    :nix="nix"
                   >
                   </blocks-handler>
                 </div>

@@ -34,6 +34,7 @@
         v-model="editorData.url"
         label="Image URL"
         class="col-12"
+        :data-cy="dataCySlug + '-url-fld'"
       ></q-input>
     </div>
 
@@ -48,6 +49,7 @@
           map-options
           dense
           options-dense
+          :data-cy="dataCySlug + '-ratio-select'"
         ></q-select>
       </div>
     </div>
@@ -63,6 +65,7 @@
           map-options
           dense
           options-dense
+          :data-cy="dataCySlug + '-fit-select'"
         ></q-select>
       </div>
     </div>
@@ -74,6 +77,7 @@
         v-model="editorData.captionText"
         label="Caption"
         class="col-12"
+        :data-cy="dataCySlug + '-caption-fld'"
       ></q-input>
       <div class="row col-6">Caption Position:</div>
       <div>
@@ -85,6 +89,7 @@
           map-options
           dense
           options-dense
+          :data-cy="dataCySlug + '-caption-position-select'"
         ></q-select>
       </div>
       <div class="row col-12">
@@ -99,6 +104,7 @@
             dense
             options-dense
             options-html
+            :data-cy="dataCySlug + '-font-option-select'"
           ></q-select>
         </div>
       </div>
@@ -114,6 +120,7 @@
             dense
             options-dense
             options-html
+            :data-cy="dataCySlug + '-font-size-select'"
           ></q-select>
         </div>
       </div>
@@ -129,6 +136,7 @@
             dense
             options-dense
             options-html
+            :data-cy="dataCySlug + '-font-style-select'"
           ></q-select>
         </div>
       </div>
@@ -144,13 +152,19 @@
             dense
             options-dense
             options-html
+            :data-cy="dataCySlug + '-font-weight-select'"
           ></q-select>
         </div>
       </div>
       <div class="row col-12">
         <div class="row col-6">Font Color:</div>
         <div>
-          <q-input filled v-model="editorData.fontColor" :rules="['hexColor']">
+          <q-input
+            filled
+            v-model="editorData.fontColor"
+            :rules="['hexColor']"
+            :data-cy="dataCySlug + '-font-color-fld'"
+          >
             <template v-slot:append>
               <q-icon name="colorize" class="cursor-pointer">
                 <q-popup-proxy
@@ -177,6 +191,7 @@
         size="sm"
         label="Clear"
         :disabled="!dirtyBit"
+        :data-cy="dataCySlug + '-clear-btn'"
       ></q-btn>
       <q-btn
         @click="
@@ -188,6 +203,7 @@
         size="sm"
         :disabled="!dirtyBit"
         label="Save"
+        :data-cy="dataCySlug + '-save-btn'"
       ></q-btn>
       <q-space></q-space>
       <q-btn
@@ -198,6 +214,7 @@
         size="sm"
         label="Close"
         :disabled="dirtyBit"
+        :data-cy="dataCySlug + '-close-btn'"
       ></q-btn>
     </div>
   </div>
@@ -220,7 +237,7 @@ import Fnt from "../../../site/widgets/Font";
 */
 export default defineComponent({
   name: "ImageEditor",
-  props: ["displayData"],
+  props: ["displayData", "dataCySlug"],
   components: {
     Fnt,
   },

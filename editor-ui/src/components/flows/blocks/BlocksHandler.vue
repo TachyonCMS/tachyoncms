@@ -3,7 +3,7 @@
     <!-- Div to wrap all blocks in this nugget -->
     <div class="row col-12 blocks-container">
       <!-- Template to repeat a card section for each block -->
-      <template v-for="block in blocks" :key="block.id">
+      <template v-for="(block, bix) in blocks" :key="block.id">
         <!-- EDITORS -->
         <div v-show="isInEdit(block.id)" class="row col-12">
           <!-- Section to show for this block if it is in edit mode. -->
@@ -18,44 +18,9 @@
               @save="(event) => saveBlock(block.id, event)"
               @close="closeEditor(block.id)"
               @delete="(event) => deleteBlock(block.id)"
+              :dataCySlug="'nugget' + nix + '-block' + bix"
             ></component>
-
-            <!-- Rich Text / HTML editor
-
-          <html-editor
-            v-if="block.type === 'rich-text'"
-            :data="block.displayData"
-            @save="(event) => saveBlock(block.id, event)"
-            @close="closeEditor(block.id)"
-            @delete="(event) => deleteBlock(block.id)"
-          ></html-editor>
-
-          <heading-editor
-            v-if="['h2', 'h3', 'h4', 'h5', 'h6'].includes(block.type)"
-            :data="block.displayData"
-            :level="block.type"
-            @save="(event) => saveBlock(block.id, event)"
-            @close="closeEditor(block.id)"
-            @delete="(event) => deleteBlock(block.id)"
-          ></heading-editor>
-
-          <single-image-editor
-            v-if="block.type === 'image'"
-            :data="block.displayData"
-            @save="(event) => saveBlock(block.id, event)"
-            @close="closeEditor(block.id)"
-            @delete="(event) => deleteBlock(block.id)"
-          ></single-image-editor>
-
-
-          <separator-editor
-            v-if="block.type === 'basicSeparator'"
-            :data="block.displayData"
-            @save="(event) => saveBlock(block.id, event)"
-            @delete="(event) => deleteBlock(block.id)"
-            @close="closeEditor(block.id)"
-          ></separator-editor>
-          --></div>
+          </div>
         </div>
         <!--/ END EDITORS -->
 
@@ -79,6 +44,8 @@
               :nextBlock="block.id"
               @addBlock="onAddBlock"
               class="top-left"
+              :data-cy="'new-block-before-btn-n' + nix + '-b' + bix"
+              :dataCySlug="'new-block-before-n' + nix + '-b' + bix"
             ></new-block-button>
             <q-btn
               class="top-right"
@@ -98,6 +65,8 @@
           btnLabel="Block"
           @addBlock="onAddBlock"
           class="col"
+          :data-cy="'new-block-btn-n' + nix"
+          :dataCySlug="'new-block-btn-n' + nix"
         ></new-block-button>
       </span>
 
@@ -142,6 +111,10 @@ export default defineComponent({
   props: {
     blockData: {
       type: String,
+    },
+    nix: {
+      type: Number,
+      default: 0,
     },
   },
   emits: ["save"],

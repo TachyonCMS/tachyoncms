@@ -8,7 +8,7 @@
     ><q-menu>
       <q-list>
         <!-- H2-H6 Header Blocks -->
-        <q-item clickable>
+        <q-item clickable :data-cy="dataCySlug + '-header'">
           <q-item-section>Header</q-item-section>
           <q-item-section side>
             <q-icon name="keyboard_arrow_right"></q-icon>
@@ -23,7 +23,9 @@
                 clickable
                 v-close-popup
               >
-                <q-item-section @click="addBlock('h' + n)"
+                <q-item-section
+                  @click="addBlock('h' + n)"
+                  :data-cy="dataCySlug + '-header-h' + n"
                   >H{{ n }} Header</q-item-section
                 >
               </q-item>
@@ -146,6 +148,10 @@ export default defineComponent({
     nextBlock: {
       type: String,
       default: "",
+    },
+    dataCySlug: {
+      type: String,
+      default: "tst",
     },
   },
   emits: ["addBlock"],

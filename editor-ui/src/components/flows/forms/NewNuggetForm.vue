@@ -8,6 +8,7 @@
             v-model="name"
             label="Name *"
             hint="The internal name for the nugget."
+            :data-cy="dataCySlug + '-new-nugget-form-name-fld'"
             ><q-tooltip>
               This is is only visible to you, even when published.
             </q-tooltip>
@@ -19,6 +20,7 @@
             v-model="title"
             label="Title"
             hint="The title is used in some blocks."
+            :data-cy="dataCySlug + '-new-nugget-form-title-fld'"
             ><q-tooltip>
               A title must be provided to publish the nugget.
             </q-tooltip></q-input
@@ -67,7 +69,12 @@
           class="q-ml-sm subdued-btn"
         ></q-btn>
 
-        <q-btn label="Submit" type="submit" class="action-btn"></q-btn>
+        <q-btn
+          label="Submit"
+          type="submit"
+          class="action-btn"
+          :data-cy="dataCySlug + '-new-nugget-form-submit-btn'"
+        ></q-btn>
       </q-card-actions>
     </q-form>
   </q-card>
@@ -92,6 +99,10 @@ export default defineComponent({
       type: Boolean,
     },
     flowId: {
+      type: String,
+    },
+    dataCySlug: {
+      default: "tst",
       type: String,
     },
   },
