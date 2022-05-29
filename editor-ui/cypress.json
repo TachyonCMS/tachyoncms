@@ -11,5 +11,6 @@
     "componentFolder": "src",
     "testFiles": "**/*.spec.js",
     "supportFile": "test/cypress/support/unit.js"
-  }
+  },
+  "defaultCommandTimeout": 4000
 }
