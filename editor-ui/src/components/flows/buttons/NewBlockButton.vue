@@ -7,7 +7,6 @@
     class="option-btn"
     ><q-menu>
       <q-list>
-        {{ dataCySlug }}
         <!-- H2-H6 Header Blocks -->
         <q-item clickable :data-cy="dataCySlug + '-header'">
           <q-item-section>Header</q-item-section>

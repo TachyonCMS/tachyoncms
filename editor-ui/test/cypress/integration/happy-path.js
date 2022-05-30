@@ -20,31 +20,39 @@ describe("Editor-UI", () => {
 
     // Create a Flow
 
-    cy.dataCy("drawer-new-flow-form-toggle-btn").click(15, 40);
+    cy.dataCy("drawer-new-flow-form-toggle-btn").click(15, 40, { force: true });
     cy.dataCy("drawer-new-flow-form-name-fld").type("My Cool New Project", {
       force: true,
     });
     cy.dataCy("drawer-toggle-btn").click(15, 40, { force: true });
     cy.dataCy("drawer-new-flow-form-title-fld").type(
-      "TachyonCMS - One CMS to rule them all"
+      "TachyonCMS - One CMS to rule them all",
+      { force: true }
     );
     cy.dataCy("drawer-new-flow-form-notes-fld").type(
-      "Install TachyonCMS TODAY!!"
+      "Install TachyonCMS TODAY!!",
+      { force: true }
     );
     cy.dataCy("drawer-new-flow-form-submit-btn").click(15, 40, { force: true });
 
     // Create a Nugget within the Flow
 
-    cy.dataCy("nuggets-new-nugget-form-toggle-btn").click(15, 40);
+    cy.dataCy("nuggets-new-nugget-form-toggle-btn").click(15, 40, {
+      force: true,
+    });
 
     cy.dataCy("nuggets-new-nugget-form-submit-btn").click(15, 40, {
       force: true,
     });
-    cy.dataCy("nuggets-new-nugget-form-name-fld").type("My First Nugget", {
-      force: true,
-    });
+    cy.dataCy("nuggets-new-nugget-form-name-fld").type(
+      "My First Nugget of Information",
+      {
+        force: true,
+      }
+    );
     cy.dataCy("nuggets-new-nugget-form-title-fld").type(
-      "Nugget titles are optional"
+      "Nugget titles are optional",
+      { force: true }
     );
     cy.dataCy("nuggets-new-nugget-form-submit-btn").click(15, 40, {
       force: true,
@@ -60,7 +68,9 @@ describe("Editor-UI", () => {
     cy.dataCy("new-block-btn-n0-header-h2").click(15, 40, {
       force: true,
     });
-    cy.dataCy("nugget0-block0-heading-fld").type("TachyonCMS Rocks!");
+    cy.dataCy("nugget0-block0-heading-fld").type("TachyonCMS Rocks!", {
+      force: true,
+    });
     cy.dataCy("nugget0-block0-save-btn").click(15, 40, {
       force: true,
     });
@@ -132,7 +142,55 @@ describe("Editor-UI", () => {
     cy.dataCy("new-block-before-btn-n0-b1-richtext").click(15, 40, {
       force: true,
     });
+
+    // Click on Align in toolbar
+    cy.get("[class=q-editor__toolbar-group]").within(() => {
+      cy.contains("Align").click();
+    });
+    // Click on "Center align"
+    cy.contains("Center align").click();
+
+    // Click on "Default Font"
+    cy.get("[class=q-editor__toolbar-group]").within(() => {
+      cy.contains("Default Font").click();
+    });
+    // Click on  "Arial Black"
+    cy.contains("Arial Black").click();
+
+    // Click on "Font Size"
+    cy.get("[class=q-editor__toolbar-group]").within(() => {
+      cy.contains("Font Size").click();
+    });
+    // Click on "Maximum"
+    cy.contains("Very big").click();
+
+    // Type in the contenteditable space
+    cy.get("[class=q-editor__content]").type("Big things coming soon...");
+
+    cy.dataCy("nugget0-block1-save-btn").click(15, 40, {
+      force: true,
+    });
+    cy.dataCy("nugget0-block1-close-btn").click(15, 40, {
+      force: true,
+    });
     //=================================================
+    cy.scrollTo("bottom");
+    cy.wait(500);
+    cy.scrollTo("top");
+    cy.wait(500);
+    cy.scrollTo("bottom");
+    //=================================================
+    // Preview Flow
+    // Open drawer
+    cy.dataCy("drawer-toggle-btn").click(15, 40, { force: true });
+    // Click Preview Flow
+    cy.dataCy("drawer-flow-preview-flow").click(15, 40, {
+      force: true,
+    });
+    cy.scrollTo("top");
+    cy.wait(500);
+    cy.scrollTo("bottom");
+    cy.wait(1000);
     cy.scrollTo("top");
   });
 });

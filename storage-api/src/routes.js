@@ -22,7 +22,7 @@ if (contentDataRootIx && contentDataRootIx > -1) {
   const contentDataRootIn = process.argv[contentDataRootIx + 1];
   contentDataRoot = path.resolve(contentDataRootIn);
 } else {
-  contentDataRoot = path.resolve("../shared/content/dev");
+  contentDataRoot = path.resolve("../../shared/content/dev");
 }
 
 setContentDataRoot(contentDataRoot);

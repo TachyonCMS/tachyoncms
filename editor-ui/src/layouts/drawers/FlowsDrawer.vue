@@ -30,6 +30,7 @@
         @click="onSelectConnector('electron')"
         v-if="$q.platform.is.electron"
         v-show="!flowConnector"
+        data-cy="drawer-select-local-directory-btn"
       >
         <q-item-section avatar>
           <q-icon name="folder" />
@@ -498,6 +499,7 @@
           @click="this.$emit('toggleDrawer')"
           exact-active-class="exact-active"
           :inset-level="1"
+          data-cy="drawer-flow-preview-flow"
         >
           <q-item-section avatar>
             <q-icon name="mdi-eye" />

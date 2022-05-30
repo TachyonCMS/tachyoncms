@@ -9,6 +9,7 @@
     "lint": "eslint --ext .js,.vue ./",
     "format": "prettier --write \"**/*.{js,vue,scss,html,md,json}\" --ignore-path .gitignore",
     "test:e2e": "cross-env E2E_TEST=true start-test \"quasar dev\" http-get://localhost:8080 \"cypress open\"",
+    "test:e2e:electron": "cross-env E2E_TEST=true start-test \"quasar dev -m electron\" http-get://localhost:8080 \"cypress open\"",
     "test:e2e:ci": "cross-env E2E_TEST=true start-test \"quasar dev\" http-get://localhost:8080 \"cypress run\"",
     "test:unit": "cypress open-ct",
     "test:unit:ci": "cypress run-ct"

@@ -85,6 +85,7 @@
       size="sm"
       label="Clear"
       :disabled="!dirtyBit"
+      :data-cy="dataCySlug + '-clear-btn'"
     ></q-btn>
     <q-btn
       @click="
@@ -96,6 +97,7 @@
       size="sm"
       :disabled="!dirtyBit"
       label="Save"
+      :data-cy="dataCySlug + '-save-btn'"
     ></q-btn>
     <q-space></q-space>
     <q-btn
@@ -106,6 +108,7 @@
       size="sm"
       label="Close"
       :disabled="dirtyBit"
+      :data-cy="dataCySlug + '-close-btn'"
     ></q-btn>
   </div>
 </template>
@@ -116,12 +119,12 @@ import { useQuasar } from "quasar";
 
 export default defineComponent({
   name: "HtmlEditor",
-  props: ["displayData"],
+  props: ["displayData", "dataCySlug"],
   emits: ["save", "close", "delete"],
   setup(props) {
     const $q = useQuasar();
 
-    console.log(props.displayData);
+    console.log(props);
 
     const rawData = unref(props.displayData);
 
