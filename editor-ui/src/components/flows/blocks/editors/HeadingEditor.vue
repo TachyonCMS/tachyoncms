@@ -1,63 +1,65 @@
 <template>
-  <div class="row col-12">
-    <heading :displayData="editorData"></heading>
-  </div>
-  <div class="row col-12">
-    <q-input
-      outlined
-      v-model="editorData.heading"
-      :label="label"
-      class="col-12"
-      :data-cy="dataCySlug + '-heading-fld'"
-    ></q-input>
-    <!-- Control buttons -->
+  <template>
     <div class="row col-12">
-      <q-space></q-space>
-      <q-btn
-        @click="this.clear()"
-        class="subdued-btn"
-        icon-right="mdi-sync"
-        flat
-        size="sm"
-        label="Clear"
-        :disabled="!dirtyBit"
-        :data-cy="dataCySlug + '-clear-btn'"
-      ></q-btn>
-      <q-btn
-        @click="
-          this.$emit('save', { newData: editorData });
-          this.dirtyBit = false;
-        "
-        class="option-btn"
-        icon="save"
-        size="sm"
-        :disabled="!dirtyBit"
-        label="Save"
-        :data-cy="dataCySlug + '-save-btn'"
-      ></q-btn>
-      <q-space></q-space>
-      <q-btn
-        @click="this.$emit('close')"
-        class="subdued-btn"
-        icon-right="mdi-close"
-        flat
-        size="sm"
-        label="Close"
-        :disabled="dirtyBit"
-        :data-cy="dataCySlug + '-close-btn'"
-      ></q-btn>
+      <heading :displayData="editorData"></heading>
     </div>
-  </div>
+    <div class="row col-12">
+      <q-input
+        outlined
+        v-model="editorData.heading"
+        :label="label"
+        class="col-12"
+        :data-cy="dataCySlug + '-heading-fld'"
+      ></q-input>
+      <!-- Control buttons -->
+      <div class="row col-12">
+        <q-space></q-space>
+        <q-btn
+          @click="this.clear()"
+          class="subdued-btn"
+          icon-right="mdi-sync"
+          flat
+          size="sm"
+          label="Clear"
+          :disabled="!dirtyBit"
+          :data-cy="dataCySlug + '-clear-btn'"
+        ></q-btn>
+        <q-btn
+          @click="
+            this.$emit('save', { newData: editorData });
+            this.dirtyBit = false;
+          "
+          class="option-btn"
+          icon="save"
+          size="sm"
+          :disabled="!dirtyBit"
+          label="Save"
+          :data-cy="dataCySlug + '-save-btn'"
+        ></q-btn>
+        <q-space></q-space>
+        <q-btn
+          @click="this.$emit('close')"
+          class="subdued-btn"
+          icon-right="mdi-close"
+          flat
+          size="sm"
+          label="Close"
+          :disabled="dirtyBit"
+          :data-cy="dataCySlug + '-close-btn'"
+        ></q-btn>
+      </div>
+    </div>
+  </template>
 </template>
 
 <script>
 import { defineComponent, unref, ref, watch, reactive, computed } from "vue";
 import { useQuasar } from "quasar";
 
-import Heading from "../renders/Heading";
+import Heading from "../renders/HeadingBlock";
 
 export default defineComponent({
-  name: "HeadingEditor",
+  name: "HeadingBlock",
   props: ["displayData", "dataCySlug"],
   emits: ["save", "close", "delete"],
   components: {

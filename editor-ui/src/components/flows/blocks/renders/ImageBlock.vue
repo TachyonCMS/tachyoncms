@@ -32,9 +32,9 @@ import { defineComponent } from "vue";
 import Fnt from "../../../site/widgets/Font";
 
 export default defineComponent({
-  name: "ImageDisplay",
+  name: "ImageBlock",
   components: { Fnt },
-  props: ["displayData"],
+  props: ["displayData", "dataCySlug"],
   setup(props) {
     console.log("ImageDisplay");
     console.log(props);

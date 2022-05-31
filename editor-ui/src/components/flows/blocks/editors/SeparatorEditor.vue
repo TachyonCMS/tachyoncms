@@ -140,7 +140,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, watch, reactive, computed, unref } from "vue";
+import { defineComponent, ref, watch, reactive, computed } from "vue";
 
 const paddingOptions = [
   {
@@ -231,7 +231,7 @@ const colorVars = [
 
 export default defineComponent({
   name: "SeparatorEditor",
-  props: ["displayData"],
+  props: ["displayData", "dataCySlug"],
   components: {},
   emits: ["save", "delete", "close"],
   setup(props) {

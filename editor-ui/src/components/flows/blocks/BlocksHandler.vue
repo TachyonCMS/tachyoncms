@@ -95,16 +95,16 @@ import { nanoid } from "nanoid";
 import NewBlockButton from "../buttons/NewBlockButton.vue";
 
 // Editors
-import HtmlEditor from "./editors/HtmlEditor";
+import HtmlEditor from "./editors/RichtextEditor";
 import HeadingEditor from "./editors/HeadingEditor";
 import ImageEditor from "./editors/ImageEditor";
 import SeparatorEditor from "./editors/SeparatorEditor";
 
 // Renderers
-import HtmlDisplay from "./renders/HtmlDisplay";
-import Heading from "./renders/Heading";
-import Image from "./renders/Image";
-import BasicSeparator from "./renders/Separator";
+import HtmlDisplay from "./renders/RichtextBlock";
+import Heading from "./renders/HeadingBlock";
+import Image from "./renders/ImageBlock";
+import BasicSeparator from "./renders/SeparatorBlock";
 
 export default defineComponent({
   name: "BlocksHandler",

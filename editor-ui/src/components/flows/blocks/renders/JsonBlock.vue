@@ -4,7 +4,7 @@ The data passed to this component must be sanitized to prevent XSS.
 
 <template>
   <div class="justify-center row col-12">
-    <component :is="'h' + level">{{ displayData.heading }}</component>
+    <div id="jsoneditor"></div>
   </div>
 </template>
 
@@ -12,16 +12,12 @@ The data passed to this component must be sanitized to prevent XSS.
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "RendersHeading",
+  name: "JsonBlock",
   components: {},
-  props: ["displayData"],
+  props: ["displayData", "dataCySlug"],
   setup(props) {
-    console.log("Heading");
+    console.log("JSON Block");
     console.log(props);
-    // Get level from the props, this should not be editable.
-    const { level } = { ...props.displayData };
-
-    return { level };
   },
   methods: {},
 });

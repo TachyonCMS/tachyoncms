@@ -32,10 +32,10 @@ import { defineComponent, ref } from "vue";
 import { useQuasar } from "quasar";
 
 // Renderers
-import HtmlDisplay from "./renders/HtmlDisplay";
-import Heading from "./renders/Heading";
-import Image from "./renders/Image";
-import BasicSeparator from "./renders/Separator";
+import HtmlDisplay from "./renders/RichtextBlock";
+import Heading from "./renders/HeadingBlock";
+import Image from "./renders/ImageBlock";
+import BasicSeparator from "./renders/SeparatorBlock";
 
 export default defineComponent({
   name: "RenderBlocks",

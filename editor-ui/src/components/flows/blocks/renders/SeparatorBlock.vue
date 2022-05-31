@@ -28,9 +28,9 @@ The data passed to this component must be sanitized to prevent XSS.
 import { defineComponent, computed } from "vue";
 
 export default defineComponent({
-  name: "SeparatorDisplay",
+  name: "SeparatorBlock",
   components: {},
-  props: ["displayData"],
+  props: ["displayData", "dataCySlug"],
   setup(props) {
     let defaultData = {
       padTop: "xs",

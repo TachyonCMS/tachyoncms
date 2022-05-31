@@ -13,9 +13,9 @@ The data passed to this component must be sanitized to prevent XSS.
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "HtmlDisplay",
+  name: "RichtextBlock",
   components: {},
-  props: ["displayData"],
+  props: ["displayData", "dataCySlug"],
   setup(props) {
     console.log("HtmlDisplay");
     console.log(props);

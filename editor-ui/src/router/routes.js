@@ -86,6 +86,21 @@ const routes = [
     },
   },
 
+  {
+    path: "/labs/block-factory/forge/:blockType",
+    name: "block-factory",
+    component: () => import("src/layouts/FlowsLayout.vue"),
+    children: [
+      {
+        path: "",
+        component: () => import("pages/block-factory/Forge.vue"),
+      },
+    ],
+    meta: {
+      requiresAuth: false,
+    },
+  },
+
   // Always leave this as last one,
   // but you can also remove it
   {
