@@ -14,6 +14,7 @@
         <q-item-section avatar>
           <q-icon name="folder" v-show="flowConnector == 'electron'"></q-icon>
           <q-icon name="api" v-show="flowConnector == 'storageApi'"></q-icon>
+          <q-icon name="folder" v-show="flowConnector == 'filesystem'"></q-icon>
         </q-item-section>
 
         <q-item-section>
@@ -31,6 +32,28 @@
         v-if="$q.platform.is.electron"
         v-show="!flowConnector"
         data-cy="drawer-select-local-directory-btn"
+      >
+        <q-item-section avatar>
+          <q-icon name="folder" />
+        </q-item-section>
+
+        <q-item-section>
+          <q-item-label
+            >Select a local directory<q-tooltip
+              >A flows and nuggets directory will be created if they don't
+              exist.</q-tooltip
+            ></q-item-label
+          >
+        </q-item-section>
+      </q-item>
+
+      <q-item
+        clickable
+        v-ripple
+        @click="onSelectConnector('filesystem')"
+        v-if="!$q.platform.is.electron"
+        v-show="!flowConnector"
+        data-cy="drawer-file-system-access-btn"
       >
         <q-item-section avatar>
           <q-icon name="folder" />
@@ -608,6 +631,7 @@ export default defineComponent({
       flowSourceMsg,
       flowSourceDetail,
       setFlowSource,
+      initSource,
       setFlowConnector,
       flowConnector,
       checkAuth,
@@ -639,6 +663,7 @@ export default defineComponent({
       flowSourceMsg,
       flowSourceDetail,
       flowSource,
+      initSource,
       setFlowSource,
       setFlowConnector,
       flowConnector,
@@ -659,6 +684,9 @@ export default defineComponent({
         case "storageApi":
           this.onStorageApi();
           break;
+        case "filesystem":
+          this.onFilesystem();
+          break;
       }
     },
     async onStorageApi() {
@@ -668,6 +696,55 @@ export default defineComponent({
         this.$router.push("/flows");
       } else {
         console.log("Auth Failed");
+      }
+    },
+    async onFilesystem() {
+      // Provide a directory picker
+      const dirHandle = await window.showDirectoryPicker();
+      // console.log(dirHandle);
+      let hasFlowsDir = false;
+      let hasNuggetsDir = false;
+      for await (const e of dirHandle.entries()) {
+        if (e[1].kind === "directory" && e[1].name === "flows") {
+          hasFlowsDir = true;
+        }
+        if (e[1].kind === "directory" && e[1].name === "nuggets") {
+          hasNuggetsDir = true;
+        }
+      }
+
+      this.setFlowConnector("filesystem");
+
+      if (hasFlowsDir && hasNuggetsDir) {
+        this.setFlowSource(dirHandle);
+        this.$emit("toggleDrawer");
+        this.initSource(dirHandle);
+        this.$router.push("/flows");
+        console.log("EXISTING FILESYSTEM ROOTDIR");
+      } else {
+        this.$q
+          .dialog({
+            title: "Confirm New Root Directory",
+            message:
+              "Required subdirectories are missing. Click 'OK' to initialize the directory or cancel to choose another directory.",
+            cancel: true,
+            persistent: true,
+          })
+          .onOk((data) => {
+            console.log("NEW FILESYSTEM ROOTDIR");
+            this.setFlowSource(dirHandle);
+            this.$emit("toggleDrawer");
+            this.$router.push("/flows");
+            this.initSource(dirHandle);
+          })
+          .onCancel(() => {
+            // console.log('>>>> Cancel')
+            this.setFlowConnector(null);
+            this.setFlowSource(null);
+          })
+          .onDismiss(() => {
+            // console.log('I am triggered on both OK and Cancel')
+          });
       }
     },
     async onSelectRootDir() {
@@ -690,10 +767,6 @@ export default defineComponent({
           selectedDir,
           "nuggets",
         ]);
-
-        console.log(hasFlowsDir);
-        console.log(hasNuggetsDir);
-
         if (hasFlowsDir && hasNuggetsDir) {
           this.setFlowConnector("electron");
           this.setFlowSource(selectedDir);
@@ -772,7 +845,6 @@ export default defineComponent({
           this.setFlowSource(null);
           this.setFlowConnector(null);
           this.pageFlowId = null;
-          this.flowId = null;
           this.nuggetMap = new Map();
           this.flowMap = new Map();
           this.$router.push("/");

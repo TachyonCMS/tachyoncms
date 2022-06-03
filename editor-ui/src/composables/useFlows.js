@@ -6,6 +6,7 @@ import { Platform } from "quasar";
 
 import electronLocal from "./flowDrivers/electronLocalDriver";
 import storageApi from "./flowDrivers/storageApiDriver";
+import filesystemAccess from "./flowDrivers/filesystemAccessDriver";
 
 // GLOBAL
 // A map of Flows w/ ID as index.
@@ -53,6 +54,9 @@ export default function useFlows() {
       case "storageApi":
         msg = dirLabel(flowSource.value.nickname);
         break;
+      case "filesystem":
+        msg = "Local file system";
+        break;
     }
 
     return msg;
@@ -66,6 +70,9 @@ export default function useFlows() {
         break;
       case "storageApi":
         msg = flowSource.value.apiUsername + " @ " + flowSource.value.rootUrl;
+        break;
+      case "filesystem":
+        msg = "Local filesystem";
         break;
     }
 
@@ -93,6 +100,9 @@ export default function useFlows() {
   // Always load the storage API as an option
   flowConnectors.storageApi = storageApi();
 
+  // Add filesystem support for Chrome browsers
+  flowConnectors.filesystem = filesystemAccess();
+
   // Derive list of connector options from those loaded above
   const flowConnectorList = computed(() => {
     const connectors = [];
@@ -105,22 +115,20 @@ export default function useFlows() {
 
   // Set the flowConnector
   const setFlowConnector = (newConnector) => {
-    console.log(newConnector);
+    console.log("New flowConnector: " + newConnector);
     flowConnector.value = newConnector;
   };
 
   // Set the flowSource here and in driver
   const setFlowSource = (newSource) => {
+    console.log("Set flowSource");
     flowSource.value = newSource;
     flowConnectors[flowConnector.value].setSource(newSource);
   };
 
   // Get all flows, @todo add pagination
   const loadFlows = async () => {
-    console.info("loading flows");
-    console.info(
-      "Connector: " + flowConnector.value + " Source: " + flowSource.value
-    );
+    console.info("Loading flows");
     try {
       if (flowConnector.value && flowSource.value) {
         flowConnectors[flowConnector.value].loadFlows().then((flows) => {
@@ -253,42 +261,6 @@ export default function useFlows() {
         });
     } catch (e) {
       console.log("Error Updating Flow");
-      console.log(e);
-    }
-  };
-
-  // DEPRECATED
-  const addToNuggetSeq = async (flowId, nuggetId, prevNugId = null) => {
-    try {
-      await flowConnectors[flowConnector.value].setSource(flowSource.value);
-      console.log(flowId + " " + nuggetId + " " + prevNugId);
-      //Get the existing Flow
-      flowConnectors[flowConnector.value]
-        .getFlowNuggetSeqById(flowId)
-        .then((seqResult) => {
-          console.log(seqResult);
-          let newSeq = [nuggetId];
-          if (seqResult) {
-            if (prevNugId === null || prevNugId.length < 1) {
-              newSeq = [...newSeq, ...seqResult.nuggetSeq];
-            } else {
-              const insertIx = seqResult.nuggetSeq.indexOf(prevNugId) + 1;
-              newSeq = [
-                ...seqResult.nuggetSeq.slice(0, insertIx),
-                ...newSeq,
-                ...seqResult.nuggetSeq.slice(insertIx),
-              ];
-            }
-          }
-          flowConnectors[flowConnector.value].updateFlowData(
-            flowId,
-            { nuggetSeq: newSeq },
-            "nuggetSeq"
-          );
-          nuggetSeqMap.set(flowId, newSeq);
-        });
-    } catch (e) {
-      console.log("Error updating Nugget sequence");
       console.log(e);
     }
   };
@@ -435,12 +407,6 @@ export default function useFlows() {
     return inPublication;
   };
 
-  // Perform whatever is needed to initialize the connection with the backend.
-  // storageApi - verifies the rootUrl, apiUsername amd apiPassword all work together.
-  const connectSource = (connectionInfo) => {
-    console.log(connectionInfo);
-  };
-
   // Get rid of all data from previous flowSource
   const flushAll = async () => {
     flowMap.clear();
@@ -453,18 +419,34 @@ export default function useFlows() {
 
   const freshenData = async () => {
     await flushAll();
-    //setFlowConnector("electron");
     loadFlows();
   };
 
   const checkAuth = async () => {
     try {
-      console.log("Checking Auth for " + flowConnector.value);
+      console.log("Checking Source Auth for " + flowConnector.value);
       // Use the defined connector
       flowConnectors[flowConnector.value]
         .checkAuth(flowSource.value)
         .then((checkResult) => {
           console.log(checkResult);
+          return true;
+        });
+    } catch (e) {
+      console.log("Error Checking Auth");
+      console.log(e);
+      return false;
+    }
+  };
+
+  const initSource = async () => {
+    try {
+      console.log("Initializing source " + flowConnector.value);
+      // Use the defined connector
+      flowConnectors[flowConnector.value]
+        .initSource(flowSource.value)
+        .then(() => {
+          return;
         });
     } catch (e) {
       console.log("Error Checking Auth");
@@ -493,6 +475,7 @@ export default function useFlows() {
     flowConnectorList,
     setFlowConnector,
     setFlowSource,
+    initSource,
     flowSource,
     flowSourceMsg,
     flowSourceDetail,

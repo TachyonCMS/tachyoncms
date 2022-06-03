@@ -1,5 +1,5 @@
 {
-  "name": "desktop-editor",
+  "name": "editor-ui",
   "version": "0.0.1",
   "description": "Manage TachyonCMS files locally, without any backend servers required.",
   "productName": "TachyonCMS",

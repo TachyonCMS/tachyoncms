@@ -3,20 +3,6 @@ const fs = require("fs");
 const { nanoid } = require("nanoid");
 const writeFileAtomic = require("write-file-atomic");
 
-/*
-const contentDataRootIx = process.argv.indexOf("--contentDataRoot");
-let contentDataRoot;
-
-if (contentDataRootIx && contentDataRootIx > -1) {
-  const contentDataRootIn = process.argv[contentDataRootIx + 1];
-  contentDataRoot = path.resolve(contentDataRootIn);
-} else {
-  contentDataRoot = path.resolve("../shared/content/dev");
-}
-
-console.debug("Managing content in " + contentDataRoot);
-*/
-
 // OS specific path separator
 const osSep = path.sep;
 
