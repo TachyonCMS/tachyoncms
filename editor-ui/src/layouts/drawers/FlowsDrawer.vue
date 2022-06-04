@@ -701,7 +701,7 @@ export default defineComponent({
     async onFilesystem() {
       // Provide a directory picker
       const dirHandle = await window.showDirectoryPicker();
-      // console.log(dirHandle);
+      this.setFlowConnector("filesystem");
       let hasFlowsDir = false;
       let hasNuggetsDir = false;
       for await (const e of dirHandle.entries()) {
@@ -713,13 +713,10 @@ export default defineComponent({
         }
       }
 
-      this.setFlowConnector("filesystem");
-
       if (hasFlowsDir && hasNuggetsDir) {
-        this.setFlowSource(dirHandle);
-        this.$emit("toggleDrawer");
-        this.initSource(dirHandle);
-        this.$router.push("/flows");
+        this.loadSource(dirHandle).then(() => {
+          this.$router.push("/flows");
+        });
         console.log("EXISTING FILESYSTEM ROOTDIR");
       } else {
         this.$q
@@ -732,10 +729,9 @@ export default defineComponent({
           })
           .onOk((data) => {
             console.log("NEW FILESYSTEM ROOTDIR");
-            this.setFlowSource(dirHandle);
-            this.$emit("toggleDrawer");
-            this.$router.push("/flows");
-            this.initSource(dirHandle);
+            this.loadSource(dirHandle).then(() => {
+              this.$router.push("/flows");
+            });
           })
           .onCancel(() => {
             // console.log('>>>> Cancel')
@@ -746,6 +742,13 @@ export default defineComponent({
             // console.log('I am triggered on both OK and Cancel')
           });
       }
+    },
+    async loadSource(dirHandle) {
+      await this.setFlowSource(dirHandle);
+      this.initSource(dirHandle).then(() => {
+        this.$emit("toggleDrawer");
+        //this.$router.push("/flows");
+      });
     },
     async onSelectRootDir() {
       const selection = await electronApi.openDirectoryDialog(

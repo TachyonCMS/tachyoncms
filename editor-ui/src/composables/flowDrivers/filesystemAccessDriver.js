@@ -1,32 +1,113 @@
-import { ref } from "vue";
+import { ref, reactive } from "vue";
 
 import { nanoid } from "nanoid";
 
-// The root handle
-const sourceDirHandle = ref(null);
-// The Flows directory handle
-const flowDirHandle = ref(null);
-// The Nuggets directory handle
-const nuggetDirHandle = ref(null);
+// Map of directory handles
+const dirHandleMap = reactive(new Map());
+// Map of file handles
+const fileHandleMap = new Map();
 
-const dirHandles = ref({
-  root: sourceDirHandle,
-  flows: flowDirHandle,
-  nuggets: nuggetDirHandle,
-});
+const objDirs = { nugget: "nuggets", flow: "flows" };
 
 export default () => {
   const setSource = async (dirHandle) => {
-    sourceDirHandle.value = dirHandle;
+    dirHandleMap.set("sourceDir", dirHandle);
   };
 
   const loadFlows = async () => {
     try {
       console.log("Filesystem Flows");
+      console.log(dirHandleMap);
+
+      let flowDirHandle;
+      // Get the flows directory handle
+      if (dirHandleMap.has("flows")) {
+        flowDirHandle = dirHandleMap.get("flows");
+      } else {
+        const sourceDirHandle = dirHandleMap.get("sourceDir");
+        flowDirHandle = await sourceDirHandle.getDirectoryHandle("flows", {
+          create: true,
+        });
+        dirHandleMap.set("flows", flowDirHandle);
+      }
+
+      console.log(flowDirHandle);
+      const dirSegmentsArray = [];
+      for await (const entry of flowDirHandle.entries()) {
+        if (entry[1].kind === "directory") {
+          const dirSegments = ["flows", entry[1].name, "flow"];
+          dirSegmentsArray.push(dirSegments);
+        }
+      }
+
+      // Check them all directories in parallel for a `flows.json`
+      const flows = await getJsonMulti(dirSegmentsArray);
 
       return { flows: flows };
     } catch (e) {
-      console.log("Error Loading Filesystem Flows");
+      console.error("Error Loading Filesystem Flows");
+      console.error(e);
+    }
+  };
+
+  const getJsonMulti = async (dirSegmentsArray) => {
+    const objects = [];
+
+    await Promise.all(
+      dirSegmentsArray.map(async (dirSegments) => {
+        let readResult = {};
+
+        try {
+          readResult = await readJson(dirSegments);
+          if (readResult) {
+            objects.push(readResult);
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      })
+    );
+
+    return objects;
+  };
+
+  const readJson = async (pathSegments) => {
+    try {
+      const topDir = pathSegments[0];
+      const objectDir = pathSegments[1];
+      const filename = pathSegments[2];
+      const fullName = filename + ".json";
+      console.log("Reading " + fullName + " from " + objectDir);
+
+      // The 2nd level directory, a Flow or Nugget ID
+      let objectDirHandle;
+
+      // If we already have a handle for the final object directory, use it.
+      if (dirHandleMap.has(objectDir)) {
+        objectDirHandle = dirHandleMap.get(objectDir);
+      } else {
+        // Else get the objectDir handle from the topDir handle.
+        // Do we already have a handle for the topDir? (flows|nuggets)
+        let topDirHandle;
+        if (dirHandleMap.has(topDir)) {
+          topDirHandle = dirHandleMap.get(topDir);
+        } else {
+          // Else fetch the topDir handle from the sourceDir handle.
+          // We don't have access above the sourceDir.
+          const sourceDirHandle = dirHandleMap.get("sourceDir");
+          topDirHandle = await sourceDirHandle.getDirectoryHandle(topDir);
+          dirHandleMap.set(topDir, topDirHandle);
+        }
+        objectDirHandle = await topDirHandle.getDirectoryHandle(objectDir);
+      }
+
+      // get the FILE handle from the objectDirHandle
+      const jsonFileHandle = await objectDirHandle.getFileHandle(fullName);
+      const jsonFile = await jsonFileHandle.getFile();
+      const jsonData = await jsonFile.text();
+      return JSON.parse(jsonData);
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -49,16 +130,23 @@ export default () => {
   const deleteFlow = async (flowId) => {
     try {
       console.log("deleteFlow " + flowId);
+      let flowsDirHandle;
 
-      const result = await electronApi.deleteDir([
-        rootDir.value,
-        "flows",
-        flowId,
-      ]);
-      console.log(result);
-      if (result.status === "success") {
-        return result.deleted;
+      // Do we already have a handle for this ID?
+
+      if (dirHandleMap.has("flows")) {
+        flowsDirHandle = dirHandleMap.get("flows");
+      } else {
+        // Else fetch the topDir handle from the sourceDir handle.
+        // We don't have access above the sourceDir.
+        const sourceDirHandle = dirHandleMap.get("sourceDir");
+        flowsDirHandle = await sourceDirHandle.getDirectoryHandle("flows");
       }
+      // get the FILE handle from the objectDirHandle
+      //const jsonFileHandle = await objectDirHandle.getFileHandle(fullName);
+      console.log(flowsDirHandle);
+      await flowsDirHandle.removeEntry(flowId, { recursive: true });
+      dirHandleMap.delete(flowId);
     } catch (e) {
       console.log("Error Deleting Filesystem Flow");
       console.log(e);
@@ -70,16 +158,92 @@ export default () => {
       console.log("Updating Flow");
       console.log(propName);
       console.log(propValue);
-      const result = await electronApi.updateFlowProp(
-        flowId,
-        propName,
-        propValue
-      );
-      console.log(result);
-      return result;
+
+      const partialData = { [propName]: propValue };
+
+      const flow = await mergeUpdate(["flows", flowId, "flow"], partialData);
+
+      console.log(flow);
+      return flow;
     } catch (e) {
       console.log("Error Updating Flow");
       console.log(e);
+    }
+  };
+
+  // Merge an update into a well named object file
+  const mergeUpdate = async (pathSegments, partialData) => {
+    try {
+      // A guard to make sure the id in the object matches the ID provided
+      delete partialData.id;
+
+      // Updated the updatedAt timestamp
+      setUpdatedAt(partialData);
+
+      // The last segment is the file name, without the `.json` suffix.
+      // The other segments are directories
+      const fileName = pathSegments.pop();
+      const fullFileName = fileName + ".json";
+      // The file handle is stored with the parent directory appended to disambiguate.
+      let parentDir = pathSegments[pathSegments.length - 1];
+      const fileHandleName = parentDir + "-" + fileName;
+
+      // The fileHandle we will read and write
+      let fileHandle;
+
+      // Do we already have the fileHandle?
+      if (fileHandleMap.has(fileHandleName)) {
+        fileHandle = fileHandleMap.get(fileHandleName);
+      } else {
+        // We need to get the fileHandle from the parent directory.
+        // The parentDirectory may not have been loaded yet.
+        // Recurse through the remaining pathSegments until we find a loaded one.
+        // Eventually we'll get to the last segment which will be in the sourceDir.
+
+        pathSegments.unshift("sourceDir");
+        // Process the remaining pathSegments in reverse
+        pathSegments.reverse();
+        // Track the segments we process so we can
+        const processedSegments = [];
+
+        // Go up and down segments updating this until its final correct state.
+        let parentDirHandle;
+        let parentFound = false;
+
+        while (!parentFound) {
+          const segment = pathSegments.shift();
+          console.log("up " + segment);
+          // Directory names will be unique and match the dirHandleMap key exactly.
+
+          if (dirHandleMap.has(segment)) {
+            // We can get to the fileHandle from here, no need to process the remaining segments.
+            parentFound = true;
+
+            parentDirHandle = dirHandleMap.get(segment);
+            console.log("FOUND PARENT " + segment);
+            console.log(parentDirHandle);
+            // We now need to recurse the processed segments to get back to the file parentDir.
+            while (processedSegments.length > 0) {
+              let nextLevel = processedSegments.shift();
+              console.log("down " + nextLevel);
+              parentDirHandle = await parentDirHandle.getDirectoryHandle(
+                nextLevel
+              );
+              console.log(parentDirHandle);
+              // Save the handle
+              dirHandleMap.set(nextLevel, parentDirHandle);
+            }
+          } else {
+            processedSegments.push(segment);
+          }
+        }
+
+        fileHandle = await parentDirHandle.getFileHandle(fullFileName);
+
+        console.log(fileHandle);
+      }
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -243,7 +407,7 @@ export default () => {
       );
 
       // This provides access to the first subdirectory level access (flows|nuggets)
-      const topDirHandle = dirHandles.value[handleName];
+      const topDirHandle = dirHandleMap.get(handleName);
 
       console.log(topDirHandle);
 
@@ -251,13 +415,13 @@ export default () => {
 
       // Ensure the objectDir exists within the topDir.
       // This object may or may not have been loaded previously.
-      if (dirHandles.value.hasOwnProperty(objectDir)) {
-        objectDirHandle = dirHandles.value[objectDir];
+      if (dirHandleMap.has(objectDir)) {
+        objectDirHandle = dirHandleMap.get(objectDir);
       } else {
         objectDirHandle = await topDirHandle.getDirectoryHandle(objectDir, {
           create: true,
         });
-        dirHandles[objectDir] = objectDirHandle;
+        dirHandleMap.set(objectDir, objectDirHandle);
       }
 
       const writeHandle = await objectDirHandle.getFileHandle(fullName, {
@@ -269,6 +433,8 @@ export default () => {
       await writable.write(jsonString);
       // Close the file and write the contents to disk.
       await writable.close();
+
+      return fileData;
     } catch (e) {
       console.error(e);
       //reject({ status: "failure" });
@@ -279,19 +445,24 @@ export default () => {
   // Initialize the chosen directory
   const initSource = async () => {
     try {
+      const sourceDirHandle = dirHandleMap.get("sourceDir");
+
       // Create required directories
-      flowDirHandle.value = await sourceDirHandle.value.getDirectoryHandle(
-        "flows",
-        {
-          create: true,
-        }
-      );
-      nuggetDirHandle.value = await sourceDirHandle.value.getDirectoryHandle(
+      const flowDirHandle = await sourceDirHandle.getDirectoryHandle("flows", {
+        create: true,
+      });
+      dirHandleMap.set("flows", flowDirHandle);
+
+      const nuggetDirHandle = await sourceDirHandle.getDirectoryHandle(
         "nuggets",
         {
           create: true,
         }
       );
+      dirHandleMap.set("nuggets", nuggetDirHandle);
+
+      console.log(dirHandleMap);
+      return;
     } catch (e) {
       console.error(e);
     }
