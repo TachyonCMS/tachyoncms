@@ -16,9 +16,7 @@ export default () => {
 
   const loadFlows = async () => {
     try {
-      console.log("Filesystem Flows");
-      console.log(dirHandleMap);
-
+      console.log("Filesystem loadFlows");
       let flowDirHandle;
       // Get the flows directory handle
       if (dirHandleMap.has("flows")) {
@@ -31,7 +29,6 @@ export default () => {
         dirHandleMap.set("flows", flowDirHandle);
       }
 
-      console.log(flowDirHandle);
       const dirSegmentsArray = [];
       for await (const entry of flowDirHandle.entries()) {
         if (entry[1].kind === "directory") {
@@ -77,7 +74,7 @@ export default () => {
       const objectDir = pathSegments[1];
       const filename = pathSegments[2];
       const fullName = filename + ".json";
-      console.log("Reading " + fullName + " from " + objectDir);
+      //console.log("Reading " + fullName + " from " + objectDir);
 
       // The 2nd level directory, a Flow or Nugget ID
       let objectDirHandle;
@@ -180,6 +177,33 @@ export default () => {
       // Updated the updatedAt timestamp
       setUpdatedAt(partialData);
 
+      const fileHandle = await getFileHandle(pathSegments);
+
+      // Read the current data
+      const jsonFile = await fileHandle.getFile();
+      const jsonData = await jsonFile.text();
+      const existingData = JSON.parse(jsonData);
+
+      // Merge partial data
+      const mergedData = await { ...existingData, ...partialData };
+
+      const jsonString = JSON.stringify(mergedData, null, 2);
+
+      // Write merged data back to fileHandle
+      const writable = await fileHandle.createWritable();
+      // Write the contents of the file to the stream.
+      await writable.write(jsonString);
+      // Close the file and write the contents to disk.
+      await writable.close();
+
+      return mergedData;
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const getFileHandle = async (pathSegments) => {
+    try {
       // The last segment is the file name, without the `.json` suffix.
       // The other segments are directories
       const fileName = pathSegments.pop();
@@ -212,7 +236,7 @@ export default () => {
 
         while (!parentFound) {
           const segment = pathSegments.shift();
-          console.log("up " + segment);
+
           // Directory names will be unique and match the dirHandleMap key exactly.
 
           if (dirHandleMap.has(segment)) {
@@ -220,16 +244,14 @@ export default () => {
             parentFound = true;
 
             parentDirHandle = dirHandleMap.get(segment);
-            console.log("FOUND PARENT " + segment);
-            console.log(parentDirHandle);
+
             // We now need to recurse the processed segments to get back to the file parentDir.
             while (processedSegments.length > 0) {
               let nextLevel = processedSegments.shift();
-              console.log("down " + nextLevel);
               parentDirHandle = await parentDirHandle.getDirectoryHandle(
                 nextLevel
               );
-              console.log(parentDirHandle);
+
               // Save the handle
               dirHandleMap.set(nextLevel, parentDirHandle);
             }
@@ -238,9 +260,12 @@ export default () => {
           }
         }
 
-        fileHandle = await parentDirHandle.getFileHandle(fullFileName);
+        // A file handle to read/write data
+        fileHandle = await parentDirHandle.getFileHandle(fullFileName, {
+          create: true,
+        });
 
-        console.log(fileHandle);
+        return fileHandle;
       }
     } catch (e) {
       console.error(e);
@@ -255,7 +280,7 @@ export default () => {
       console.log(e);
     }
   };
-
+  /*
   const getFlowNuggetSeqById = async (flowId) => {
     try {
       let nuggetSeq = await electronApi.getFlowData(
@@ -274,7 +299,7 @@ export default () => {
       console.log(e);
     }
   };
-
+*/
   const updateFlowData = async (flowId, data, dataType) => {
     try {
       const updateResult = await electronApi.writeJson(
@@ -312,26 +337,87 @@ export default () => {
     }
   };
 
-  const createNugget = async (flowId, nugget, prevNuggetId) => {
+  const createNugget = async (flowId, nuggetObj, prevNuggetId) => {
     try {
       console.log("Creating Nugget for Flow " + flowId);
 
       // Set ID and initial timestamps
-      addId(nugget);
-      initTimestamps(nugget);
+      addId(nuggetObj);
+      initTimestamps(nuggetObj);
 
       const nugObj = {
-        nugget: nugget,
+        nugget: nuggetObj,
         flowId: flowId,
         prevNuggetId: prevNuggetId,
       };
+      const nugget = await writeJson(
+        ["nuggets", nuggetObj.id, "nugget"],
+        nuggetObj
+      );
 
-      const nuggetResult = await electronApi.createNugget(nugObj);
+      let newSeq = [nuggetObj.id];
 
-      return nuggetResult;
+      // Get the Flow's nuggetSeq fileHandle
+      const nuggetSeqHandle = await getFileHandle([
+        "flows",
+        flowId,
+        "nuggetSeq",
+      ]);
+      console.log(nuggetSeqHandle);
+
+      const existingSeq = await readJsonHandle(nuggetSeqHandle);
+
+      if (existingSeq) {
+        // If there is no previousNuggetId, append this nuggetId to start of array
+        if (prevNuggetId === 0 || prevNuggetId === null) {
+          newSeq = [...newSeq, ...existingSeq.nuggetSeq];
+        } else {
+          // Insert after defined prevNuggetId
+          existingSeq.push(nugget.id);
+        }
+      }
+      // Write the updated sequence back to the file handle
+      const finalSeq = await writeJsonHandle(nuggetSeqHandle, {
+        nuggetSeq: newSeq,
+      });
+
+      return { nugget: nugget, nuggetSeq: finalSeq.nuggetSeq };
     } catch (e) {
       console.error("Error Creating Filesystem Nugget");
       console.error(e);
+    }
+  };
+
+  const readJsonHandle = async (fileHandle) => {
+    try {
+      // Read the current data
+      const jsonFile = await fileHandle.getFile();
+      const jsonData = await jsonFile.text();
+      console.log(jsonData);
+
+      const existingData = JSON.parse(jsonData);
+
+      return existingData;
+    } catch (e) {
+      console.error(e);
+      return null;
+    }
+  };
+
+  const writeJsonHandle = async (fileHandle, jsonData) => {
+    try {
+      const jsonString = JSON.stringify(jsonData, null, 2);
+
+      // Write merged data back to fileHandle
+      const writable = await fileHandle.createWritable();
+      // Write the contents of the file to the stream.
+      await writable.write(jsonString);
+      // Close the file and write the contents to disk.
+      await writable.close();
+      return jsonData;
+    } catch (e) {
+      console.error(e);
+      return null;
     }
   };
 
@@ -461,7 +547,6 @@ export default () => {
       );
       dirHandleMap.set("nuggets", nuggetDirHandle);
 
-      console.log(dirHandleMap);
       return;
     } catch (e) {
       console.error(e);
@@ -510,7 +595,7 @@ export default () => {
     deleteNugget,
     setSource,
     initSource,
-    getFlowNuggetSeqById,
+    // getFlowNuggetSeqById,
     updateFlowData,
     checkAuth,
   };

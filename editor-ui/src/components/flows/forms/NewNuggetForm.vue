@@ -106,7 +106,7 @@ export default defineComponent({
       type: String,
     },
   },
-  emits: ["appNotification"],
+  emits: ["appNotification", "closeForm"],
   setup(props) {
     const name = ref("");
     const title = ref("");

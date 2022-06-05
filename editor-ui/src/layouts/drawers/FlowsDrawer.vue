@@ -277,7 +277,7 @@
                   <date-display
                     :rawDate="pageFlowData.pubAt"
                     displayFormat="YYYY/MM/DD hh:mm a"
-                    label="Publish At:"
+                    label="Publish At"
                   ></date-display>
                   <q-icon
                     size="xs"
@@ -343,7 +343,7 @@
                   <date-display
                     :rawDate="pageFlowData.unPubAt"
                     displayFormat="YYYY/MM/DD hh:mm a"
-                    label="Expire At:"
+                    label="Expire At"
                   ></date-display>
                   <q-icon
                     size="xs"
