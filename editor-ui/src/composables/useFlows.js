@@ -154,7 +154,8 @@ export default function useFlows() {
         return flowConnectors[flowConnector.value]
           .getFlowById(flowId, withNuggets)
           .then((flowData) => {
-            console.log("FLOWDATA: " + flowData);
+            console.log("FLOWDATA: ");
+            console.log(flowData);
             const flow = flowData.flow;
             if (flowData.nuggets) {
               console.log(flowData.nuggets);

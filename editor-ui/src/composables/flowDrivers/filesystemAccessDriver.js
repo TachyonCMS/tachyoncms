@@ -274,32 +274,47 @@ export default () => {
 
   const getFlowById = async (flowId, withNuggets = false) => {
     try {
-      return await electronApi.getFilesystemFlowById(flowId, withNuggets);
+      // Get the Flow
+      const flow = await readJson(["flows", flowId, "flow"]);
+      console.log(flow);
+
+      // If not withNuggets, return only the base data
+      // If with Nuggets, fetch the nuggets for this flow
+      if (!withNuggets) {
+        return { flow: flow };
+      } else {
+        // Get the Flow's nuggetSeq
+        const nuggetSeqHandle = await getFileHandle([
+          "flows",
+          flowId,
+          "nuggetSeq",
+        ]);
+        console.log(nuggetSeqHandle);
+
+        const existingSeq = await readJsonHandle(nuggetSeqHandle);
+        const nuggetSeq = existingSeq.nuggetSeq;
+        if (existingSeq) {
+          // Set nuggetSeq in flow result
+          flow.nuggetSeq = nuggetSeq;
+
+          // Create an array of paths
+          const filePaths = [];
+          nuggetSeq.map((dirName) => {
+            const pathSegments = ["nuggets", dirName, "nugget"];
+            filePaths.push(pathSegments);
+          });
+          // Load those paths
+          const nuggets = await getJsonMulti(filePaths);
+
+          return { flow: flow, nuggets: [] };
+        }
+      }
     } catch (e) {
       console.log("Error Loading Filesystem Flow: " + flowId);
       console.log(e);
     }
   };
-  /*
-  const getFlowNuggetSeqById = async (flowId) => {
-    try {
-      let nuggetSeq = await electronApi.getFlowData(
-        rootDir.value,
-        flowId,
-        "nuggetSeq"
-      );
 
-      if (!nuggetSeq) {
-        nuggetSeq = { nuggetSeq: [] };
-      }
-
-      return nuggetSeq;
-    } catch (e) {
-      console.log("Error Loading Filesystem NuggetSeq: " + flowId);
-      console.log(e);
-    }
-  };
-*/
   const updateFlowData = async (flowId, data, dataType) => {
     try {
       const updateResult = await electronApi.writeJson(
