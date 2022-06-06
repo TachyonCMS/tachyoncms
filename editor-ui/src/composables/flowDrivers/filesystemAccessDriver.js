@@ -293,7 +293,8 @@ export default () => {
 
         const existingSeq = await readJsonHandle(nuggetSeqHandle);
         const nuggetSeq = existingSeq.nuggetSeq;
-        if (existingSeq) {
+        console.log(nuggetSeq);
+        if (nuggetSeq) {
           // Set nuggetSeq in flow result
           flow.nuggetSeq = nuggetSeq;
 
@@ -306,7 +307,7 @@ export default () => {
           // Load those paths
           const nuggets = await getJsonMulti(filePaths);
 
-          return { flow: flow, nuggets: [] };
+          return { flow: flow, nuggets: nuggets };
         }
       }
     } catch (e) {
@@ -438,18 +439,21 @@ export default () => {
 
   const updateNuggetProp = async (nuggetId, propName, propValue) => {
     try {
-      console.log("Updating Nugget " + nuggetId);
+      console.log("Updating Nugget");
       console.log(propName);
       console.log(propValue);
-      const result = await electronApi.updateNuggetProp(
-        nuggetId,
-        propName,
-        propValue
+
+      const partialData = { [propName]: propValue };
+
+      const nugget = await mergeUpdate(
+        ["nuggets", nuggetId, "nugget"],
+        partialData
       );
-      console.log(result);
-      return result;
+
+      console.log(nugget);
+      return { nugget: nugget };
     } catch (e) {
-      console.log("Error Updating Flow");
+      console.log("Error Updating Nugget");
       console.log(e);
     }
   };

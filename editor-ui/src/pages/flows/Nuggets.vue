@@ -24,7 +24,6 @@
         <!-- END expansion form -->
 
         <!-- Show a spinner over the div if the flow hasn't finished loading. -->
-        {{ nuggetSeq }}{{ nuggetMap }}
         <template v-if="flowLoaded">
           <template v-if="nuggetSeq">
             <!-- Reactive list of Nuggets from within the Flow object. -->
