@@ -126,8 +126,8 @@
       ></q-btn>
       <q-btn
         @click="
-          this.$emit('save', { newData: editorData });
           dirtyBit = false;
+          this.$emit('save', { newData: editorData });
         "
         class="option-btn"
         icon="save"
@@ -270,6 +270,8 @@ export default defineComponent({
     watch(editorData, (value) => {
       const newData = Object.entries({ ...value }).toString();
       const origData = Object.entries({ ...props.displayData }).toString();
+      console.log(newData);
+      console.log(origData);
       if (value && newData != origData) {
         console.log({ ...value });
         console.log({ ...props.displayData });

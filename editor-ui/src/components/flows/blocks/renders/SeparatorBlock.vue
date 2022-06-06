@@ -7,16 +7,16 @@ The data passed to this component must be sanitized to prevent XSS.
     <div
       :class="
         'row col-12 q-pt-' +
-        renderData.padTop +
+        displayData.padTop +
         ' q-pb-' +
-        renderData.padBot +
+        displayData.padBot +
         ' q-px-' +
-        renderData.padSides
+        displayData.padSides
       "
     >
       <q-separator
-        :color="selectedColor"
-        :size="renderData.size"
+        :color="displayData.color + '-' + displayData.colorVar"
+        :size="displayData.size"
         class="col-12"
         spaced="q-ma-lg"
       ></q-separator>
@@ -41,16 +41,7 @@ export default defineComponent({
       colorVar: "4",
     };
 
-    const renderData = { ...defaultData, ...props.displayData };
-
-    const selectedColor = computed(() => {
-      return renderData.color + "-" + renderData.colorVar;
-    });
-
-    return {
-      renderData,
-      selectedColor,
-    };
+    return {};
   },
   methods: {},
 });
