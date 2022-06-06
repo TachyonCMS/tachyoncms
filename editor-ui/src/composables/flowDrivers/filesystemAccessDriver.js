@@ -479,14 +479,26 @@ export default () => {
   // Delete Flow reference and Nugget
   const deleteNugget = async (flowId, nuggetId) => {
     try {
-      console.log("Deleting Nugget: " + nuggetId);
-      // URL on LCS for POST
-      const url = "/flows/" + flowId + "/nuggets/" + nuggetId;
+      let nuggetsDirHandle;
 
-      // DELETE the data on the LCS
-      return api.delete(url).then((response) => {
-        console.log(response);
-      });
+      // Do we already have a handle for this ID?
+
+      if (dirHandleMap.has("nuggets")) {
+        nuggetsDirHandle = dirHandleMap.get("nuggets");
+      } else {
+        // Else fetch the topDir handle from the sourceDir handle.
+        // We don't have access above the sourceDir.
+        const sourceDirHandle = dirHandleMap.get("sourceDir");
+        nuggetsDirHandle = await sourceDirHandle.getDirectoryHandle("nuggets");
+      }
+      // get the FILE handle from the objectDirHandle
+      //const jsonFileHandle = await objectDirHandle.getFileHandle(fullName);
+      console.log(nuggetsDirHandle);
+      await nuggetsDirHandle.removeEntry(nuggetId, { recursive: true });
+      dirHandleMap.delete(nuggetId);
+
+      let nuggetSeq;
+      return { deleted: nuggetId, nuggetSeq: nuggetSeq };
     } catch (e) {
       console.log("Error Deleting Flow");
       console.log(e);
