@@ -126,6 +126,7 @@
       ></q-btn>
       <q-btn
         @click="
+          isNew = false;
           dirtyBit = false;
           this.$emit('save', { newData: editorData });
         "
@@ -264,7 +265,7 @@ export default defineComponent({
     // Display popup color picker
     const displayColorPicker = ref(false);
 
-    // Use the dirty bit to track if chnages have been made
+    // Use the dirty bit to track if changes have been made
     const dirtyBit = ref(false);
 
     watch(editorData, (value) => {
@@ -286,7 +287,7 @@ export default defineComponent({
     });
 
     const saveEnabled = computed(() => {
-      return dirtyBit.value || isNew.value ? true : false;
+      return dirtyBit.value ? true : false;
     });
 
     const clearEnabled = computed(() => {
@@ -294,7 +295,7 @@ export default defineComponent({
     });
 
     const closeEnabled = computed(() => {
-      return !isNew.value && !dirtyBit.value ? true : false;
+      return !dirtyBit.value ? true : false;
     });
 
     return {
