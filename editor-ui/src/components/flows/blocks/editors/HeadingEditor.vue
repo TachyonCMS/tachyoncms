@@ -1,5 +1,5 @@
 <template>
-  <template>
+  <div class="row col-12">
     <div class="row col-12">
       <heading :displayData="editorData"></heading>
     </div>
@@ -49,7 +49,7 @@
         ></q-btn>
       </div>
     </div>
-  </template>
+  </div>
 </template>
 
 <script>
@@ -59,13 +59,14 @@ import { useQuasar } from "quasar";
 import Heading from "../renders/HeadingBlock";
 
 export default defineComponent({
-  name: "HeadingBlock",
+  name: "HeadingEditor",
   props: ["displayData", "dataCySlug"],
   emits: ["save", "close", "delete"],
   components: {
     Heading,
   },
   setup(props) {
+    console.log("HEADING EDITOR");
     const $q = useQuasar();
 
     // We know this to be a shallow object so this should provide a non-reactive copy.

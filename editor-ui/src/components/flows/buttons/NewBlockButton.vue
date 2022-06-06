@@ -8,7 +8,7 @@
     ><q-menu>
       <q-list>
         <!-- H2-H6 Header Blocks -->
-        <q-item clickable :data-cy="dataCySlug + '-header'">
+        <q-item clickable :data-cy="dataCySlug + '-heading'">
           <q-item-section>Header</q-item-section>
           <q-item-section side>
             <q-icon name="keyboard_arrow_right"></q-icon>
@@ -25,8 +25,8 @@
               >
                 <q-item-section
                   @click="addBlock('h' + n)"
-                  :data-cy="dataCySlug + '-header-h' + n"
-                  >H{{ n }} Header</q-item-section
+                  :data-cy="dataCySlug + '-heading-h' + n"
+                  >H{{ n }} Heading</q-item-section
                 >
               </q-item>
             </q-list>
