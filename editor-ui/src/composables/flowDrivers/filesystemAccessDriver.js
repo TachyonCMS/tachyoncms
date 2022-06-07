@@ -280,36 +280,42 @@ export default () => {
 
       // If not withNuggets, return only the base data
       // If with Nuggets, fetch the nuggets for this flow
-      if (!withNuggets) {
-        return { flow: flow };
-      } else {
-        // Get the Flow's nuggetSeq
-        const nuggetSeqHandle = await getFileHandle([
-          "flows",
-          flowId,
-          "nuggetSeq",
-        ]);
-        console.log(nuggetSeqHandle);
+      if (withNuggets) {
+        try {
+          // Get the Flow's nuggetSeq
+          const nuggetSeqHandle = await getFileHandle([
+            "flows",
+            flowId,
+            "nuggetSeq",
+          ]);
+          console.log(nuggetSeqHandle);
 
-        const existingSeq = await readJsonHandle(nuggetSeqHandle);
-        const nuggetSeq = existingSeq.nuggetSeq;
-        console.log(nuggetSeq);
-        if (nuggetSeq) {
-          // Set nuggetSeq in flow result
-          flow.nuggetSeq = nuggetSeq;
+          const existingSeq = await readJsonHandle(nuggetSeqHandle);
+          if (existingSeq) {
+            const nuggetSeq = existingSeq.nuggetSeq;
+            console.log(nuggetSeq);
+            if (nuggetSeq) {
+              // Set nuggetSeq in flow result
+              flow.nuggetSeq = nuggetSeq;
 
-          // Create an array of paths
-          const filePaths = [];
-          nuggetSeq.map((dirName) => {
-            const pathSegments = ["nuggets", dirName, "nugget"];
-            filePaths.push(pathSegments);
-          });
-          // Load those paths
-          const nuggets = await getJsonMulti(filePaths);
+              // Create an array of paths
+              const filePaths = [];
+              nuggetSeq.map((dirName) => {
+                const pathSegments = ["nuggets", dirName, "nugget"];
+                filePaths.push(pathSegments);
+              });
+              // Load those paths
+              const nuggets = await getJsonMulti(filePaths);
 
-          return { flow: flow, nuggets: nuggets };
+              return { flow: flow, nuggets: nuggets };
+            }
+          }
+        } catch (e) {
+          console.error(e);
         }
       }
+
+      return { flow: flow };
     } catch (e) {
       console.log("Error Loading Filesystem Flow: " + flowId);
       console.log(e);
@@ -341,18 +347,6 @@ export default () => {
   /**
    * NUGGETS
    */
-
-  const getNuggetsByFlowId = async (flowId) => {
-    try {
-      const url = "/flows/" + flowId + "/nuggets";
-      return api.get(url).then((response) => {
-        return response.data;
-      });
-    } catch (e) {
-      console.log("Error Loading Nuggets for Flow: " + flowId);
-    }
-  };
-
   const createNugget = async (flowId, nuggetObj, prevNuggetId) => {
     try {
       console.log("Creating Nugget for Flow " + flowId);
@@ -361,79 +355,27 @@ export default () => {
       addId(nuggetObj);
       initTimestamps(nuggetObj);
 
-      const nugObj = {
-        nugget: nuggetObj,
-        flowId: flowId,
-        prevNuggetId: prevNuggetId,
-      };
       const nugget = await writeJson(
         ["nuggets", nuggetObj.id, "nugget"],
         nuggetObj
       );
 
-      let newSeq = [nuggetObj.id];
+      // Create a nuggetSeq update object
+      const seqObj = {
+        objType: "flow",
+        objId: flowId,
+        dataElement: "nuggetSeq",
+        insertVal: nuggetObj.id,
+        relId: prevNuggetId,
+        relType: "prev",
+      };
 
-      // Get the Flow's nuggetSeq fileHandle
-      const nuggetSeqHandle = await getFileHandle([
-        "flows",
-        flowId,
-        "nuggetSeq",
-      ]);
-      console.log(nuggetSeqHandle);
+      let newSeq = await insertIntoSeq(seqObj);
 
-      const existingSeq = await readJsonHandle(nuggetSeqHandle);
-
-      if (existingSeq) {
-        // If there is no previousNuggetId, append this nuggetId to start of array
-        if (prevNuggetId === 0 || prevNuggetId === null) {
-          newSeq = [...newSeq, ...existingSeq.nuggetSeq];
-        } else {
-          // Insert after defined prevNuggetId
-          existingSeq.push(nugget.id);
-        }
-      }
-      // Write the updated sequence back to the file handle
-      const finalSeq = await writeJsonHandle(nuggetSeqHandle, {
-        nuggetSeq: newSeq,
-      });
-
-      return { nugget: nugget, nuggetSeq: finalSeq.nuggetSeq };
+      return { nugget: nugget, nuggetSeq: newSeq };
     } catch (e) {
       console.error("Error Creating Filesystem Nugget");
       console.error(e);
-    }
-  };
-
-  const readJsonHandle = async (fileHandle) => {
-    try {
-      // Read the current data
-      const jsonFile = await fileHandle.getFile();
-      const jsonData = await jsonFile.text();
-      console.log(jsonData);
-
-      const existingData = JSON.parse(jsonData);
-
-      return existingData;
-    } catch (e) {
-      console.error(e);
-      return null;
-    }
-  };
-
-  const writeJsonHandle = async (fileHandle, jsonData) => {
-    try {
-      const jsonString = JSON.stringify(jsonData, null, 2);
-
-      // Write merged data back to fileHandle
-      const writable = await fileHandle.createWritable();
-      // Write the contents of the file to the stream.
-      await writable.write(jsonString);
-      // Close the file and write the contents to disk.
-      await writable.close();
-      return jsonData;
-    } catch (e) {
-      console.error(e);
-      return null;
     }
   };
 
@@ -458,24 +400,6 @@ export default () => {
     }
   };
 
-  const getNuggetById = async (nuggetId) => {
-    try {
-      const result = await electronApi.readJson(
-        [rootDir.value, "nuggets", nuggetId],
-        "nugget"
-      );
-      console.log(result);
-
-      if (result.status != "success") {
-        return null;
-      }
-
-      return result.data;
-    } catch (e) {
-      console.log("Error Loading Nugget: " + nuggetId);
-    }
-  };
-
   // Delete Flow reference and Nugget
   const deleteNugget = async (flowId, nuggetId) => {
     try {
@@ -497,10 +421,11 @@ export default () => {
       await nuggetsDirHandle.removeEntry(nuggetId, { recursive: true });
       dirHandleMap.delete(nuggetId);
 
-      let nuggetSeq;
+      const nuggetSeq = await delFromSeq("flow", flowId, "nuggetSeq", nuggetId);
+
       return { deleted: nuggetId, nuggetSeq: nuggetSeq };
     } catch (e) {
-      console.log("Error Deleting Flow");
+      console.log("Error Deleting Nugget");
       console.log(e);
     }
   };
@@ -508,6 +433,37 @@ export default () => {
   /**
    * SHARED}
    */
+  const delFromSeq = async (objType, objId, dataElement, ixVal) => {
+    console.log(
+      "Deleting " +
+        ixVal +
+        " from " +
+        dataElement +
+        " for " +
+        objType +
+        " " +
+        objId
+    );
+    // Determine the path of the target file
+    const pathSegments = [objDirs[objType], objId, dataElement];
+
+    // Get a fileHandle for that path.
+    const fileHandle = await getFileHandle(pathSegments);
+
+    // Read the current sequence from the fileHandle
+    const currentSeq = await readJsonHandle(fileHandle);
+
+    const newSeq = currentSeq.nuggetSeq.filter(function (value) {
+      return value !== ixVal;
+    });
+    const writeResult = await writeJsonHandle(fileHandle, {
+      nuggetSeq: newSeq,
+    });
+
+    // Return the new sequence
+    return newSeq;
+  };
+
   const writeJson = async (pathSegments = [], fileData) => {
     // return new Promise((resolve, reject) => {
     try {
@@ -612,6 +568,114 @@ export default () => {
 
   const checkAuth = () => {
     return { user: "localuser" };
+  };
+
+  const insertIntoSeq = async (seqInput) => {
+    try {
+      // Breakup the input
+      const { objType, objId, dataElement, insertVal, relId, relType } = {
+        ...seqInput,
+      };
+      // Make the new sequence value into an array
+      let newSeq = [insertVal];
+
+      // Determine the path of the target file
+      const pathSegments = [objDirs[objType], objId, dataElement];
+
+      // Get a fileHandle for that path.
+      const fileHandle = await getFileHandle(pathSegments);
+
+      // Read the current sequence from the fileHandle
+      const currentSeq = await readJsonHandle(fileHandle);
+
+      if (currentSeq) {
+        console.log("Current sequence found");
+        // Determine insert index
+        //if (relId ) {
+        console.log("RelId: " + relId);
+        // A related nuggetId was passed, the new one is positioned relative to it.
+        if (relId === 0) {
+          // The new nugget is either first or last in sequence
+          switch (relType) {
+            case "prev":
+              // There is zero nugget previous. so this new nugget is first
+              newSeq = [...newSeq, ...currentSeq.nuggetSeq];
+              break;
+
+            case "next":
+              // There is no "next" nugget, the new nugget belongs on the end.
+              newSeq = [...currentSeq.nuggetSeq, ...newSeq];
+              break;
+          }
+        } else {
+          // An existing item was provided.
+          // It is either the prev or next, relative to the new one.
+          let insertIx;
+          console.log(relType);
+          switch (relType) {
+            case "prev":
+              // The related nugget is previous. The new  nugget is immediately after it.
+              insertIx = currentSeq.nuggetSeq.indexOf(relId) + 1;
+              break;
+
+            case "next":
+              // The related nugget is "next", the new nugget belongs immediately before it.
+              insertIx = currentSeq.nuggetSeq.indexOf(relId) + 1;
+              break;
+          }
+          console.log(insertIx);
+          newSeq = [
+            ...currentSeq.nuggetSeq.slice(0, insertIx),
+            ...newSeq,
+            ...currentSeq.nuggetSeq.slice(insertIx),
+          ];
+        }
+        // }
+      }
+      console.log(newSeq);
+      // Write the new sequence out to same path
+      const writeResult = await writeJsonHandle(fileHandle, {
+        nuggetSeq: newSeq,
+      });
+
+      // Return the new sequence
+      return newSeq;
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const readJsonHandle = async (fileHandle) => {
+    try {
+      // Read the current data
+      const jsonFile = await fileHandle.getFile();
+      const jsonData = await jsonFile.text();
+      console.log(jsonData);
+
+      const existingData = JSON.parse(jsonData);
+
+      return existingData;
+    } catch (e) {
+      console.error(e);
+      return null;
+    }
+  };
+
+  const writeJsonHandle = async (fileHandle, jsonData) => {
+    try {
+      const jsonString = JSON.stringify(jsonData, null, 2);
+
+      // Write merged data back to fileHandle
+      const writable = await fileHandle.createWritable();
+      // Write the contents of the file to the stream.
+      await writable.write(jsonString);
+      // Close the file and write the contents to disk.
+      await writable.close();
+      return jsonData;
+    } catch (e) {
+      console.error(e);
+      return null;
+    }
   };
 
   // exposed

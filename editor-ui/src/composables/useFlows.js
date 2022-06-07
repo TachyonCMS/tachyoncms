@@ -292,10 +292,10 @@ export default function useFlows() {
         .deleteNugget(flowId, nuggetId)
         .then((delResult) => {
           console.log(delResult);
-          // Delete from nuggetMap
-          nuggetMap.delete(nuggetId);
+          // Delete from nuggetMap and seq
           nuggetSeqMap.set(flowId, delResult.nuggetSeq);
-          console.log(nuggetSeqMap);
+          nuggetMap.delete(nuggetId);
+          // console.log(nuggetSeqMap);
         });
     } catch (e) {
       console.log("Error Deleting Flow");
@@ -312,7 +312,7 @@ export default function useFlows() {
       if (object.pubAt) {
         // Now date object for comparing publication dates
         const nowDate = new Date();
-        const nowDateId = nowDate.getTime(); // easy to compare represenation of a date
+        const nowDateId = nowDate.getTime(); // easy to compare representation of a date
 
         // The publication start date
         const startDate = new Date(object.pubAt);

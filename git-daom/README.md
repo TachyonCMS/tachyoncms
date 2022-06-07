@@ -1,6 +1,7 @@
 # Git DAO Manager - GitDAOM
 
-Git DAOM is a git-based DAO Management app using Bitcoin Cash (BCH) to create smart contracts.
+Git DAOM is a git-based DAO Management app using Bitcoin Cash (BCH) with cashscript to create smart contracts.
+
 It is geared towards supporting software development but could be used outside of that.
 
 * ALL DAO info will be stored in a git repo. (tachyoncms/DAOM)
