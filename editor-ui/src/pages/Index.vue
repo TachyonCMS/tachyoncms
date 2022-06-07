@@ -1,21 +1,18 @@
 <template>
-  <q-page class="flex flex-center">
-    <q-card flat class="text-center"> Welcome to TachyonCMS </q-card>
-  </q-page>
+  <no-flow-source-set-page></no-flow-source-set-page>
 </template>
 
 <script>
 import { defineComponent } from "vue";
 
-import LinkButton from "../components/site/buttons/Link.vue";
+import NoFlowSourceSetPage from "../pages/flows/NoFlowSourceSetPage";
 
 export default defineComponent({
   name: "PageIndex",
+  components: {
+    NoFlowSourceSetPage,
+  },
 
   setup() {},
-
-  components: {
-    //    LinkButton,
-  },
 });
 </script>
