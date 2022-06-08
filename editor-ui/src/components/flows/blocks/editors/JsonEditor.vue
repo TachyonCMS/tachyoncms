@@ -18,28 +18,6 @@ const element = document.getElementById("jsoneditor");
 const options = {};
 const editor = new JSONEditor(element, options);
 
-// set json
-document.getElementById("setJSON").onclick = function () {
-  const json = {
-    array: [1, 2, 3],
-    boolean: true,
-    color: "#82b92c",
-    null: null,
-    number: 123,
-    object: { a: "b", c: "d" },
-    time: 1575599819000,
-    string: "Hello World",
-    onlineDemo: "https://jsoneditoronline.org/",
-  };
-  editor.set(json);
-};
-
-// get json
-document.getElementById("getJSON").onclick = function () {
-  const json = editor.get();
-  alert(JSON.stringify(json, null, 2));
-};
-
 export default defineComponent({
   name: "JsonEditor",
   props: ["displayData", "dataCySlug"],

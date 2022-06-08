@@ -1,8 +1,11 @@
 <template>
   <q-page>
-    {{ blockType }}
-    <component :is="editor" :displayData="displayData"></component>
-    <component :is="render" :displayData="displayData"></component>
+    <component
+      :is="editor"
+      :displayData="displayData"
+      @save="(event) => (saveData = event)"
+    ></component>
+    {{ saveData }}
   </q-page>
 </template>
 
@@ -21,17 +24,18 @@ import RichtextEditor from "../../components/flows/blocks/editors/RichtextEditor
 import HeadingEditor from "../../components/flows/blocks/editors/HeadingEditor";
 import ImageEditor from "../../components/flows/blocks/editors/ImageEditor";
 import SeparatorEditor from "../../components/flows/blocks/editors/SeparatorEditor";
-import JsonEditor from "../../components/flows/blocks/editors/JsonEditor";
-
-// Renderers
-import RichtextBlock from "../../components/flows/blocks/renders/RichtextBlock";
-import HeadingBlock from "../../components/flows/blocks/renders/HeadingBlock";
-import ImageBlock from "../../components/flows/blocks/renders/ImageBlock";
-import SeparatorBlock from "../../components/flows/blocks/renders/SeparatorBlock";
-import JsonBlock from "../../components/flows/blocks/renders/JsonBlock";
+import MulticorderEditor from "../../components/flows/blocks/editors/MulticorderEditor";
+//import JsonEditor from "../../components/flows/blocks/editors/JsonEditor";
 
 // TachyonCMS compliant block types
-const tcmsBlockTypes = ["image", "richtext", "separator", "json"];
+const tcmsBlockTypes = [
+  "image",
+  "richtext",
+  "separator",
+  "json",
+  "heading",
+  "multicorder",
+];
 
 // Map url block type string to an editor and a renderer
 const blockHandlers = {};
@@ -43,42 +47,30 @@ tcmsBlockTypes.map((type) => {
     render: [type] + "-block",
   };
 });
-// The TachyonCMS H2-H5 headings do NOT follow the convention.
-// They all share the same editor and render components
-
-const hTags = ["h2", "h3", "h4", "h5"];
-
-hTags.map((type) => {
-  blockHandlers[type] = {
-    editor: "heading-editor",
-    render: "heading-block",
-  };
-});
-
-// console.log(blockHandlers);
 
 export default defineComponent({
-  name: "PageForge",
+  name: "PageBlockBuilder",
   emits: ["appNotification"],
   components: {
     RichtextEditor,
     HeadingEditor,
     ImageEditor,
     SeparatorEditor,
-    JsonEditor,
-    RichtextBlock,
-    HeadingBlock,
-    ImageBlock,
-    SeparatorBlock,
-    JsonBlock,
+    MulticorderEditor,
+    //    JsonEditor,
   },
   setup() {
     const route = useRoute();
     const blockType = route.params.blockType;
 
+    const saveData = ref({});
+
     console.log(blockType);
 
     const displayData = ref({});
+    if (blockType === "heading") {
+      displayData.value = { level: "2", heading: "" };
+    }
 
     const getEditor = (blockType) => {
       return blockHandlers[blockType].editor;
@@ -96,6 +88,7 @@ export default defineComponent({
       displayData,
       editor,
       render,
+      saveData,
     };
   },
   methods: {},

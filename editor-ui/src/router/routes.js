@@ -87,13 +87,13 @@ const routes = [
   },
 
   {
-    path: "/labs/block-factory/forge/:blockType",
+    path: "/labs/block-builder/:blockType",
     name: "block-factory",
     component: () => import("src/layouts/FlowsLayout.vue"),
     children: [
       {
         path: "",
-        component: () => import("pages/block-factory/Forge.vue"),
+        component: () => import("pages/flows/BlockBuilder.vue"),
       },
     ],
     meta: {
