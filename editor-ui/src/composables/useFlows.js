@@ -18,6 +18,9 @@ const nuggetMap = reactive(new Map());
 // An map of nuggetSeq by flowId
 const nuggetSeqMap = reactive(new Map());
 
+// An map of nugget assets by nuggetId
+const nuggetAssetMap = reactive(new Map());
+
 // An array of sequenced Nugget Id's for a given flow.
 const nuggetSeq = ref([]);
 
@@ -162,7 +165,7 @@ export default function useFlows() {
               // Copy, then delete Nuggets from response
               const nuggets = flowData.nuggets;
               // Add each nugget to the nuggetMap
-              nuggets.map((key) => {
+              nuggets.forEach((key) => {
                 nuggetMap.set(key.id, key);
               });
               // Remove the nuggets array from flow
@@ -455,7 +458,27 @@ export default function useFlows() {
     }
   };
 
+  const loadNuggetAssets = async (nuggetId, refresh = false) => {
+    try {
+      // Use the defined connector
+      if (nuggetAssetMap.has(nuggetId) && !refresh) {
+        return;
+      }
+      return flowConnectors[flowConnector.value]
+        .loadNuggetAssets(nuggetId)
+        .then((assets) => {
+          console.log(assets);
+          nuggetAssetMap.set(nuggetId, assets);
+          return;
+        });
+    } catch (e) {
+      console.log("Error Creating Nugget");
+      console.log(e);
+    }
+  };
+
   return {
+    loadNuggetAssets,
     loadFlows,
     flowsLoaded: readonly(flowsLoaded),
     flowLoaded: readonly(flowLoaded),
@@ -484,5 +507,6 @@ export default function useFlows() {
     freshenData,
     nuggetSeqMap,
     checkAuth,
+    nuggetAssetMap,
   };
 }

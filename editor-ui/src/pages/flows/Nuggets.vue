@@ -295,6 +295,23 @@
                 </q-card>
               </q-expansion-item>
 
+              <q-expansion-item
+                header-class="collection-item-subheader text-center"
+                :v-model="'nug-' + nuggetId + '-assets-toggle'"
+              >
+                <template #header>
+                  <div>
+                    <q-icon name="image" size="sm"></q-icon>
+                  </div>
+                  <q-space></q-space>
+                  <div class="collection-item-subheader text-center">
+                    Assets
+                  </div>
+                  <q-space></q-space>
+                </template>
+                <asset-manager :nuggetId="nuggetId"></asset-manager>
+              </q-expansion-item>
+
               <div class="row col-12">
                 <blocks-handler
                   :blockData="nuggetMap.get(nuggetId).blockData"
@@ -344,6 +361,8 @@ import BlocksHandler from "../../components/flows/blocks/BlocksHandler";
 import NuggetTextProperty from "../../components/flows/forms/fields/NuggetTextProperty";
 import NoFlowSourceSetPage from "../../pages/flows/NoFlowSourceSetPage";
 
+import AssetManager from "../../components/flows/AssetManager";
+
 export default defineComponent({
   name: "PageFlow",
   emits: ["appNotification"],
@@ -353,6 +372,7 @@ export default defineComponent({
     BlocksHandler,
     NuggetTextProperty,
     NoFlowSourceSetPage,
+    AssetManager,
   },
   setup() {
     const route = useRoute();
@@ -367,6 +387,7 @@ export default defineComponent({
       createNugget,
       flowSource,
       nuggetSeqMap,
+      nuggetAssetTabMap,
     } = useFlows();
 
     console.log(flowMap);
@@ -444,6 +465,7 @@ export default defineComponent({
       flowSource,
       // nuggetSeqMap,
       nuggetSeq,
+      nuggetAssetTabMap,
     };
   },
   methods: {

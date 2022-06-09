@@ -41,7 +41,7 @@ const tcmsBlockTypes = [
 const blockHandlers = {};
 // We use a convention for the TachyonCMS created ones.
 // You can append custom editor and render mappings for a url segment to the blockHandlers.
-tcmsBlockTypes.map((type) => {
+tcmsBlockTypes.foreach((type) => {
   blockHandlers[type] = {
     editor: [type] + "-editor",
     render: [type] + "-block",

@@ -251,12 +251,9 @@ export default defineComponent({
       // Add the block to the local nugget
       const block = { id: uid, type: def.type, displayData: dataHolder };
       if (def.nextBlock && def.nextBlock.length > 0) {
-        console.log("Need to splice into blocks");
-        console.log(this.blocks);
         const nextIx = this.blocks
           .map((object) => object.id)
           .indexOf(def.nextBlock);
-        console.log(nextIx);
         this.blocks.splice(nextIx, 0, block);
       } else {
         this.blocks.push(block);
@@ -279,7 +276,7 @@ export default defineComponent({
       console.log(data);
       // Get the
       const blockIx = this.blocks.findIndex((x) => x.id === blockId);
-      console.log(blockIx);
+
       // Set the displayData of the blockIX item to the string after sanitizing
       this.blocks[blockIx].displayData = data.newData;
 

@@ -202,6 +202,35 @@ export default () => {
     }
   };
 
+  const getDirHandle = async (pathSegments, create = true) => {
+    try {
+      // All segments are directories.
+      // The dirHandles index name is a hyphenated list of elements.
+      // The elements for the list start at the first top level objectId
+
+      // The dirHandle we will read and write
+      let dirHandle;
+
+      // Do we already have the fileHandle?
+      if (dirHandleMap.has(dirHandleName)) {
+        dirHandle = dirHandleMap.get(dirHandleName);
+      } else {
+        // Recurse through the pathSegments.
+        // If `create` is true create any missing path.
+        // If `create` is false return the successful and failed parts if any are missing.
+
+        // A file handle to read/write data
+        dirdHandle = await parentDirHandle.getFileHandle(fullFileName, {
+          create: true,
+        });
+
+        return fileHandle;
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   const getFileHandle = async (pathSegments) => {
     try {
       // The last segment is the file name, without the `.json` suffix.
@@ -678,6 +707,18 @@ export default () => {
     }
   };
 
+  const loadNuggetAssets = async (nuggetId) => {
+    try {
+      // Get the nugget assets dirHandle
+      const dirHandle = await getDirHandle(["nuggets"]);
+
+      // Get the list of files from the dirHandle
+    } catch (e) {
+      console.log("Error Loading Filesystem Nugget Assests");
+      console.log(e);
+    }
+  };
+
   // exposed
   return {
     loadFlows,
@@ -693,5 +734,6 @@ export default () => {
     // getFlowNuggetSeqById,
     updateFlowData,
     checkAuth,
+    loadNuggetAssets,
   };
 };

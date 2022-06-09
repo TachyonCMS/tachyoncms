@@ -114,8 +114,17 @@ a.navbar-title:visited {
   background-color: hsl(
     var(--color-primary-h),
     var(--color-primary-s),
-    calc(var(--color-primary-l) + 40%)
+    calc(var(--color-primary-l) + 35%)
   );
+}
+
+.collection-item-subheader {
+  background-color: hsl(
+    var(--color-primary-h),
+    var(--color-primary-s),
+    calc(var(--color-primary-l) + 45%)
+  );
+  font-size: 1.2em
 }
 
 .blocks-container {
