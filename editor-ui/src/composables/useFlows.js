@@ -477,6 +477,28 @@ export default function useFlows() {
     }
   };
 
+  // Delete a Nugget Asset
+  const deleteNuggetAsset = async (nuggetId, assetName) => {
+    try {
+      console.log("useFlows:deleteNuggetAsset " + nuggetId + " " + assetName);
+      // Use the defined connector
+      flowConnectors[flowConnector.value]
+        .deleteNuggetAsset(nuggetId, assetName)
+        .then((delResult) => {
+          console.log(delResult);
+          // Update the nuggetAssetMap for this nugget
+          const currentAssets = nuggetAssetMap.get(nuggetId);
+          console.log(currentAssets);
+          const newAssets = currentAssets.filter((asset) => asset != assetName);
+          console.log(newAssets);
+          nuggetAssetMap.set(nuggetId, newAssets);
+        });
+    } catch (e) {
+      console.log("Error Deleting Flow");
+      console.log(e);
+    }
+  };
+
   return {
     loadNuggetAssets,
     loadFlows,
@@ -508,5 +530,6 @@ export default function useFlows() {
     nuggetSeqMap,
     checkAuth,
     nuggetAssetMap,
+    deleteNuggetAsset,
   };
 }

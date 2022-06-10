@@ -46,11 +46,15 @@
               class="top-left"
               :data-cy="'new-block-before-btn-n' + nix + '-b' + bix"
               :dataCySlug="'new-block-before-btn-n' + nix + '-b' + bix"
+              size="md"
+              padding="sm"
             ></new-block-button>
             <q-btn
               class="top-right"
               icon="mdi-delete"
               @click="confirmDeleteBlock(block.id)"
+              size="md"
+              padding="sm"
               ><q-tooltip>Delete block</q-tooltip></q-btn
             >
           </div>

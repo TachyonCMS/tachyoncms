@@ -298,6 +298,7 @@
               <q-expansion-item
                 header-class="collection-item-subheader text-center"
                 :v-model="'nug-' + nuggetId + '-assets-toggle'"
+                @show="loadNuggetAssets(nuggetId)"
               >
                 <template #header>
                   <div>
@@ -361,7 +362,7 @@ import BlocksHandler from "../../components/flows/blocks/BlocksHandler";
 import NuggetTextProperty from "../../components/flows/forms/fields/NuggetTextProperty";
 import NoFlowSourceSetPage from "../../pages/flows/NoFlowSourceSetPage";
 
-import AssetManager from "../../components/flows/AssetManager";
+import AssetManager from "../../components/flows/asset-manager/AssetManager";
 
 export default defineComponent({
   name: "PageFlow",
@@ -387,7 +388,7 @@ export default defineComponent({
       createNugget,
       flowSource,
       nuggetSeqMap,
-      nuggetAssetTabMap,
+      loadNuggetAssets,
     } = useFlows();
 
     console.log(flowMap);
@@ -465,7 +466,7 @@ export default defineComponent({
       flowSource,
       // nuggetSeqMap,
       nuggetSeq,
-      nuggetAssetTabMap,
+      loadNuggetAssets,
     };
   },
   methods: {

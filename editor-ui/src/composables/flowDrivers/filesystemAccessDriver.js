@@ -202,33 +202,20 @@ export default () => {
     }
   };
 
-  const getDirHandle = async (pathSegments, create = true) => {
-    try {
-      // All segments are directories.
-      // The dirHandles index name is a hyphenated list of elements.
-      // The elements for the list start at the first top level objectId
+  const getDirFiles = async (dirHandle, extensions = "*") => {
+    // Get entries for the dirHandle
+    const dirFiles = [];
 
-      // The dirHandle we will read and write
-      let dirHandle;
-
-      // Do we already have the fileHandle?
-      if (dirHandleMap.has(dirHandleName)) {
-        dirHandle = dirHandleMap.get(dirHandleName);
-      } else {
-        // Recurse through the pathSegments.
-        // If `create` is true create any missing path.
-        // If `create` is false return the successful and failed parts if any are missing.
-
-        // A file handle to read/write data
-        dirdHandle = await parentDirHandle.getFileHandle(fullFileName, {
-          create: true,
-        });
-
-        return fileHandle;
+    for await (const entry of dirHandle.entries()) {
+      console.log(entry);
+      if (entry[1].kind === "file") {
+        dirFiles.push(entry[1].name);
       }
-    } catch (e) {
-      console.error(e);
     }
+
+    // Filter out directories and files that don't match the extension
+    // Return the asset files
+    return dirFiles;
   };
 
   const getFileHandle = async (pathSegments) => {
@@ -709,12 +696,99 @@ export default () => {
 
   const loadNuggetAssets = async (nuggetId) => {
     try {
-      // Get the nugget assets dirHandle
-      const dirHandle = await getDirHandle(["nuggets"]);
-
-      // Get the list of files from the dirHandle
+      // The parentDir is "/nuggets/:nuggetId/assets"
+      // Get the list of files from the parentDirHandle.
+      const dirHandleName = "assets-" + nuggetId;
+      const handleSegments = ["nuggets", nuggetId, dirHandleName];
+      const dirHandle = await getDirHandle(handleSegments);
+      console.log(dirHandle);
+      const assets = await getDirFiles(dirHandle);
+      console.log(assets);
+      return assets;
     } catch (e) {
-      console.log("Error Loading Filesystem Nugget Assests");
+      console.log("Error Loading Filesystem Nugget Assets");
+      console.log(e);
+    }
+  };
+
+  const getDirHandle = async (pathSegments, create = true) => {
+    try {
+      // All pathSegments are directories.
+      // All segment names should be 100% resolved and can be used as-is.
+
+      // If the last segment doesn't exist we
+      console.log(pathSegments);
+      let isHandleFound = false;
+
+      const processedSegments = [];
+
+      const targetHandleName = pathSegments.pop();
+
+      // If we already have the desired handle, return it.
+      if (dirHandleMap.has(targetHandleName)) {
+        return dirHandleMap.get(targetHandleName);
+      }
+
+      // Recurse up though pathSegments
+      let parentDirName;
+      let parentDirHandle;
+
+      // Loop through remaining elements until we find one.
+      while (!isHandleFound) {
+        parentDirName = pathSegments.pop();
+        console.log(parentDirName);
+        if (dirHandleMap.has(parentDirName)) {
+          isHandleFound = true;
+          parentDirHandle = dirHandleMap.get(parentDirName);
+          console.log(parentDirHandle);
+        } else {
+          processedSegments.push(parentDirName);
+        }
+      }
+
+      // Recurse back though processedSegments
+      // creating dirHandles until we get to our original target dir
+      let childDirName;
+
+      while (processedSegments.length > 0) {
+        childDirName = processedSegments.pop();
+        console.log(childDirName);
+        parentDirHandle = await parentDirHandle.getDirectoryHandle(
+          childDirName,
+          { create: true }
+        );
+        dirHandleMap.set(childDirName, parentDirHandle);
+        console.log(parentDirHandle);
+      }
+
+      const dirHandle = await parentDirHandle.getDirectoryHandle(
+        targetHandleName,
+        {
+          create: true,
+        }
+      );
+
+      console.log(dirHandle);
+      return dirHandle;
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  // Delete Flow reference and Nugget
+  const deleteNuggetAsset = async (nuggetId, assetName) => {
+    try {
+      // Delete the asset
+      const dirHandle = await getDirHandle([
+        "nugget",
+        nuggetId,
+        "assets-" + nuggetId,
+      ]);
+      console.log(dirHandle);
+      await dirHandle.removeEntry(assetName);
+      return { deleted: assetName };
+    } catch (e) {
+      console.log("Error Deleting Nugget Asset");
       console.log(e);
     }
   };
@@ -735,5 +809,6 @@ export default () => {
     updateFlowData,
     checkAuth,
     loadNuggetAssets,
+    deleteNuggetAsset,
   };
 };
