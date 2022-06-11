@@ -15,6 +15,7 @@
         size="md"
         condensed
         padding="sm"
+        :disabled="!files || files.length < 1"
         ><q-tooltip>Upload</q-tooltip></q-btn
       >
       <q-space></q-space>
@@ -26,7 +27,6 @@
         ><q-tooltip>Refresh</q-tooltip></q-btn
       >
     </div>
-    {{ files }}
     <div class="row col-12">
       <q-list v-for="asset in nuggetAssets" :key="asset" class="row col-12">
         <q-item class="row col-12">
@@ -56,36 +56,31 @@ export default defineComponent({
   props: ["nuggetId"],
   setup(props) {
     console.log(props);
-    const { nuggetAssetMap, loadNuggetAssets, deleteNuggetAsset } = useFlows();
+    const {
+      nuggetAssetMap,
+      loadNuggetAssets,
+      deleteNuggetAsset,
+      storeNuggetAssets,
+    } = useFlows();
     const tabView = ref("files");
     const nuggetAssets = computed(() => {
       return nuggetAssetMap.get(props.nuggetId);
     });
     const files = ref(null);
-    return { nuggetAssets, loadNuggetAssets, deleteNuggetAsset, files };
+    return {
+      nuggetAssets,
+      loadNuggetAssets,
+      deleteNuggetAsset,
+      files,
+      storeNuggetAssets,
+    };
   },
   methods: {
     async onUpload(nuggetId) {
       //console.log(this.nuggetId);
       console.log(nuggetId);
-      console.log(this.files[0]);
-    },
-    async onSelectConnector(connector) {
-      // Record the connector choice
-      //this.setFlowConnector(connector);
-
-      // Display sources options for the connector
-      switch (connector) {
-        case "electron":
-          this.onSelectRootDir();
-          break;
-        case "storageApi":
-          this.onStorageApi();
-          break;
-        case "filesystem":
-          this.onFilesystem();
-          break;
-      }
+      await this.storeNuggetAssets(nuggetId, this.files);
+      this.files.value = null;
     },
   },
 });

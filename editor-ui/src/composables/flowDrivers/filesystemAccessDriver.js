@@ -146,7 +146,7 @@ export default () => {
       dirHandleMap.delete(flowId);
     } catch (e) {
       console.log("Error Deleting Filesystem Flow");
-      console.log(e);
+      console.error(e);
     }
   };
 
@@ -164,7 +164,7 @@ export default () => {
       return flow;
     } catch (e) {
       console.log("Error Updating Flow");
-      console.log(e);
+      console.error(e);
     }
   };
 
@@ -334,7 +334,7 @@ export default () => {
       return { flow: flow };
     } catch (e) {
       console.log("Error Loading Filesystem Flow: " + flowId);
-      console.log(e);
+      console.error(e);
     }
   };
 
@@ -355,7 +355,7 @@ export default () => {
       console.log(
         "Error Updating Filesystem FlowData: " + flowId + " " + dataType
       );
-      console.log(e);
+      console.error(e);
       return;
     }
   };
@@ -412,7 +412,7 @@ export default () => {
       return { nugget: nugget };
     } catch (e) {
       console.log("Error Updating Nugget");
-      console.log(e);
+      console.error(e);
     }
   };
 
@@ -442,7 +442,7 @@ export default () => {
       return { deleted: nuggetId, nuggetSeq: nuggetSeq };
     } catch (e) {
       console.log("Error Deleting Nugget");
-      console.log(e);
+      console.error(e);
     }
   };
 
@@ -680,14 +680,23 @@ export default () => {
   const writeJsonHandle = async (fileHandle, jsonData) => {
     try {
       const jsonString = JSON.stringify(jsonData, null, 2);
+      await writeToFileHandle(fileHandle, jsonString);
+      return jsonData;
+    } catch (e) {
+      console.error(e);
+      return null;
+    }
+  };
 
+  const writeToFileHandle = async (fileHandle, data) => {
+    try {
       // Write merged data back to fileHandle
       const writable = await fileHandle.createWritable();
       // Write the contents of the file to the stream.
-      await writable.write(jsonString);
+      await writable.write(data);
       // Close the file and write the contents to disk.
       await writable.close();
-      return jsonData;
+      return true;
     } catch (e) {
       console.error(e);
       return null;
@@ -707,7 +716,7 @@ export default () => {
       return assets;
     } catch (e) {
       console.log("Error Loading Filesystem Nugget Assets");
-      console.log(e);
+      console.error(e);
     }
   };
 
@@ -789,7 +798,50 @@ export default () => {
       return { deleted: assetName };
     } catch (e) {
       console.log("Error Deleting Nugget Asset");
-      console.log(e);
+      console.error(e);
+    }
+  };
+
+  const storeNuggetAssets = async (nuggetId, files) => {
+    try {
+      // Get the Nugget asset dirHandle that all files will use.
+      const dirHandle = await getDirHandle([
+        "nugget",
+        nuggetId,
+        "assets-" + nuggetId,
+      ]);
+
+      const assets = ref([]);
+
+      await Promise.all(
+        files.map(async (file) => {
+          console.log(file);
+
+          const reader = new FileReader();
+
+          reader.readAsArrayBuffer(file);
+
+          reader.onload = function () {
+            dirHandle
+              .getFileHandle(file.name, { create: true })
+              .then((handle) => {
+                writeToFileHandle(handle, reader.result).then((result) => {
+                  console.log(result);
+                  console.log(file.name);
+                  if (result === true) {
+                    assets.value.push(file.name);
+                  }
+                });
+              });
+            console.log(reader.result);
+          };
+        })
+      );
+      console.log(assets.value);
+      return { assetNames: assets.value };
+    } catch (e) {
+      console.log("Error Deleting Nugget Asset");
+      console.error(e);
     }
   };
 
@@ -810,5 +862,6 @@ export default () => {
     checkAuth,
     loadNuggetAssets,
     deleteNuggetAsset,
+    storeNuggetAssets,
   };
 };

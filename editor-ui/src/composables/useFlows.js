@@ -144,8 +144,8 @@ export default function useFlows() {
         });
       }
     } catch (e) {
-      console.log("Error Loading Flows");
-      console.log(e);
+      console.error("Error Loading Flows");
+      console.error(e);
     }
   };
 
@@ -188,8 +188,8 @@ export default function useFlows() {
           });
       }
     } catch (e) {
-      console.log("Error Loading Flow: " + flowId);
-      console.log(e);
+      console.error("Error Loading Flow: " + flowId);
+      console.error(e);
     }
   };
 
@@ -209,8 +209,8 @@ export default function useFlows() {
           return flowResult.flow;
         });
     } catch (e) {
-      console.log("Error Creating Flow");
-      console.log(e);
+      console.error("Error Creating Flow");
+      console.error(e);
     }
   };
 
@@ -233,8 +233,8 @@ export default function useFlows() {
           return nuggetResult;
         });
     } catch (e) {
-      console.log("Error Creating Nugget");
-      console.log(e);
+      console.error("Error Creating Nugget");
+      console.error(e);
     }
   };
 
@@ -248,8 +248,8 @@ export default function useFlows() {
           flowMap.delete(flowId);
         });
     } catch (e) {
-      console.log("Error Deleting Flow");
-      console.log(e);
+      console.error("Error Deleting Flow");
+      console.error(e);
     }
   };
 
@@ -264,8 +264,8 @@ export default function useFlows() {
           flowMap.set(flowId, flowResult);
         });
     } catch (e) {
-      console.log("Error Updating Flow");
-      console.log(e);
+      console.error("Error Updating Flow");
+      console.error(e);
     }
   };
 
@@ -281,8 +281,8 @@ export default function useFlows() {
           nuggetMap.set(nuggetId, nuggetResult.nugget);
         });
     } catch (e) {
-      console.log("Error Updating Nugget");
-      console.log(e);
+      console.error("Error Updating Nugget");
+      console.error(e);
     }
   };
 
@@ -301,8 +301,8 @@ export default function useFlows() {
           // console.log(nuggetSeqMap);
         });
     } catch (e) {
-      console.log("Error Deleting Flow");
-      console.log(e);
+      console.error("Error Deleting Flow");
+      console.error(e);
     }
   };
 
@@ -338,7 +338,7 @@ export default function useFlows() {
         }
       }
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
 
     return published;
@@ -360,11 +360,11 @@ export default function useFlows() {
             published.set(nuggetId, nug);
           }
         } catch (e) {
-          console.log(e);
+          console.error(e);
         }
       });
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
 
     return published;
@@ -401,7 +401,7 @@ export default function useFlows() {
           }
         }
       } catch (e) {
-        console.log(e);
+        console.error(e);
         // default inPublication set above will be returned
       }
     }
@@ -437,8 +437,8 @@ export default function useFlows() {
           return true;
         });
     } catch (e) {
-      console.log("Error Checking Auth");
-      console.log(e);
+      console.error("Error Checking Auth");
+      console.error(e);
       return false;
     }
   };
@@ -453,8 +453,8 @@ export default function useFlows() {
           return;
         });
     } catch (e) {
-      console.log("Error Checking Auth");
-      console.log(e);
+      console.error("Error Checking Auth");
+      console.error(e);
     }
   };
 
@@ -472,8 +472,8 @@ export default function useFlows() {
           return;
         });
     } catch (e) {
-      console.log("Error Creating Nugget");
-      console.log(e);
+      console.error("Error Creating Nugget");
+      console.error(e);
     }
   };
 
@@ -494,8 +494,30 @@ export default function useFlows() {
           nuggetAssetMap.set(nuggetId, newAssets);
         });
     } catch (e) {
-      console.log("Error Deleting Flow");
-      console.log(e);
+      console.error("Error Deleting Flow");
+      console.error(e);
+    }
+  };
+
+  const storeNuggetAssets = async (nuggetId, browserFiles) => {
+    try {
+      console.log("storeNuggetAsset " + nuggetId);
+      // Use the defined connector
+      flowConnectors[flowConnector.value]
+        .storeNuggetAssets(nuggetId, browserFiles)
+        .then((result) => {
+          console.log(result.assetNames);
+          // Update the nuggetAssetMap for this nugget, adding these assets
+          const currentAssets = nuggetAssetMap.get(nuggetId);
+          console.log(currentAssets);
+          const newAssets = [...currentAssets, ...result.assetNames];
+          console.log(newAssets);
+          nuggetAssetMap.set(nuggetId, newAssets);
+          console.log(nuggetAssetMap);
+        });
+    } catch (e) {
+      console.error("Error Storing Assets");
+      console.error(e);
     }
   };
 
@@ -531,5 +553,6 @@ export default function useFlows() {
     checkAuth,
     nuggetAssetMap,
     deleteNuggetAsset,
+    storeNuggetAssets,
   };
 }

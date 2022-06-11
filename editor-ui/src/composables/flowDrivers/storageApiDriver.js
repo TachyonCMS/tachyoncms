@@ -50,7 +50,7 @@ export default () => {
       return result.data;
     } catch (e) {
       console.log("Error Creating Flow");
-      console.log(e);
+      console.error(e);
     }
   };
 
@@ -63,7 +63,7 @@ export default () => {
       return result.data;
     } catch (e) {
       console.log("Error Deleting Storage API Flow");
-      console.log(e);
+      console.error(e);
     }
   };
 
@@ -79,7 +79,7 @@ export default () => {
       return result.data;
     } catch (e) {
       console.log("Error Updating Flow");
-      console.log(e);
+      console.error(e);
     }
   };
 
@@ -102,7 +102,7 @@ export default () => {
       return flowData;
     } catch (e) {
       console.log("Error Loading Storage API Flow: " + flowId);
-      console.log(e);
+      console.error(e);
     }
   };
 
@@ -110,7 +110,7 @@ export default () => {
     try {
     } catch (e) {
       console.log("Error Loading Electron Flow: " + flowId);
-      console.log(e);
+      console.error(e);
     }
   };
 
@@ -129,7 +129,7 @@ export default () => {
       return nuggetSeq;
     } catch (e) {
       console.log("Error Loading Electron NuggetSeq: " + flowId);
-      console.log(e);
+      console.error(e);
     }
   };
 
@@ -150,7 +150,7 @@ export default () => {
       console.log(
         "Error Updating Electron FlowData: " + flowId + " " + dataType
       );
-      console.log(e);
+      console.error(e);
       return;
     }
   };
@@ -205,7 +205,7 @@ export default () => {
       return result.data;
     } catch (e) {
       console.log("Error Updating Nugget");
-      console.log(e);
+      console.error(e);
     }
   };
 
@@ -220,7 +220,7 @@ export default () => {
       return result.data;
     } catch (e) {
       console.log("Error Deleting Nugget");
-      console.log(e);
+      console.error(e);
     }
   };
 

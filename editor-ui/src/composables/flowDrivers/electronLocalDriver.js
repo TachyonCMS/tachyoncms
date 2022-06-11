@@ -54,7 +54,7 @@ export default () => {
       }
     } catch (e) {
       console.log("Error Deleting Electron Flow");
-      console.log(e);
+      console.error(e);
     }
   };
 
@@ -72,7 +72,7 @@ export default () => {
       return result;
     } catch (e) {
       console.log("Error Updating Flow");
-      console.log(e);
+      console.error(e);
     }
   };
 
@@ -81,7 +81,7 @@ export default () => {
       return await electronApi.getElectronFlowById(flowId, withNuggets);
     } catch (e) {
       console.log("Error Loading Electron Flow: " + flowId);
-      console.log(e);
+      console.error(e);
     }
   };
 
@@ -100,7 +100,7 @@ export default () => {
       return nuggetSeq;
     } catch (e) {
       console.log("Error Loading Electron NuggetSeq: " + flowId);
-      console.log(e);
+      console.error(e);
     }
   };
 
@@ -121,7 +121,7 @@ export default () => {
       console.log(
         "Error Updating Electron FlowData: " + flowId + " " + dataType
       );
-      console.log(e);
+      console.error(e);
       return;
     }
   };
@@ -178,7 +178,7 @@ export default () => {
       return result;
     } catch (e) {
       console.log("Error Updating Flow");
-      console.log(e);
+      console.error(e);
     }
   };
 
@@ -213,7 +213,7 @@ export default () => {
       });
     } catch (e) {
       console.log("Error Deleting Flow");
-      console.log(e);
+      console.error(e);
     }
   };
 
