@@ -73,6 +73,7 @@ export default defineComponent({
       deleteNuggetAsset,
       files,
       storeNuggetAssets,
+      nuggetAssetMap,
     };
   },
   methods: {
@@ -80,7 +81,9 @@ export default defineComponent({
       //console.log(this.nuggetId);
       console.log(nuggetId);
       await this.storeNuggetAssets(nuggetId, this.files);
-      this.files.value = null;
+      console.log("DONE");
+      this.files = null;
+      //this.loadNuggetAssets(nuggetId, true);
     },
   },
 });

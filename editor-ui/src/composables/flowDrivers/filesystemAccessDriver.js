@@ -1,4 +1,4 @@
-import { ref, reactive } from "vue";
+import { ref, reactive, toRef } from "vue";
 
 import { nanoid } from "nanoid";
 
@@ -695,8 +695,7 @@ export default () => {
       // Write the contents of the file to the stream.
       await writable.write(data);
       // Close the file and write the contents to disk.
-      await writable.close();
-      return true;
+      return await writable.close();
     } catch (e) {
       console.error(e);
       return null;
@@ -811,36 +810,29 @@ export default () => {
         "assets-" + nuggetId,
       ]);
 
-      const assets = ref([]);
-
       await Promise.all(
         files.map(async (file) => {
-          console.log(file);
-
           const reader = new FileReader();
+          const writeFileHandle = await dirHandle.getFileHandle(file.name, {
+            create: true,
+          });
+          console.log(writeFileHandle);
 
           reader.readAsArrayBuffer(file);
-
-          reader.onload = function () {
-            dirHandle
-              .getFileHandle(file.name, { create: true })
-              .then((handle) => {
-                writeToFileHandle(handle, reader.result).then((result) => {
-                  console.log(result);
-                  console.log(file.name);
-                  if (result === true) {
-                    assets.value.push(file.name);
-                  }
-                });
-              });
+          reader.onload = async function () {
             console.log(reader.result);
+
+            const writeResult = await writeToFileHandle(
+              writeFileHandle,
+              reader.result
+            );
           };
         })
       );
-      console.log(assets.value);
-      return { assetNames: assets.value };
+
+      return await loadNuggetAssets(nuggetId);
     } catch (e) {
-      console.log("Error Deleting Nugget Asset");
+      console.log("Error Adding Nugget Assets");
       console.error(e);
     }
   };

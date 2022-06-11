@@ -1,4 +1,4 @@
-import { readonly, reactive, ref, computed } from "vue";
+import { readonly, reactive, ref, computed, unref } from "vue";
 
 import { date } from "quasar";
 
@@ -506,14 +506,8 @@ export default function useFlows() {
       flowConnectors[flowConnector.value]
         .storeNuggetAssets(nuggetId, browserFiles)
         .then((result) => {
-          console.log(result.assetNames);
-          // Update the nuggetAssetMap for this nugget, adding these assets
-          const currentAssets = nuggetAssetMap.get(nuggetId);
-          console.log(currentAssets);
-          const newAssets = [...currentAssets, ...result.assetNames];
-          console.log(newAssets);
-          nuggetAssetMap.set(nuggetId, newAssets);
-          console.log(nuggetAssetMap);
+          console.log(result);
+          nuggetAssetMap.set(nuggetId, result);
         });
     } catch (e) {
       console.error("Error Storing Assets");
