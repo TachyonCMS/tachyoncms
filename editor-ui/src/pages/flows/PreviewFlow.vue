@@ -5,7 +5,7 @@
       <!-- Reactive list of Nuggets from within the Flow object. -->
       <q-list v-for="nuggetId in flow.nuggetSeq" :key="nuggetId">
         <div class="nugget-container row col-12">
-          <render-blocks :blockData="nuggetMap.get(nuggetId).blockData">
+          <render-blocks :blocks="nuggetMap.get(nuggetId).blocks">
           </render-blocks>
         </div>
       </q-list>
@@ -74,7 +74,7 @@ export default defineComponent({
     });
 
     const saveBlocks = (nuggetId, blocks) => {
-      updateNuggetProp(flowId.value, nuggetId, "blockData", blocks);
+      updateNuggetProp(flowId.value, nuggetId, "blocks", blocks);
     };
 
     onMounted(async () => {

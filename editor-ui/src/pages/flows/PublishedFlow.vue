@@ -12,7 +12,7 @@
             <!-- This will receive a stringified JSON array of block objects. -->
             <!-- Block objects have an id, type and displayData -->
             <!-- Display data is stringified data that is rendered differently for each type -->
-            <render-blocks :blockData="item.blockData"> </render-blocks>
+            <render-blocks :blocks="item.blocks"> </render-blocks>
           </div>
         </q-list>
       </template>

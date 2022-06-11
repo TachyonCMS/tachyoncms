@@ -41,7 +41,7 @@ export default defineComponent({
   name: "RenderBlocks",
   props: {
     blocks: {
-      type: String,
+      type: Array,
     },
   },
   emits: ["save"],

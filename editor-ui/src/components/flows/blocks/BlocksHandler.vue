@@ -286,7 +286,7 @@ export default defineComponent({
     async saveBlock(blockId, data) {
       console.log(data);
       // Get the
-      const blockIx = this.blocks.findIndex((x) => x.id === blockId);
+      const blockIx = this.editorBlocks.findIndex((x) => x.id === blockId);
 
       // Set the displayData of the blockIX item to the string after sanitizing
       this.editorBlocks[blockIx].displayData = data.newData;
