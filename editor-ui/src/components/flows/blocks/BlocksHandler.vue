@@ -3,7 +3,7 @@
     <!-- Div to wrap all blocks in this nugget -->
     <div class="row col-12 blocks-container">
       <!-- Template to repeat a card section for each block -->
-      <template v-for="(block, bix) in blocks" :key="block.id">
+      <template v-for="(block, bix) in editorBlocks" :key="block.id">
         <!-- EDITORS -->
         <div v-show="isInEdit(block.id)" class="row col-12">
           <!-- Section to show for this block if it is in edit mode. -->
@@ -113,8 +113,8 @@ import BasicSeparator from "./renders/SeparatorBlock";
 export default defineComponent({
   name: "BlocksHandler",
   props: {
-    blockData: {
-      type: String,
+    blocks: {
+      type: Array,
     },
     nix: {
       type: Number,
@@ -151,9 +151,6 @@ export default defineComponent({
 
       return blockArr;
     };
-
-    // Reactive blocks array
-    const blocks = ref(convertToBlocks(props.blockData));
 
     // Map a block type to a renderer
     const renderers = {
@@ -210,8 +207,13 @@ export default defineComponent({
         });
     };
 
+    console.log(props.blocks);
+    let editorBlocks = ref([]);
+    if (props.blocks) {
+      editorBlocks = [...props.blocks];
+    }
+
     return {
-      blocks,
       inEdit,
       isInEdit,
       deleteBlock,
@@ -219,6 +221,7 @@ export default defineComponent({
       editors,
       ref,
       confirmDeleteBlock,
+      editorBlocks,
     };
   },
   methods: {
@@ -227,6 +230,7 @@ export default defineComponent({
       const uid = nanoid(8);
       // Define the default data based on the block type
       let dataHolder = null;
+      console.log(def);
       switch (def.type) {
         case "image":
         case "separator":
@@ -250,17 +254,20 @@ export default defineComponent({
         case "richText":
         default:
           dataHolder = "";
+          break;
       }
 
       // Add the block to the local nugget
       const block = { id: uid, type: def.type, displayData: dataHolder };
       if (def.nextBlock && def.nextBlock.length > 0) {
-        const nextIx = this.blocks
+        const nextIx = this.editorBlocks
           .map((object) => object.id)
           .indexOf(def.nextBlock);
-        this.blocks.splice(nextIx, 0, block);
+        this.editorBlocks.splice(nextIx, 0, block);
       } else {
-        this.blocks.push(block);
+        console.log("pushing");
+        console.log(block);
+        this.editorBlocks.push(block);
       }
 
       // Set this block in edit mode
@@ -282,9 +289,9 @@ export default defineComponent({
       const blockIx = this.blocks.findIndex((x) => x.id === blockId);
 
       // Set the displayData of the blockIX item to the string after sanitizing
-      this.blocks[blockIx].displayData = data.newData;
+      this.editorBlocks[blockIx].displayData = data.newData;
 
-      this.$emit("save", JSON.stringify(this.blocks));
+      this.$emit("save", this.editorBlocks);
     },
   },
 });

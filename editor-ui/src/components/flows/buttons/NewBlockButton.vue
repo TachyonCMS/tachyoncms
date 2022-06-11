@@ -152,9 +152,6 @@ import { nanoid } from "nanoid";
 export default defineComponent({
   name: "NewBlockButton",
   props: {
-    blockData: {
-      type: String,
-    },
     btnLabel: {
       type: String,
       default: "New Block",

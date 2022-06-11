@@ -40,7 +40,7 @@ import BasicSeparator from "./renders/SeparatorBlock";
 export default defineComponent({
   name: "RenderBlocks",
   props: {
-    blockData: {
+    blocks: {
       type: String,
     },
   },
@@ -71,7 +71,7 @@ export default defineComponent({
     };
 
     // Reactive blocks array
-    const blocks = ref(convertToBlocks(props.blockData));
+    //const blocks = ref(convertToBlocks(props.blocks));
 
     // Map a block type to a renderer
     const renderers = {
@@ -86,7 +86,7 @@ export default defineComponent({
     };
 
     return {
-      blocks,
+      //blocks,
       renderers,
     };
   },

@@ -195,7 +195,7 @@
 
           <div class="nugget-container row col-12">
             <blocks-handler
-              :blockData="nuggetMap.get(nuggetId).blockData"
+              :blocks="nuggetMap.get(nuggetId).blocks"
               @save="(event) => saveBlocks(nuggetMap.get(nuggetId).id, event)"
             >
             </blocks-handler>
@@ -278,7 +278,7 @@ export default defineComponent({
     });
 
     const saveBlocks = (nuggetId, blocks) => {
-      updateNuggetProp(nuggetId, "blockData", blocks);
+      updateNuggetProp(nuggetId, "blocks", blocks);
     };
 
     onMounted(async () => {
