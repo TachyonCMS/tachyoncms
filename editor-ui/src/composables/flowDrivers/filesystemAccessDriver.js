@@ -288,7 +288,11 @@ export default () => {
     }
   };
 
-  const getFlowById = async (flowId, withNuggets = false) => {
+  const getFlowById = async (
+    flowId,
+    withNuggets = false,
+    withBlocks = true
+  ) => {
     try {
       // Get the Flow
       const flow = await readJson(["flows", flowId, "flow"]);
@@ -314,16 +318,39 @@ export default () => {
               // Set nuggetSeq in flow result
               flow.nuggetSeq = nuggetSeq;
 
-              // Create an array of paths
-              const filePaths = [];
-              nuggetSeq.map((dirName) => {
-                const pathSegments = ["nuggets", dirName, "nugget"];
-                filePaths.push(pathSegments);
-              });
-              // Load those paths
-              const nuggets = await getJsonMulti(filePaths);
+              let nuggets = [];
+              let blocks = [];
 
-              return { flow: flow, nuggets: nuggets };
+              try {
+                // Create an array of paths
+                const filePaths = [];
+                nuggetSeq.map((dirName) => {
+                  const pathSegments = ["nuggets", dirName, "nugget"];
+                  filePaths.push(pathSegments);
+                });
+                // Load those paths
+                nuggets = await getJsonMulti(filePaths);
+              } catch (e) {
+                console.error(e);
+              }
+
+              if (withBlocks) {
+                try {
+                  console.log("Loading Blocks");
+                  const blockPaths = [];
+                  nuggetSeq.map((dirName) => {
+                    const pathSegments = ["nuggets", dirName, "blocks"];
+                    blockPaths.push(pathSegments);
+                  });
+                  // Load those paths
+                  blocks = await getJsonMulti(blockPaths);
+                  console.log(blocks);
+                } catch (e) {
+                  console.error(e);
+                }
+              }
+
+              return { flow: flow, nuggets: nuggets, blocks: blocks };
             }
           }
         } catch (e) {
@@ -410,6 +437,26 @@ export default () => {
 
       console.log(nugget);
       return { nugget: nugget };
+    } catch (e) {
+      console.log("Error Updating Nugget");
+      console.error(e);
+    }
+  };
+
+  const updateNuggetData = async (nuggetId, propName, propValue) => {
+    try {
+      console.log("Updating Nugget");
+      console.log(propName);
+      console.log(propValue);
+
+      const partialData = { [propName]: propValue };
+
+      const result = await writeJson(["nuggets", nuggetId, "blocks"], {
+        blocks: propValue,
+      });
+
+      console.log(result);
+      return result;
     } catch (e) {
       console.log("Error Updating Nugget");
       console.error(e);
@@ -846,6 +893,7 @@ export default () => {
     getFlowById,
     createNugget,
     updateNuggetProp,
+    updateNuggetData,
     deleteNugget,
     setSource,
     initSource,

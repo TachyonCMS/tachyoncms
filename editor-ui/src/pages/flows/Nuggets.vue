@@ -384,6 +384,7 @@ export default defineComponent({
       flowLoaded,
       nuggetMap,
       updateNuggetProp,
+      updateNuggetData,
       deleteNugget,
       createNugget,
       flowSource,
@@ -425,6 +426,7 @@ export default defineComponent({
 
     const saveBlocks = (nuggetId, blocks) => {
       updateNuggetProp(nuggetId, "blocks", blocks);
+      updateNuggetData(nuggetId, "blocks", blocks);
     };
 
     const insertNugget = (prevNugId) => {
@@ -459,6 +461,7 @@ export default defineComponent({
       collectionFormOpen,
       flowId,
       updateNuggetProp,
+      updateNuggetData,
       deleteNugget,
       saveBlocks,
       insertNugget,

@@ -21,6 +21,9 @@ const nuggetSeqMap = reactive(new Map());
 // An map of nugget assets by nuggetId
 const nuggetAssetMap = reactive(new Map());
 
+// An map of an array of blocks for a nugget by nuggetId
+const nuggetBlocksMap = reactive(new Map());
+
 // An array of sequenced Nugget Id's for a given flow.
 const nuggetSeq = ref([]);
 
@@ -150,16 +153,23 @@ export default function useFlows() {
   };
 
   // Get a single Flow for display in the App page
-  const loadFlow = async (flowId, withNuggets = false) => {
+  const loadFlow = async (flowId, withNuggets = false, withBlocks = true) => {
     try {
       if (flowConnector.value && flowSource.value) {
         // Use the defined connector
         return flowConnectors[flowConnector.value]
-          .getFlowById(flowId, withNuggets)
+          .getFlowById(flowId, withNuggets, withBlocks)
           .then((flowData) => {
             console.log("FLOWDATA: ");
             console.log(flowData);
             const flow = flowData.flow;
+            // Add the flow to the flowMap we use to list Flows.
+            flowMap.set(flow.id, flow);
+
+            if (flow.nuggetSeq) {
+              nuggetSeqMap.set(flowId, flow.nuggetSeq);
+            }
+
             if (flowData.nuggets) {
               console.log(flowData.nuggets);
               // Copy, then delete Nuggets from response
@@ -171,15 +181,20 @@ export default function useFlows() {
               // Remove the nuggets array from flow
               delete flow.nuggets;
             }
-            // Is a sequence defined? If not we'll use nuggets in the order they appear.
-            if (flow.nuggetSeq) {
-              nuggetSeqMap.set(flowId, flow.nuggetSeq);
+
+            if (flowData.blocks) {
+              console.log(flowData.blocks);
+              // Copy, then delete Blocks from response
+              const blocks = flowData.blocks;
+              // Add each block to the nuggetBlocksMap
+              blocks.forEach((key) => {
+                nuggetBlocksMap.set(key.id, key);
+              });
+              // Remove the nuggets array from flow
+              delete flowData.blocks;
             }
 
-            console.log(nuggetMap);
-
-            // Add the flow, minus nuggets, to the same flowMap we use to list Flows.
-            flowMap.set(flow.id, flow);
+            console.log(nuggetBlocksMap);
 
             // Signal the code Flows are loaded and it is safe to display them.
             flowLoaded.value = true;
@@ -281,7 +296,24 @@ export default function useFlows() {
           nuggetMap.set(nuggetId, nuggetResult.nugget);
         });
     } catch (e) {
-      console.error("Error Updating Nugget");
+      console.error("Error Updating Nugget prop");
+      console.error(e);
+    }
+  };
+
+  // Update a single property of a nugget.
+  // This is the predominate mechanism when the property has a lot of data.
+  const updateNuggetData = async (nuggetId, propName, propValue) => {
+    try {
+      // Use the defined connector
+      flowConnectors[flowConnector.value]
+        .updateNuggetData(nuggetId, propName, propValue)
+        .then((result) => {
+          console.log(result);
+          nuggetBlocksMap.set(nuggetId, result.blocks);
+        });
+    } catch (e) {
+      console.error("Error Updating Nugget data prop");
       console.error(e);
     }
   };
@@ -529,6 +561,7 @@ export default function useFlows() {
     createNugget,
     nuggetMap,
     updateNuggetProp,
+    updateNuggetData,
     deleteNugget,
     nuggetSeq,
     isPublished,
@@ -546,6 +579,7 @@ export default function useFlows() {
     nuggetSeqMap,
     checkAuth,
     nuggetAssetMap,
+    nuggetBlocksMap,
     deleteNuggetAsset,
     storeNuggetAssets,
   };
