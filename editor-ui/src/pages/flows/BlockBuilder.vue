@@ -2,7 +2,7 @@
   <q-page>
     <component
       :is="editor"
-      :displayData="displayData"
+      :data="data"
       @save="(event) => (saveData = event)"
     ></component>
     {{ saveData }}
@@ -67,9 +67,9 @@ export default defineComponent({
 
     console.log(blockType);
 
-    const displayData = ref({});
+    const data = ref({});
     if (blockType === "heading") {
-      displayData.value = { level: "2", heading: "" };
+      data.value = { level: "2", heading: "" };
     }
 
     const getEditor = (blockType) => {
@@ -85,7 +85,7 @@ export default defineComponent({
 
     return {
       blockType,
-      displayData,
+      data,
       editor,
       render,
       saveData,

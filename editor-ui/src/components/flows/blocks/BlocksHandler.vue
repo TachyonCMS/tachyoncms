@@ -14,7 +14,7 @@
           <div class="nugget-content row col-12">
             <component
               :is="editors[block.type]"
-              :displayData="block.displayData"
+              :data="block.data"
               @save="(event) => saveBlock(block.id, event)"
               @close="closeEditor(block.id)"
               @delete="(event) => deleteBlock(block.id)"
@@ -36,7 +36,7 @@
           <div class="nugget-content row col-12">
             <component
               :is="renderers[block.type]"
-              :displayData="block.displayData"
+              :data="block.data"
               @click="openEditor(block.id)"
             ></component>
             <new-block-button
@@ -137,8 +137,8 @@ export default defineComponent({
   setup(props, { emit }) {
     // We'll receive a string that can be converted to a JSON object.
     // That object will have an array of block objects.
-    // Block object have an id, type and displayData.
-    // displayData is stringified data that the renderers and editors handle by type.
+    // Block object have an id, type and data.
+    // data is stringified data that the renderers and editors handle by type.
 
     const $q = useQuasar();
 
@@ -184,9 +184,12 @@ export default defineComponent({
     };
 
     const deleteBlock = (blockId) => {
-      const newBlocks = blocks.value.filter((block) => block.id !== blockId);
-      blocks.value = newBlocks;
-      emit("save", JSON.stringify(newBlocks));
+      console.log(editorBlocks);
+      const newBlocks = editorBlocks.value.filter(
+        (block) => block.id !== blockId
+      );
+      editorBlocks.value = newBlocks;
+      emit("save", newBlocks);
     };
 
     const confirmDeleteBlock = async (blockId) => {
@@ -258,7 +261,7 @@ export default defineComponent({
       }
 
       // Add the block to the local nugget
-      const block = { id: uid, type: def.type, displayData: dataHolder };
+      const block = { id: uid, type: def.type, data: dataHolder };
       if (def.nextBlock && def.nextBlock.length > 0) {
         const nextIx = this.editorBlocks
           .map((object) => object.id)
@@ -288,8 +291,8 @@ export default defineComponent({
       // Get the
       const blockIx = this.editorBlocks.findIndex((x) => x.id === blockId);
 
-      // Set the displayData of the blockIX item to the string after sanitizing
-      this.editorBlocks[blockIx].displayData = data.newData;
+      // Set the data of the blockIX item to the string after sanitizing
+      this.editorBlocks[blockIx].data = data.newData;
 
       this.$emit("save", this.editorBlocks);
     },

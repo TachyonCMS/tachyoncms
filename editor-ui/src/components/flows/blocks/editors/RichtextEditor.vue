@@ -121,14 +121,14 @@ import { useQuasar } from "quasar";
 
 export default defineComponent({
   name: "HtmlEditor",
-  props: ["displayData", "dataCySlug"],
+  props: ["data", "dataCySlug"],
   emits: ["save", "close", "delete"],
   setup(props) {
     const $q = useQuasar();
 
     console.log(props);
 
-    const rawData = unref(props.displayData);
+    const rawData = unref(props.data);
 
     console.log(rawData);
 
@@ -145,7 +145,7 @@ export default defineComponent({
       if (value) {
         console.log(value);
         console.log(editorData);
-        console.log(props.displayData);
+        console.log(props.data);
         dirtyBit.value = true;
       }
     });

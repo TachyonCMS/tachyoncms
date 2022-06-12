@@ -20,14 +20,14 @@ const editor = new JSONEditor(element, options);
 
 export default defineComponent({
   name: "JsonEditor",
-  props: ["displayData", "dataCySlug"],
+  props: ["data", "dataCySlug"],
   emits: ["save", "close", "delete"],
   components: {},
   setup(props) {
     const $q = useQuasar();
 
     // We know this to be a shallow object so this should provide a non-reactive copy.
-    const rawData = Object.assign({}, props.displayData);
+    const rawData = Object.assign({}, props.data);
 
     // Create a local reactive object, not linked to the props.
     const editorData = reactive(rawData);
@@ -38,13 +38,13 @@ export default defineComponent({
     // Undo any UNSAVED changes
     const clear = () => {
       console.log("Clearing");
-      editorData = Object.assign({}, props.displayData);
+      editorData = Object.assign({}, props.data);
       dirtyBit.value = false;
     };
 
     // Watch for changes and update the dirtyBit accordingly
     watch(editorData, (value) => {
-      if (value && value.heading != props.displayData.heading) {
+      if (value && value.heading != props.data.heading) {
         dirtyBit.value = true;
       } else {
         // Catches the user manually undoing the change

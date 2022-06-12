@@ -237,7 +237,7 @@ import Fnt from "../../../site/widgets/Font";
 */
 export default defineComponent({
   name: "ImageEditor",
-  props: ["displayData", "dataCySlug"],
+  props: ["data", "dataCySlug"],
   components: {
     Fnt,
   },
@@ -257,8 +257,8 @@ export default defineComponent({
       fontColor: "#ffffff",
     };
 
-    if (props.displayData) {
-      rawData = { ...props.displayData };
+    if (props.data) {
+      rawData = { ...props.data };
       console.log(rawData);
     }
 

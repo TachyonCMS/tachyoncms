@@ -5,7 +5,7 @@ The data passed to this component must be sanitized to prevent XSS.
 <template>
   <div
     class="block-object-wrapper col-12 justify-left text-left full-width q-pa-lg"
-    v-html="displayData"
+    v-html="data"
   ></div>
 </template>
 
@@ -15,7 +15,7 @@ import { defineComponent } from "vue";
 export default defineComponent({
   name: "RichtextBlock",
   components: {},
-  props: ["displayData", "dataCySlug"],
+  props: ["data", "dataCySlug"],
   setup(props) {
     console.log("HtmlDisplay");
     console.log(props);

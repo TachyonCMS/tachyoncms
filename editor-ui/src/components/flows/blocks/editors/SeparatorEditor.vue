@@ -232,7 +232,7 @@ const colorVars = [
 
 export default defineComponent({
   name: "SeparatorEditor",
-  props: ["displayData", "dataCySlug"],
+  props: ["data", "dataCySlug"],
   components: {},
   emits: ["save", "delete", "close"],
   setup(props) {
@@ -247,8 +247,8 @@ export default defineComponent({
 
     const isNew = ref(false);
 
-    if (props.displayData) {
-      rawData = { ...rawData, ...props.displayData };
+    if (props.data) {
+      rawData = { ...rawData, ...props.data };
       console.log(rawData);
     } else {
       isNew.value = true;
@@ -258,8 +258,8 @@ export default defineComponent({
 
     const clear = () => {
       console.log(editorData);
-      console.log(props.displayData);
-      Object.assign(editorData, props.displayData);
+      console.log(props.data);
+      Object.assign(editorData, props.data);
     };
 
     // Display popup color picker
@@ -270,12 +270,12 @@ export default defineComponent({
 
     watch(editorData, (value) => {
       const newData = Object.entries({ ...value }).toString();
-      const origData = Object.entries({ ...props.displayData }).toString();
+      const origData = Object.entries({ ...props.data }).toString();
       console.log(newData);
       console.log(origData);
       if (value && newData != origData) {
         console.log({ ...value });
-        console.log({ ...props.displayData });
+        console.log({ ...props.data });
         dirtyBit.value = true;
       } else {
         dirtyBit.value = false;

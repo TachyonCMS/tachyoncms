@@ -14,7 +14,7 @@ import { defineComponent } from "vue";
 export default defineComponent({
   name: "JsonBlock",
   components: {},
-  props: ["displayData", "dataCySlug"],
+  props: ["data", "dataCySlug"],
   setup(props) {
     console.log("JSON Block");
     console.log(props);

@@ -16,7 +16,7 @@
           <div class="row col-12">
             <component
               :is="renderers[block.type]"
-              :displayData="block.displayData"
+              :data="block.data"
               @click="openEditor(block.id)"
             ></component>
           </div>
@@ -55,8 +55,8 @@ export default defineComponent({
   setup(props, { emit }) {
     // We'll receive a string that can be converted to a JSON object.
     // That object will have an array of block objects.
-    // Block object have an id, type and displayData.
-    // displayData is stringified data that the renderers and editors handle by type.
+    // Block object have an id, type and data.
+    // data is stringified data that the renderers and editors handle by type.
 
     const $q = useQuasar();
 

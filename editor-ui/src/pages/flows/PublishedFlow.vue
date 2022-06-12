@@ -10,7 +10,7 @@
         >
           <div class="nugget-container row col-12">
             <!-- This will receive a stringified JSON array of block objects. -->
-            <!-- Block objects have an id, type and displayData -->
+            <!-- Block objects have an id, type and data -->
             <!-- Display data is stringified data that is rendered differently for each type -->
             <render-blocks :blocks="item.blocks"> </render-blocks>
           </div>

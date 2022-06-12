@@ -7,16 +7,16 @@ The data passed to this component must be sanitized to prevent XSS.
     <div
       :class="
         'row col-12 q-pt-' +
-        displayData.padTop +
+        data.padTop +
         ' q-pb-' +
-        displayData.padBot +
+        data.padBot +
         ' q-px-' +
-        displayData.padSides
+        data.padSides
       "
     >
       <q-separator
-        :color="displayData.color + '-' + displayData.colorVar"
-        :size="displayData.size"
+        :color="data.color + '-' + data.colorVar"
+        :size="data.size"
         class="col-12"
         spaced="q-ma-lg"
       ></q-separator>
@@ -30,7 +30,7 @@ import { defineComponent, computed } from "vue";
 export default defineComponent({
   name: "SeparatorBlock",
   components: {},
-  props: ["displayData", "dataCySlug"],
+  props: ["data", "dataCySlug"],
   setup(props) {
     let defaultData = {
       padTop: "xs",

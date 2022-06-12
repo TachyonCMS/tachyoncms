@@ -2,27 +2,21 @@
 The data passed to this component must be sanitized to prevent XSS.
 -->
 <template>
-  <q-img
-    :src="displayData.url"
-    :ratio="displayData.ratio"
-    :fit="displayData.fit"
+  <q-img :src="data.url" :ratio="data.ratio" :fit="data.fit"
     ><div
-      v-if="displayData.captionText"
+      v-if="data.captionText"
       :class="
-        displayData.captionPosition +
+        data.captionPosition +
         ' ' +
-        displayData.fontSize +
+        data.fontSize +
         ' ' +
-        displayData.fontStyle +
+        data.fontStyle +
         ' ' +
-        displayData.fontWeight
+        data.fontWeight
       "
-      :style="'color:' + displayData.fontColor"
+      :style="'color:' + data.fontColor"
     >
-      <fnt
-        :face="displayData.font"
-        :txtStr="displayData.captionText"
-      ></fnt></div
+      <fnt :face="data.font" :txtStr="data.captionText"></fnt></div
   ></q-img>
 </template>
 
@@ -34,7 +28,7 @@ import Fnt from "../../../site/widgets/Font";
 export default defineComponent({
   name: "ImageBlock",
   components: { Fnt },
-  props: ["displayData", "dataCySlug"],
+  props: ["data", "dataCySlug"],
   setup(props) {
     console.log("ImageDisplay");
     console.log(props);

@@ -2,7 +2,7 @@
   <div class="row col-12">
     Multicorder
     <div class="row col-12">
-      <heading :displayData="editorData"></heading>
+      <heading :data="editorData"></heading>
     </div>
     <div class="row col-12">
       <q-input
@@ -61,7 +61,7 @@ import Heading from "../renders/HeadingBlock";
 
 export default defineComponent({
   name: "MulticorderEditor",
-  props: ["displayData", "dataCySlug"],
+  props: ["data", "dataCySlug"],
   emits: ["save", "close", "delete"],
   components: {
     Heading,
@@ -71,7 +71,7 @@ export default defineComponent({
     const $q = useQuasar();
 
     // We know this to be a shallow object so this should provide a non-reactive copy.
-    const rawData = Object.assign({}, props.displayData);
+    const rawData = Object.assign({}, props.data);
 
     // Create a local reactive object, not linked to the props.
     const editorData = reactive(rawData);
@@ -82,13 +82,13 @@ export default defineComponent({
     // Undo any UNSAVED changes
     const clear = () => {
       console.log("Clearing");
-      editorData.heading = props.displayData.heading;
+      editorData.heading = props.data.heading;
       dirtyBit.value = false;
     };
 
     // Watch for changes and update the dirtyBit accordingly
     watch(editorData, (value) => {
-      if (value && value.heading != props.displayData.heading) {
+      if (value && value.heading != props.data.heading) {
         dirtyBit.value = true;
       } else {
         // Catches the user manually undoing the change
