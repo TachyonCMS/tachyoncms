@@ -143,14 +143,14 @@ export default defineComponent({
     const $q = useQuasar();
 
     // Convert Amplify AWSJSON blockData to editable blocks array.
-    const convertToBlocks = (blockData) => {
-      if (!blockData) {
-        return [];
-      }
-      const blockArr = JSON.parse(blockData);
-
-      return blockArr;
-    };
+    //const convertToBlocks = (blockData) => {
+    //  if (!blockData) {
+    //    return [];
+    //  }
+    //  const blockArr = JSON.parse(blockData);
+    //
+    //  return blockArr;
+    //};
 
     // Map a block type to a renderer
     const renderers = {
@@ -183,33 +183,6 @@ export default defineComponent({
       return inEdit.value.includes(blockId) ? true : false;
     };
 
-    const deleteBlock = (blockId) => {
-      console.log(editorBlocks);
-      const newBlocks = editorBlocks.value.filter(
-        (block) => block.id !== blockId
-      );
-      editorBlocks.value = newBlocks;
-      emit("save", newBlocks);
-    };
-
-    const confirmDeleteBlock = async (blockId) => {
-      $q.dialog({
-        title: "Confirm block deletion",
-        message: 'Click "OK" to delete this block, this cannot be undone.',
-        cancel: true,
-        persistent: true,
-      })
-        .onOk((data) => {
-          deleteBlock(blockId);
-        })
-        .onCancel(() => {
-          // console.log('>>>> Cancel')
-        })
-        .onDismiss(() => {
-          // console.log('I am triggered on both OK and Cancel')
-        });
-    };
-
     console.log(props.blocks);
     let editorBlocks = ref([]);
     if (props.blocks) {
@@ -219,15 +192,41 @@ export default defineComponent({
     return {
       inEdit,
       isInEdit,
-      deleteBlock,
       renderers,
       editors,
       ref,
-      confirmDeleteBlock,
       editorBlocks,
     };
   },
   methods: {
+    confirmDeleteBlock(blockId) {
+      this.$q
+        .dialog({
+          title: "Confirm block deletion",
+          message: 'Click "OK" to delete this block, this cannot be undone.',
+          cancel: true,
+          persistent: true,
+        })
+        .onOk((data) => {
+          this.deleteBlock(blockId);
+        })
+        .onCancel(() => {
+          // console.log('>>>> Cancel')
+        })
+        .onDismiss(() => {
+          // console.log('I am triggered on both OK and Cancel')
+        });
+    },
+
+    deleteBlock(blockId) {
+      console.log(this.editorBlocks);
+      const newBlocks = this.editorBlocks.filter(
+        (block) => block.id !== blockId
+      );
+      this.editorBlocks = newBlocks;
+      this.$emit("save", newBlocks);
+    },
+
     onAddBlock(def) {
       // Create an ID for the block.
       const uid = nanoid(8);
