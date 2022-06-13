@@ -315,7 +315,7 @@
 
               <div class="row col-12">
                 <blocks-handler
-                  :blocks="nuggetMap.get(nuggetId).blocks"
+                  :blocks="nuggetBlocksMap.get(nuggetId)"
                   @save="(event) => saveBlocks(nuggetId, event)"
                   :nix="nix"
                 >
@@ -389,6 +389,7 @@ export default defineComponent({
       createNugget,
       flowSource,
       nuggetSeqMap,
+      nuggetBlocksMap,
       loadNuggetAssets,
     } = useFlows();
 
@@ -470,6 +471,7 @@ export default defineComponent({
       // nuggetSeqMap,
       nuggetSeq,
       loadNuggetAssets,
+      nuggetBlocksMap,
     };
   },
   methods: {

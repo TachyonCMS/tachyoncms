@@ -68,43 +68,78 @@ export default () => {
     return objects;
   };
 
+  const getJsonMultiObj = async (dirSegmentsArray, segmentIx = -2) => {
+    const objects = {};
+
+    await Promise.all(
+      dirSegmentsArray.map(async (dirSegments) => {
+        let readResult = {};
+        let objId = dirSegments.at(segmentIx);
+
+        try {
+          readResult = await readJson(dirSegments);
+          if (readResult) {
+            objects[objId] = readResult;
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      })
+    );
+
+    return objects;
+  };
+
   const readJson = async (pathSegments) => {
     try {
       const topDir = pathSegments[0];
       const objectDir = pathSegments[1];
       const filename = pathSegments[2];
       const fullName = filename + ".json";
-      //console.log("Reading " + fullName + " from " + objectDir);
 
-      // The 2nd level directory, a Flow or Nugget ID
-      let objectDirHandle;
+      // The actual file handle we need
+      let fileHandle;
 
-      // If we already have a handle for the final object directory, use it.
-      if (dirHandleMap.has(objectDir)) {
-        objectDirHandle = dirHandleMap.get(objectDir);
+      // The unique name for the desired filehandle
+      const fileHandleName = objectDir + "-" + filename;
+
+      if (fileHandleMap.has(fileHandleName)) {
+        fileHandle = fileHandleMap.get(fileHandleName);
       } else {
-        // Else get the objectDir handle from the topDir handle.
-        // Do we already have a handle for the topDir? (flows|nuggets)
-        let topDirHandle;
-        if (dirHandleMap.has(topDir)) {
-          topDirHandle = dirHandleMap.get(topDir);
+        // The 2nd level directory, a Flow or Nugget ID
+        let objectDirHandle;
+
+        // If we already have a handle for the final object directory, use it.
+        if (dirHandleMap.has(objectDir)) {
+          objectDirHandle = dirHandleMap.get(objectDir);
         } else {
-          // Else fetch the topDir handle from the sourceDir handle.
-          // We don't have access above the sourceDir.
-          const sourceDirHandle = dirHandleMap.get("sourceDir");
-          topDirHandle = await sourceDirHandle.getDirectoryHandle(topDir);
-          dirHandleMap.set(topDir, topDirHandle);
+          // Else get the objectDir handle from the topDir handle.
+          // Do we already have a handle for the topDir? (flows|nuggets)
+          let topDirHandle;
+          if (dirHandleMap.has(topDir)) {
+            topDirHandle = dirHandleMap.get(topDir);
+          } else {
+            // Else fetch the topDir handle from the sourceDir handle.
+            // We don't have access above the sourceDir.
+            const sourceDirHandle = dirHandleMap.get("sourceDir");
+            topDirHandle = await sourceDirHandle.getDirectoryHandle(topDir, {
+              create: true,
+            });
+            dirHandleMap.set(topDir, topDirHandle);
+          }
+          objectDirHandle = await topDirHandle.getDirectoryHandle(objectDir);
         }
-        objectDirHandle = await topDirHandle.getDirectoryHandle(objectDir);
+
+        // get the FILE handle from the objectDirHandle
+        fileHandle = await objectDirHandle.getFileHandle(fullName);
       }
 
-      // get the FILE handle from the objectDirHandle
-      const jsonFileHandle = await objectDirHandle.getFileHandle(fullName);
-      const jsonFile = await jsonFileHandle.getFile();
+      const jsonFile = await fileHandle.getFile();
       const jsonData = await jsonFile.text();
       return JSON.parse(jsonData);
     } catch (e) {
       console.error(e);
+      return null;
     }
   };
 
@@ -338,13 +373,21 @@ export default () => {
                 try {
                   console.log("Loading Blocks");
                   const blockPaths = [];
+                  // Get an array of file paths
                   nuggetSeq.map((dirName) => {
                     const pathSegments = ["nuggets", dirName, "blocks"];
                     blockPaths.push(pathSegments);
                   });
                   // Load those paths
-                  blocks = await getJsonMulti(blockPaths);
-                  console.log(blocks);
+                  console.log(blockPaths);
+                  blocks = await getJsonMultiObj(blockPaths);
+                  const outObj = {};
+                  Object.entries(blocks).forEach((entry) => {
+                    const [objId, blocksObj] = entry;
+                    console.log(objId, blocksObj);
+                    outObj[objId] = blocksObj.blocks;
+                  });
+                  console.log(outObj);
                 } catch (e) {
                   console.error(e);
                 }
@@ -759,7 +802,10 @@ export default () => {
       console.log(dirHandle);
       const assets = await getDirFiles(dirHandle);
       console.log(assets);
-      return assets;
+      const noTemps = assets.filter((asset) => {
+        return asset.substring(asset.length - 7) != ".crswap";
+      });
+      return noTemps;
     } catch (e) {
       console.log("Error Loading Filesystem Nugget Assets");
       console.error(e);

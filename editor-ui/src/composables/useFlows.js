@@ -185,13 +185,12 @@ export default function useFlows() {
             if (flowData.blocks) {
               console.log(flowData.blocks);
               // Copy, then delete Blocks from response
-              const blocks = flowData.blocks;
-              // Add each block to the nuggetBlocksMap
-              blocks.forEach((key) => {
-                nuggetBlocksMap.set(key.id, key);
+              Object.entries(flowData.blocks).forEach((entry) => {
+                const [nuggetId, blocksArr] = entry;
+                nuggetBlocksMap.set(nuggetId, blocksArr.blocks);
               });
               // Remove the nuggets array from flow
-              delete flowData.blocks;
+              delete flowData.blocksMap;
             }
 
             console.log(nuggetBlocksMap);
