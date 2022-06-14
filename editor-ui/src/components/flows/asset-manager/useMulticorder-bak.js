@@ -1,109 +1,34 @@
-<template>
-  <div class="row col-12">
-    <video
-      ref="video"
-      :width="width"
-      :height="height"
-      :src="source"
-      :autoplay="autoplay"
-      :playsinline="playsinline"
-      muted="muted"
-    />
-    <canvas id="canvas"> </canvas>
-    <div class="output">
-      <img
-        v-show="view == 'snapshot'"
-        :src="snapshot"
-        width="100%"
-        height="100%"
-      />
-    </div>
-  </div>
-</template>
-
-<script>
 import { defineComponent, ref, onMounted } from "vue";
 
-export default defineComponent({
-  name: "MultiCorder",
-  emits: ["cameras", "error", "notification"],
-  props: {
-    videoSource: {
-      type: Object,
-      default: null,
-    },
-    width: {
-      type: [Number, String],
-      default: "100%",
-    },
-    height: {
-      type: [Number, String],
-      default: "100%",
-    },
-    autoplay: {
-      type: Boolean,
-      default: true,
-    },
-    playsinline: {
-      type: Boolean,
-      default: true,
-    },
-    recorderMuted: {
-      type: Boolean,
-      default: true,
-    },
-    playerMuted: {
-      type: Boolean,
-      default: true,
-    },
-    screenshotFormat: {
-      type: String,
-      default: "image/jpeg",
-    },
-    videoTypes: {
-      type: Array,
-      default: () => {
-        return ["camera", "screen"];
-      },
-    },
-    recorderMode: {
-      type: String,
-      default: "single",
-    },
-    camerasHeader: {
-      type: Array,
-      default: () => {
-        return [
+export default function useMulticorder() {
+  const videoSource = ref(null);
+  const width = ref("100%");
+  const height= ref("100%");
+  const autoplay=ref(true);
+  const playsInline=ref(true);
+  const playerMuted=(true);
+  const screenshotFormat=ref("image/jpeg");
+  const videoTypes = ref(["camera", "screen"]);
+  const recorderMode =ref("single");
+  const camerasHeader=ref([
           {
             divider: true,
             header: "Cameras",
           },
-        ];
-      },
-    },
-    staticVideoOptions: {
-      type: Array,
-      default: () => {
-        return [
+        ]);
+    const    staticVideoOptions=ref([
           {
             text: "Screen share",
             value: "screenshare",
           },
-        ];
-      },
-    },
-    staticVideoOptionsHeader: {
-      type: Array,
-      default: () => {
-        return [
+        ]);
+    const     staticVideoOptionsHeader=ref([
           {
             divider: true,
             header: "Screen Sharing",
           },
-        ];
-      },
-    },
-  },
+        ]);
+
   setup(props, { emit }) {
     console.log(props);
 
@@ -478,4 +403,3 @@ export default defineComponent({
     },
   },
 });
-</script>

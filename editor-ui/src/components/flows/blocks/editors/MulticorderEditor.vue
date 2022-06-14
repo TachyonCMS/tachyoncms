@@ -1,10 +1,12 @@
 <template>
   <div class="row col-12">
+    <div>MulticorderEditor</div>
     <am-camera></am-camera>
   </div>
 </template>
 
 <script>
+console.log("MulticorderEditor.vue - loading");
 import { defineComponent, ref } from "vue";
 
 import AmCamera from "../../asset-manager/AMCamera";
@@ -15,8 +17,6 @@ export default defineComponent({
   components: {
     AmCamera,
   },
-  setup(props) {
-    console.log("Multicorder Capture");
-  },
+  setup(props) {},
 });
 </script>

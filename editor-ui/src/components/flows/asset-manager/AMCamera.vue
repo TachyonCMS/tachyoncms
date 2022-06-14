@@ -1,29 +1,35 @@
 <template>
   <div class="row col-12 text-center justify-center items-center">
+    <div class="row col-12">AMCamera</div>
     <div class="videobox">
-      <multi-corder
-        ref="multicorder"
-        :video-source="videoSource"
-        :videoTypes="videoTypes"
-        :recorderMode="recorderMode"
-        @error="onError"
-        @cameras="onCameras"
-        @video-live="onVideoLive"
-        @view-change="onViewChange"
-        @new-recording="onNewRecording"
-        @delete-recording="onDeleteRecording"
-        @player-loaded="onPlayerLoaded"
-      ></multi-corder>
+      <multi-corder-video>
+        ref="multicorder" :video-source="videoSource" :videoTypes="['camera']"
+        :recorderMode="recorderMode" @error="onError" @video-live="onVideoLive"
+        @view-change="onViewChange" @new-recording="onNewRecording"
+        @delete-recording="onDeleteRecording" @player-loaded="onPlayerLoaded"
+        ></multi-corder-video
+      >
     </div>
-    {{ videoSourceList }}
+    <video-source-selector
+      :videoSourceList="videoSourceList"
+    ></video-source-selector>
+    <div class="row col-12">Video Sources:</div>
+    <div class="row col-12">{{ videoSourceList }}</div>
   </div>
 </template>
 
 <script>
-import { defineComponent, ref, onMounted } from "vue";
+import { defineComponent, ref } from "vue";
+console.log("AMCamera.vue - loading");
 
-// This provides the shared code for the HTML5 Recording.
-import MultiCorder from "./MultiCorder";
+// The composable function
+import useMultiCorder from "./useMultiCorder";
+
+// This provides the shared code for displaying an HTML5 video component.
+import MultiCorderVideo from "./MultiCorderVideo";
+
+// Import smart UI components
+import VideoSourceSelector from "./components/VideoSourceSelector";
 
 /**
  * Wraps Multicorder in a Camera specific UI.
@@ -32,9 +38,10 @@ import MultiCorder from "./MultiCorder";
  */
 export default defineComponent({
   name: "AssetManagerCamera",
-  emits: ["cameras", "error", "notification"],
+  emits: ["error", "notification"],
   components: {
-    MultiCorder,
+    MultiCorderVideo,
+    VideoSourceSelector,
   },
   props: {
     recorderMode: {
@@ -45,26 +52,29 @@ export default defineComponent({
   setup(props, { emit }) {
     console.log(props);
 
-    const controls = ref(null);
-    const videoSource = ref(null);
-    const videoSourceList = ref([]);
-    const isPaused = ref(false);
-    const isPlayerPaused = ref(false);
-    const isMuted = ref(true);
-    const isPlayerMuted = ref(true);
-    const view = ref("video");
-    const recordings = ref([]);
+    const { videoSource, videoSourceList } = useMultiCorder();
+
+    //const controls = ref(null);
+    //const videoSource = ref(null);
+    //const videoSourceList = ref([]);
+    //const isPaused = ref(false);
+    //const isPlayerPaused = ref(false);
+    //const isMuted = ref(true);
+    //const isPlayerMuted = ref(true);
+    //const view = ref("video");
+    //const recordings = ref([]);
 
     return {
-      controls,
-      videoSource,
-      videoSourceList,
-      isPaused,
-      isPlayerPaused,
-      isMuted,
-      isPlayerMuted,
-      view,
-      recordings,
+      videoSourceList, // List of available video sources
+      // cameras, // A list of available cameras
+      // controls,
+
+      //isPaused,
+      //isPlayerPaused,
+      //isMuted,
+      //isPlayerMuted,
+      //view,
+      //recordings,
     };
   },
   methods: {

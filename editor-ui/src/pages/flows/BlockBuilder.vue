@@ -1,11 +1,19 @@
 <template>
   <q-page>
+    <div>BlockBuilder</div>
     <component
       :is="editor"
       :data="data"
       @save="(event) => (saveData = event)"
     ></component>
-    {{ saveData }}
+    <div class="blockbuilder">
+      <p>Everything above here is the block editor.</p>
+
+      <p>The emitted data:</p>
+      <p>
+        {{ saveData }}
+      </p>
+    </div>
   </q-page>
 </template>
 
@@ -41,7 +49,7 @@ const tcmsBlockTypes = [
 const blockHandlers = {};
 // We use a convention for the TachyonCMS created ones.
 // You can append custom editor and render mappings for a url segment to the blockHandlers.
-tcmsBlockTypes.foreach((type) => {
+tcmsBlockTypes.forEach((type) => {
   blockHandlers[type] = {
     editor: [type] + "-editor",
     render: [type] + "-block",
@@ -65,7 +73,7 @@ export default defineComponent({
 
     const saveData = ref({});
 
-    console.log(blockType);
+    console.log("Editing " + blockType + " block editor");
 
     const data = ref({});
     if (blockType === "heading") {
@@ -94,3 +102,9 @@ export default defineComponent({
   methods: {},
 });
 </script>
+
+<style scoped>
+.blockbuilder {
+  background-color: aqua;
+}
+</style>
