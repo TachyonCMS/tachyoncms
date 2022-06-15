@@ -3,12 +3,13 @@
     <div class="row col-12">Multicorder</div>
     <div class="videobox">
       <video
-        :ref="'video-' + uniq"
+        :ref="'video_' + uniq"
         :width="width"
         :height="height"
         :src="videoSource"
         :autoplay="autoplay"
         :playsInline="playsInline"
+        id="video_0"
         muted="recorderMuted"
       />
       <div>
@@ -20,11 +21,12 @@
         />
       </div>
     </div>
-
-    <video-source-selector
-      :videoSourceList="cameras"
-      @selectedSource="(event) => changeVideoSource(event)"
-    ></video-source-selector>
+    <div class="col-12 text-center justify-center items-center">
+      <video-source-selector
+        :videoSourceList="cameras"
+        @selectedSource="(event) => changeVideoSource(event, 'video_' + uniq)"
+      ></video-source-selector>
+    </div>
   </div>
 </template>
 
@@ -93,7 +95,13 @@ export default defineComponent({
   setup(props, { emit }) {
     console.log(props);
 
-    const { initVideoOptions, cameras } = useMultiCorder();
+    const {
+      initVideoOptions,
+      cameras,
+      startScreenshare,
+      loadCamera,
+      stopVideo,
+    } = useMultiCorder();
 
     const view = ref("camera");
 
@@ -107,7 +115,30 @@ export default defineComponent({
       snapshot, // All the captured image to be displayed or manipulated
       view, // The current selected view
       cameras, // List of source options
+      startScreenshare,
+      loadCamera,
+      stopVideo,
     };
+  },
+  methods: {
+    // Handle switching the video source to the given one
+    changeVideoSource(videoSource, videoElemName) {
+      console.log(videoSource);
+      console.log(videoElemName);
+      console.log(this.$refs[videoElemName]);
+
+      const videoElem = this.$refs[videoElemName];
+
+      this.stopVideo(video_0);
+
+      if (videoSource) {
+        if (videoSource.value == "screenshare") {
+          this.startScreenshare();
+        } else {
+          this.loadCamera(videoSource, videoElem);
+        }
+      }
+    },
   },
 });
 </script>

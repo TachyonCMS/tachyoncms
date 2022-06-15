@@ -148,10 +148,14 @@ export default function useFlows() {
   };
 
   // Handle switching the video source to the given one
-  const changeVideoSource = (videoSource, videoElem) => {
+  const changeVideoSource = (videoSource, videoElemName) => {
     console.log(videoSource);
+    console.log(videoElemName);
+    console.log(this.$refs.video_0);
 
-    stopVideo(videoElem);
+    const video_0 = ref(null);
+
+    stopVideo(video_0);
 
     if (videoSource) {
       if (videoSource.value == "screenshare") {
@@ -246,5 +250,8 @@ export default function useFlows() {
     videoSource,
     // Allow changing the videoSource
     changeVideoSource,
+    // Permitting stopping video
+    stopVideo,
+    loadCamera,
   };
 }
