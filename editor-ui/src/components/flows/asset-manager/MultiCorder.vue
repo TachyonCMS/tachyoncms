@@ -1,24 +1,30 @@
 <template>
-  <div class="row col-12">
-    <div>Multicorder</div>
-    <video
-      :ref="'video-' + uniq"
-      :width="width"
-      :height="height"
-      :src="videoSource"
-      :autoplay="autoplay"
-      :playsInline="playsInline"
-      muted="recorderMuted"
-    />
-    <canvas id="canvas"> </canvas>
-    <div>
-      <img
-        v-show="view == 'snapshot'"
-        :src="snapshot"
-        width="100%"
-        height="100%"
+  <div class="row col-12 text-center justify-center items-center">
+    <div class="row col-12">AMCamera</div>
+    <div class="videobox">
+      <video
+        :ref="'video-' + uniq"
+        :width="width"
+        :height="height"
+        :src="videoSource"
+        :autoplay="autoplay"
+        :playsInline="playsInline"
+        muted="recorderMuted"
       />
+      <div>
+        <img
+          v-show="view == 'snapshot'"
+          :src="snapshot"
+          width="100%"
+          height="100%"
+        />
+      </div>
     </div>
+    <video-source-selector
+      :videoSourceList="videoSourceList"
+    ></video-source-selector>
+    <div class="row col-12">Video Sources:</div>
+    <div class="row col-12">{{ videoSourceList }}</div>
   </div>
 </template>
 
