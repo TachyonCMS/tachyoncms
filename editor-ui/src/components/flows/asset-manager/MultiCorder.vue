@@ -1,15 +1,13 @@
 <template>
   <div class="row col-12 text-center justify-center items-center">
-    <div class="row col-12">Multicorder</div>
-    <div class="videobox">
+    <div class="videobox" v-show="view != 'selectSource'">
       <video
         :ref="'video_' + uniq"
-        :width="width"
-        :height="height"
         :src="videoSource"
         :autoplay="autoplay"
         :playsInline="playsInline"
-        id="video_0"
+        :height="height"
+        :width="width"
         muted="recorderMuted"
       />
       <div>
@@ -21,10 +19,14 @@
         />
       </div>
     </div>
-    <div class="col-12 text-center justify-center items-center">
+
+    <div
+      class="col-12 text-center justify-center items-center"
+      v-show="view === 'selectSource'"
+    >
       <video-source-selector
         :videoSourceList="cameras"
-        @selectedSource="(event) => changeVideoSource(event, 'video_' + uniq)"
+        @selectedSource="(event) => onChangeVideoSource(event, 'video_' + uniq)"
       ></video-source-selector>
     </div>
   </div>
@@ -95,15 +97,10 @@ export default defineComponent({
   setup(props, { emit }) {
     console.log(props);
 
-    const {
-      initVideoOptions,
-      cameras,
-      startScreenshare,
-      loadCamera,
-      stopVideo,
-    } = useMultiCorder();
+    const { initVideoOptions, cameras, startScreenshare, changeVideoSource } =
+      useMultiCorder();
 
-    const view = ref("camera");
+    const view = ref("selectSource");
 
     const snapshot = ref(null);
 
@@ -116,28 +113,14 @@ export default defineComponent({
       view, // The current selected view
       cameras, // List of source options
       startScreenshare,
-      loadCamera,
-      stopVideo,
+      changeVideoSource,
     };
   },
   methods: {
-    // Handle switching the video source to the given one
-    changeVideoSource(videoSource, videoElemName) {
-      console.log(videoSource);
-      console.log(videoElemName);
-      console.log(this.$refs[videoElemName]);
-
+    onChangeVideoSource(videoSource, videoElemName) {
       const videoElem = this.$refs[videoElemName];
-
-      this.stopVideo(video_0);
-
-      if (videoSource) {
-        if (videoSource.value == "screenshare") {
-          this.startScreenshare();
-        } else {
-          this.loadCamera(videoSource, videoElem);
-        }
-      }
+      this.changeVideoSource(videoSource, videoElem);
+      this.view = "video";
     },
   },
 });

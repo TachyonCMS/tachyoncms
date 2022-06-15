@@ -29,8 +29,14 @@ export default function useFlows() {
   // The current snapshot image
   const snapshot = ref(null);
 
-  // The currently select videoSource
+  // The currently selected videoSource
   const videoSource = ref(null);
+
+  // The friendly name for the videoSource
+  const videoSourceName = ref(null);
+
+  // Legacy video use @todo deprecate
+  const source = ref(null);
 
   // The HTML <video> element for THIS multicorder
 
@@ -148,18 +154,15 @@ export default function useFlows() {
   };
 
   // Handle switching the video source to the given one
-  const changeVideoSource = (videoSource, videoElemName) => {
+  const changeVideoSource = (videoSource, videoElem) => {
     console.log(videoSource);
-    console.log(videoElemName);
-    console.log(this.$refs.video_0);
+    console.log(videoElem);
 
-    const video_0 = ref(null);
-
-    stopVideo(video_0);
+    stopVideo(videoElem);
 
     if (videoSource) {
-      if (videoSource.value == "screenshare") {
-        startScreenshare();
+      if (videoSource == "screen") {
+        startScreenshare(videoElem);
       } else {
         loadCamera(videoSource, videoElem);
       }
@@ -172,7 +175,6 @@ export default function useFlows() {
       video: {
         deviceId: {
           exact: device,
-          //"cbcc832cc980055ebf11fbd3eff100c989a227794bc2ecf1586365f8d9da8e62",
         },
       },
       audio: { echoCancellation: true },
@@ -194,7 +196,7 @@ export default function useFlows() {
     try {
       navigator.mediaDevices
         .getDisplayMedia()
-        .then((stream) => loadSrcStream(stream));
+        .then((stream) => loadSrcStream(stream, videoElem));
     } catch (e) {
       console.error(e);
     }
@@ -207,12 +209,12 @@ export default function useFlows() {
       videoElem.srcObject = stream;
     } else {
       // old broswers
-      this.source = window.HTMLMediaElement.srcObject(stream);
+      source.value = window.HTMLMediaElement.srcObject(stream);
     }
     // Emit video start/live event
     videoElem.onloadedmetadata = () => {
       //("video-live", stream);
-      console.log("video streaming to " + videoTarget);
+      console.log("video streaming to " + videoElem);
     };
   };
 
@@ -230,7 +232,7 @@ export default function useFlows() {
       track.stop();
 
       videoElem.srcObject = null;
-      this.source = null;
+      source.value = null;
     });
   };
 
@@ -252,6 +254,9 @@ export default function useFlows() {
     changeVideoSource,
     // Permitting stopping video
     stopVideo,
+    // Permit loading a single camera
     loadCamera,
+    // Allow screen capture via HTML5 screen share
+    startScreenshare,
   };
 }
