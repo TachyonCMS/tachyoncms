@@ -1,7 +1,7 @@
 <template>
   <div class="row col-12">
     <div>MulticorderEditor</div>
-    <am-camera></am-camera>
+    <multi-corder></multi-corder>
   </div>
 </template>
 
@@ -9,13 +9,13 @@
 console.log("MulticorderEditor.vue - loading");
 import { defineComponent, ref } from "vue";
 
-import AmCamera from "../../asset-manager/AMCamera";
+import MultiCorder from "../../asset-manager/MultiCorder";
 
 export default defineComponent({
-  name: "MulticorderEditor",
+  name: "MultiCorderEditor",
   props: ["data", "dataCySlug"],
   components: {
-    AmCamera,
+    MultiCorder,
   },
   setup(props) {},
 });

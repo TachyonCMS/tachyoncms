@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { ref, computed } from "vue";
 
 /**
  * SHARED
@@ -23,7 +23,7 @@ export default function useFlows() {
    * REACTIVE PROPERTIES
    */
 
-  // Types of video supported [camera,screen]
+  // Types of desired video support [camera,screen]
   const videoTypes = ref(["camera", "screen"]);
 
   // The current snapshot image
@@ -32,8 +32,16 @@ export default function useFlows() {
   // The currently select videoSource
   const videoSource = ref(null);
 
+  // The HTML <video> element for THIS multicorder
+
   // The list of available videoSources, cameras and screenshare
-  const videoSourceList = ref([]);
+  const videoSourceList = computed(() => {
+    const screenDef = {
+      text: "Screen Capture",
+      value: "screen",
+    };
+    return [screenDef, ...cameras.value];
+  });
 
   /**
    * FUNCTIONS
@@ -47,7 +55,6 @@ export default function useFlows() {
     }
     if (reqVideoTypes.includes("camera")) {
       initCameras();
-      camerasLoaded.value = true;
     }
   };
 
@@ -92,7 +99,7 @@ export default function useFlows() {
         });
         loadCameras();
       })
-      .catch((error) => this.$emit("error", error));
+      .catch((error) => console.error("error", error));
   };
 
   // Handle older browsers
@@ -123,27 +130,111 @@ export default function useFlows() {
 
   // Load the available cameras into a ref list
   const loadCameras = () => {
-    console.log("loadCameras");
-    navigator.mediaDevices
-      .enumerateDevices()
-      .then((deviceInfos) => {
-        for (let i = 0; i !== deviceInfos.length; ++i) {
-          let deviceInfo = deviceInfos[i];
-          if (deviceInfo.kind === "videoinput") {
-            // store only the data we need
-            cameras.value.push({
-              text: deviceInfo.label,
-              value: deviceInfo.deviceId,
-            });
+    if (!camerasLoaded.value) {
+      console.log("loadCameras");
+      console.log(cameras);
+      navigator.mediaDevices
+        .enumerateDevices()
+        .then((deviceInfos) => {
+          for (let i = 0; i !== deviceInfos.length; ++i) {
+            let deviceInfo = deviceInfos[i];
+            if (deviceInfo.kind === "videoinput") {
+              // store only the data we need
+              cameras.value.push({
+                text: deviceInfo.label,
+                value: deviceInfo.deviceId,
+              });
+            }
           }
-        }
-      })
-      .then(() => {
-        if (!camerasLoaded.value) {
+        })
+        .then(() => {
           camerasLoaded.value = true;
-        }
-      })
-      .catch((error) => ("error", error));
+        })
+        .catch((error) => ("error", error));
+    }
+  };
+
+  // Handle switching the video source to the given one
+  const changeVideoSource = (videoSource, videoElem) => {
+    console.log(videoSource);
+
+    stopVideo(videoElem);
+
+    if (videoSource) {
+      if (videoSource.value == "screenshare") {
+        startScreenshare();
+      } else {
+        loadCamera(videoSource, videoElem);
+      }
+    }
+  };
+
+  // Get a video stream from a specific camera
+  const loadCamera = (device, videoElem) => {
+    let constraints = {
+      video: {
+        deviceId: {
+          exact: device,
+          //"cbcc832cc980055ebf11fbd3eff100c989a227794bc2ecf1586365f8d9da8e62",
+        },
+      },
+      audio: { echoCancellation: true },
+    };
+
+    // if (this.resolution) {
+    //   constraints.video.height = this.resolution.height;
+    //   constraints.video.width = this.resolution.width;
+    // }
+
+    navigator.mediaDevices
+      .getUserMedia(constraints)
+      .then((stream) => loadSrcStream(stream, videoElem))
+      .catch((e) => console.error(e));
+  };
+
+  // Start video from screenshare
+  const startScreenshare = (videoElem) => {
+    try {
+      navigator.mediaDevices
+        .getDisplayMedia()
+        .then((stream) => loadSrcStream(stream));
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  // Load a src stream into the HTML5 video element
+  const loadSrcStream = (stream, videoElem) => {
+    if ("srcObject" in videoElem) {
+      // new browsers api
+      videoElem.srcObject = stream;
+    } else {
+      // old broswers
+      this.source = window.HTMLMediaElement.srcObject(stream);
+    }
+    // Emit video start/live event
+    videoElem.onloadedmetadata = () => {
+      //("video-live", stream);
+      console.log("video streaming to " + videoTarget);
+    };
+  };
+
+  const stopVideo = (videoElem) => {
+    if (videoElem.srcObject) {
+      stopStreamedVideo(videoElem);
+    }
+  };
+
+  const stopStreamedVideo = (videoElem) => {
+    let stream = videoElem.srcObject;
+    let tracks = stream.getTracks();
+
+    tracks.forEach((track) => {
+      track.stop();
+
+      videoElem.srcObject = null;
+      this.source = null;
+    });
   };
 
   /**
@@ -162,5 +253,7 @@ export default function useFlows() {
     snapshot,
     // The selected video source for this instance
     videoSource,
+    // Allow changing the videoSource
+    changeVideoSource,
   };
 }

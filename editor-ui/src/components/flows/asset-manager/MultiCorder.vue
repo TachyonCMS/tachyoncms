@@ -2,7 +2,7 @@
   <div class="row col-12">
     <div>Multicorder</div>
     <video
-      ref="video"
+      :ref="'video-' + uniq"
       :width="width"
       :height="height"
       :src="videoSource"
@@ -32,6 +32,10 @@ export default defineComponent({
   name: "MultiCorder",
   emits: ["error", "notification"],
   props: {
+    uniq: {
+      type: String,
+      default: "0",
+    },
     videoSource: {
       type: Object,
       default: null,
@@ -73,39 +77,6 @@ export default defineComponent({
     recorderMode: {
       type: String,
       default: "single",
-    },
-    camerasHeader: {
-      type: Array,
-      default: () => {
-        return [
-          {
-            divider: true,
-            header: "Cameras",
-          },
-        ];
-      },
-    },
-    staticVideoOptions: {
-      type: Array,
-      default: () => {
-        return [
-          {
-            text: "Screen share",
-            value: "screenshare",
-          },
-        ];
-      },
-    },
-    staticVideoOptionsHeader: {
-      type: Array,
-      default: () => {
-        return [
-          {
-            divider: true,
-            header: "Screen Sharing",
-          },
-        ];
-      },
     },
   },
   setup(props, { emit }) {
