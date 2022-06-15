@@ -24,7 +24,7 @@ export default function useFlows() {
    */
 
   // Types of desired video support [camera,screen]
-  const videoTypes = ref(["camera", "screen"]);
+  const videoTypes = ref(null);
 
   // The current snapshot image
   const snapshot = ref(null);
@@ -34,26 +34,18 @@ export default function useFlows() {
 
   // The HTML <video> element for THIS multicorder
 
-  // The list of available videoSources, cameras and screenshare
-  const videoSourceList = computed(() => {
-    const screenDef = {
-      text: "Screen Capture",
-      value: "screen",
-    };
-    return [screenDef, ...cameras.value];
-  });
-
   /**
    * FUNCTIONS
    */
 
   // Set desired video types support and do any init required
   const initVideoOptions = (reqVideoTypes = ["camera", "screen"]) => {
+    videoTypes.value = reqVideoTypes;
     console.log("initVideoOptions");
-    if (reqVideoTypes.includes("screen")) {
+    if (videoTypes.value.includes("screen")) {
       initScreen();
     }
-    if (reqVideoTypes.includes("camera")) {
+    if (videoTypes.value.includes("camera")) {
       initCameras();
     }
   };
@@ -152,6 +144,7 @@ export default function useFlows() {
         })
         .catch((error) => ("error", error));
     }
+    console.log(cameras.value);
   };
 
   // Handle switching the video source to the given one
@@ -247,8 +240,6 @@ export default function useFlows() {
     initVideoOptions,
     // Provide list access to cameras (global)
     cameras,
-    // The list of available video sources (global)
-    videoSourceList,
     // The current captured image
     snapshot,
     // The selected video source for this instance

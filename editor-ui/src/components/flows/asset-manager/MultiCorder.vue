@@ -1,6 +1,6 @@
 <template>
   <div class="row col-12 text-center justify-center items-center">
-    <div class="row col-12">AMCamera</div>
+    <div class="row col-12">Multicorder</div>
     <div class="videobox">
       <video
         :ref="'video-' + uniq"
@@ -20,19 +20,21 @@
         />
       </div>
     </div>
+
     <video-source-selector
-      :videoSourceList="videoSourceList"
+      :videoSourceList="cameras"
+      @selectedSource="(event) => changeVideoSource(event)"
     ></video-source-selector>
-    <div class="row col-12">Video Sources:</div>
-    <div class="row col-12">{{ videoSourceList }}</div>
   </div>
 </template>
 
 <script>
-import { defineComponent, ref, onMounted } from "vue";
+import { defineComponent, ref, onMounted, computed } from "vue";
 console.log("MultiCorder.vue - loading");
 
 import useMultiCorder from "./useMultiCorder";
+
+import VideoSourceSelector from "./components/VideoSourceSelector.vue";
 
 export default defineComponent({
   name: "MultiCorder",
@@ -85,21 +87,33 @@ export default defineComponent({
       default: "single",
     },
   },
+  components: {
+    VideoSourceSelector,
+  },
   setup(props, { emit }) {
     console.log(props);
 
-    const { initVideoOptions, snapshot } = useMultiCorder();
+    const { initVideoOptions, cameras } = useMultiCorder();
 
     const view = ref("camera");
 
+    const snapshot = ref(null);
+
     onMounted(() => {
-      initVideoOptions();
+      initVideoOptions(props.videoTypes);
     });
 
     return {
       snapshot, // All the captured image to be displayed or manipulated
       view, // The current selected view
+      cameras, // List of source options
     };
   },
 });
 </script>
+
+<style scoped>
+.videobox {
+  background-color: black;
+}
+</style>
