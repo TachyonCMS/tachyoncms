@@ -3,24 +3,35 @@
     <div class="row col-12 text-center justify-center items-center">
       <h6>Select Video Source</h6>
     </div>
+
     <div class="row col-8 text-center justify-center items-center">
-      <q-select
-        v-model="selectedVideoSource"
-        :options="videoSourceList"
-        option-label="text"
-        label="Camera"
-        emit-value
-        map-options
-        class="col-xs-8 col-sm-4 col-md-2 q-gutter-xs"
-      ></q-select>
+      <q-btn-dropdown color="primary" icon="mdi-camera" label="Camera">
+        <q-list>
+          <q-item
+            v-for="item in videoSourceList"
+            :key="item.value"
+            clickable
+            v-close-popup
+            @click="selectedVideoSource = item"
+          >
+            <q-item-section>
+              <q-item-label>{{ item.text }}</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </q-btn-dropdown>
     </div>
-    <div class="row col-8 text-center justify-center items-center">- or -</div>
+    <div class="row col-8 text-center justify-center items-center q-mt-sm">
+      - or -
+    </div>
 
     <div class="row col-8 text-center justify-center items-center">
       <q-btn
-        @click="selectedVideoSource = 'screen'"
+        @click="
+          selectedVideoSource = { text: 'Screen Capture', value: 'screen' }
+        "
         class="option-btn"
-        icon-right="mdi-monitor"
+        icon="mdi-monitor"
         flat
         size="md"
         label="Screen Capture"
@@ -59,6 +70,6 @@ export default defineComponent({
 
 <style scoped>
 h6 {
-  margin: 0;
+  margin: 0 0 1em 0;
 }
 </style>

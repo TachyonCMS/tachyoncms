@@ -1,6 +1,8 @@
 <template>
   <q-page>
-    <div>BlockBuilder</div>
+    <div class="fit row wrap justify-around items-start content-start">
+      BlockBuilder
+    </div>
     <component
       :is="editor"
       :data="data"

@@ -38,7 +38,24 @@ export default function useFlows() {
   // Legacy video use @todo deprecate
   const source = ref(null);
 
+  // Microphone on|off
+  const micOn = ref(false);
+
+  // Video display on|off
+  const videoLive = ref(false);
+
+  // Recording from mic/video
+  const recording = ref(false);
+
+  // Recording paused
+  const paused = ref(false);
+
+  // Speaker Muted
+  const muted = ref(true);
   // The HTML <video> element for THIS multicorder
+
+  // Recorder state idle|recording|paused|stopped|saving
+  const recorderState = ref("idle");
 
   /**
    * FUNCTIONS
@@ -220,20 +237,16 @@ export default function useFlows() {
 
   const stopVideo = (videoElem) => {
     if (videoElem.srcObject) {
-      stopStreamedVideo(videoElem);
+      let stream = videoElem.srcObject;
+      let tracks = stream.getTracks();
+
+      tracks.forEach((track) => {
+        track.stop();
+
+        videoElem.srcObject = null;
+        source.value = null;
+      });
     }
-  };
-
-  const stopStreamedVideo = (videoElem) => {
-    let stream = videoElem.srcObject;
-    let tracks = stream.getTracks();
-
-    tracks.forEach((track) => {
-      track.stop();
-
-      videoElem.srcObject = null;
-      source.value = null;
-    });
   };
 
   /**
@@ -258,5 +271,17 @@ export default function useFlows() {
     loadCamera,
     // Allow screen capture via HTML5 screen share
     startScreenshare,
+    // Is the mic on for this element?
+    micOn,
+    // Is the video playing in the browser?
+    videoLive,
+    // Is the audio/video being recorded?
+    recording,
+    // Is the recording paused
+    paused,
+    // Speaker muted?
+    muted,
+    // Current state of recorder
+    recorderState,
   };
 }

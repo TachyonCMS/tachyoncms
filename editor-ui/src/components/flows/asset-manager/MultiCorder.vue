@@ -1,15 +1,24 @@
 <template>
-  <div class="row col-12 text-center justify-center items-center">
-    <div class="videobox" v-show="view != 'selectSource'">
-      <video
-        :ref="'video_' + uniq"
-        :src="videoSource"
-        :autoplay="autoplay"
-        :playsInline="playsInline"
-        :height="height"
-        :width="width"
-        muted="recorderMuted"
-      />
+  <div class="flex flex-center">
+    <div v-show="view != 'selectSource'" class="row col-12">
+      <div class="videobox">
+        <video
+          :ref="videoId"
+          :src="videoSource"
+          :autoplay="autoplay"
+          :playsInline="playsInline"
+          :height="height"
+          :width="width"
+          muted="recorderMuted"
+        />
+        <div class="top-right text-body2">
+          {{ sourceName }}
+          <q-icon
+            name="mdi-close-circle"
+            @click="this.onCloseVideo(videoId)"
+          ></q-icon>
+        </div>
+      </div>
       <div>
         <img
           v-show="view == 'snapshot'"
@@ -20,13 +29,90 @@
       </div>
     </div>
 
-    <div
-      class="col-12 text-center justify-center items-center"
-      v-show="view === 'selectSource'"
-    >
+    <div v-show="view != 'selectSource'" class="row col-12">
+      <q-btn round icon="mdi-camera-iris"></q-btn>
+
+      <q-space></q-space>
+
+      <q-btn
+        round
+        icon="mdi-record"
+        text-color="red"
+        v-show="['idle', 'paused'].includes(recorderState)"
+        @click="this.recorderState = 'recording'"
+      ></q-btn>
+
+      <q-btn
+        round
+        icon="mdi-pause"
+        v-show="recorderState === 'recording'"
+        @click="this.recorderState = 'paused'"
+      ></q-btn>
+
+      <q-btn
+        round
+        icon="mdi-stop"
+        v-show="['recording', 'paused'].includes(recorderState)"
+        @click="this.recorderState = 'stopped'"
+      ></q-btn>
+
+      <q-btn
+        round
+        icon="mdi-play"
+        v-show="recorderState === 'stopped'"
+        @click="this.recorderState = 'playing'"
+      ></q-btn>
+      <q-btn
+        round
+        icon="mdi-content-save"
+        v-show="recorderState === 'stopped'"
+        @click="this.recorderState = 'saving'"
+      ></q-btn>
+      <q-btn
+        round
+        icon="mdi-download"
+        v-show="recorderState === 'stopped'"
+        @click="this.recorderState = 'downloading'"
+      ></q-btn>
+      <q-btn
+        round
+        icon="mdi-delete"
+        v-show="recorderState === 'stopped'"
+        @click="this.recorderState = 'deleting'"
+      ></q-btn>
+
+      <q-space></q-space>
+
+      <q-btn
+        round
+        icon="mdi-microphone"
+        v-show="micOn"
+        @click="micOn = false"
+      ></q-btn>
+      <q-btn
+        round
+        icon="mdi-microphone-off"
+        v-show="!micOn"
+        @click="this.micOn = true"
+      ></q-btn>
+      <q-btn
+        round
+        icon="mdi-volume-high"
+        v-show="!muted"
+        @click="muted = true"
+      ></q-btn>
+      <q-btn
+        round
+        icon="mdi-volume-off"
+        v-show="muted"
+        @click="muted = false"
+      ></q-btn>
+    </div>
+
+    <div v-show="view === 'selectSource'" class="row">
       <video-source-selector
         :videoSourceList="cameras"
-        @selectedSource="(event) => onChangeVideoSource(event, 'video_' + uniq)"
+        @selectedSource="(event) => onChangeVideoSource(event)"
       ></video-source-selector>
     </div>
   </div>
@@ -97,16 +183,31 @@ export default defineComponent({
   setup(props, { emit }) {
     console.log(props);
 
-    const { initVideoOptions, cameras, startScreenshare, changeVideoSource } =
-      useMultiCorder();
+    const {
+      initVideoOptions,
+      cameras,
+      startScreenshare,
+      changeVideoSource,
+      stopVideo,
+      micOn,
+      videoLive,
+      recording,
+      paused,
+      muted,
+      recorderState,
+    } = useMultiCorder();
 
     const view = ref("selectSource");
 
     const snapshot = ref(null);
 
+    const sourceName = ref(null);
+
     onMounted(() => {
       initVideoOptions(props.videoTypes);
     });
+
+    const videoId = "video_" + props.uniq;
 
     return {
       snapshot, // All the captured image to be displayed or manipulated
@@ -114,13 +215,29 @@ export default defineComponent({
       cameras, // List of source options
       startScreenshare,
       changeVideoSource,
+      sourceName,
+      stopVideo,
+      videoId,
+      micOn,
+      videoLive,
+      recording,
+      paused,
+      muted,
+      recorderState,
     };
   },
   methods: {
-    onChangeVideoSource(videoSource, videoElemName) {
-      const videoElem = this.$refs[videoElemName];
-      this.changeVideoSource(videoSource, videoElem);
+    onChangeVideoSource(videoSource) {
+      const videoElem = this.$refs[this.videoId];
+      this.changeVideoSource(videoSource.value, videoElem);
+      this.sourceName = videoSource.text;
       this.view = "video";
+    },
+    onCloseVideo() {
+      const videoElem = this.$refs[this.videoId];
+      this.stopVideo(videoElem);
+      this.sourceName = null;
+      this.view = "selectSource";
     },
   },
 });

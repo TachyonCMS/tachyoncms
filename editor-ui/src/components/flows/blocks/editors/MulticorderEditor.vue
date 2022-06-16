@@ -1,7 +1,6 @@
 <template>
-  <div class="row col-12">
-    <div>MulticorderEditor</div>
-    <div class="row window-width justify-center items-center">
+  <div class="fit row wrap justify-around items-start content-start mce">
+    <div class="col-8 justify-center mce">
       <multi-corder
         :width="width"
         :height="height"
@@ -39,5 +38,8 @@ export default defineComponent({
 <style scoped>
 .videobox {
   background-color: black;
+}
+.mce {
+  background-color: whitesmoke;
 }
 </style>
