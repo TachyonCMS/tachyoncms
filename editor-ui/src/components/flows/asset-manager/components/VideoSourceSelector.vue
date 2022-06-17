@@ -3,7 +3,6 @@
     <div class="fit row col-12 text-center justify-center items-center">
       <h6>Select Video Source</h6>
     </div>
-    {{ selectedVideoSource }}
     <div
       class="fit row col-12 text-center justify-center items-center"
       height="500px"
@@ -24,6 +23,7 @@
         </q-list>
       </q-btn-dropdown>
     </div>
+
     <div class="fit row col-12 text-center justify-center items-center q-mt-sm">
       - or -
     </div>
@@ -44,6 +44,27 @@
         :data-cy="dataCySlug + '-screen-capture-btn'"
       ></q-btn>
     </div>
+
+    <div class="fit row col-12 text-center justify-center items-center q-mt-sm">
+      - or -
+    </div>
+
+    <div class="fit row col-12 text-center justify-center items-center">
+      <q-btn
+        @click="
+          this.$emit('selectedSource', {
+            text: 'Whiteboard',
+            value: 'whiteboard',
+          })
+        "
+        class="option-btn"
+        icon="mdi-drawing-box"
+        flat
+        size="md"
+        label="Whiteboard (new)"
+        :data-cy="dataCySlug + '-whiteboard-btn'"
+      ></q-btn>
+    </div>
   </div>
 </template>
 
@@ -55,8 +76,6 @@ export default defineComponent({
   emits: ["selectedSource"],
   setup(props, { emit }) {
     console.log(props);
-
-    const selectedVideoSource = ref(null);
 
     const width = ref(0);
 

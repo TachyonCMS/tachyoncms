@@ -57,6 +57,9 @@ export default function useFlows() {
   // Recorder state idle|recording|paused|stopped|saving
   const recorderState = ref("idle");
 
+  // The image format for snapshots
+  const snapshotFormat = ref("image/png");
+
   // Physical camera resolution
   const cameraRes = ref({
     height: null,
@@ -260,6 +263,7 @@ export default function useFlows() {
     };
   };
 
+  // Stop video in a player, it may be restarted.
   const stopVideo = (videoElem) => {
     if (videoElem.srcObject) {
       let stream = videoElem.srcObject;
@@ -272,6 +276,33 @@ export default function useFlows() {
         source.value = null;
       });
     }
+  };
+
+  // Take a snapshot of the video element content
+  const videoSnapshot = (videoElem) => {
+    snapshot.value = prepCanvas().toDataURL(screenshotFormat.value);
+  };
+
+  // Return a canvas element to display new media
+  const prepCanvas = (videoElem) => {
+    if (!this.ctx) {
+      let canvas = document.createElement("canvas");
+      canvas.height = videoElem.videoHeight;
+      canvas.width = videoElem.videoWidth;
+      this.canvas = canvas;
+
+      this.ctx = canvas.getContext("2d");
+    }
+
+    const { ctx, canvas } = this;
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    return canvas;
+  };
+
+  // Close a snapshot
+  const closeSnapshot = () => {
+    this.snapshot = null;
   };
 
   /**
@@ -308,7 +339,11 @@ export default function useFlows() {
     muted,
     // Current state of recorder
     recorderState,
-    // Selected camera resultion
+    // Selected camera resolution
     cameraRes,
+    // Take a snapshot
+    videoSnapshot,
+    // Close a snapshot
+    closeSnapshot,
   };
 }

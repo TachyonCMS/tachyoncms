@@ -42,6 +42,7 @@
           icon="mdi-camera-iris"
           v-show="recorderState != 'stopped'"
           class="video-control-btn"
+          @click="onSnap()"
         ></q-btn>
         <q-btn
           round
@@ -192,7 +193,7 @@ export default defineComponent({
       type: Boolean,
       default: true,
     },
-    screenshotFormat: {
+    snapshotFormat: {
       type: String,
       default: "image/jpeg",
     },
@@ -263,21 +264,18 @@ export default defineComponent({
       return targetHeight;
     });
 
+    // We only carer about the event, not the content of the resize event.
     const onResize = (size) => {
-      report.value = size;
-      resized.value = true;
-      console.log(report.value);
-      console.log(vHeight.value);
-      console.log(vWidth.value);
+      //report.value = size;
+      resized.value = true; // Trigger a vHeight recalculation
       resized.value = false;
-
-      // {
-      //   width: 20 // width of container (in px)
-      //   height: 50 // height of container (in px)
-      // }
     };
 
+    // Used during screen resize
     const report = ref(null);
+
+    // The resolved video element
+    const videoElem = ref(null);
 
     return {
       snapshot, // All the captured image to be displayed or manipulated
@@ -301,16 +299,24 @@ export default defineComponent({
   },
   methods: {
     onChangeVideoSource(videoSource) {
-      const videoElem = this.$refs[this.videoId];
+      console.log(videoSource);
+      let videoElem;
+      videoElem = this.$refs[this.videoId];
+      this.videoElem = videoElem;
       this.changeVideoSource(videoSource.value, videoElem);
       this.sourceName = videoSource.text;
       this.view = "video";
     },
     onCloseVideo() {
       const videoElem = this.$refs[this.videoId];
-      this.stopVideo(videoElem);
+      this.stopVideo(this.videoElem);
+      console.log(this.sourceName);
       this.sourceName = null;
+      //this.selectedVideoSource = null;
       this.view = "selectSource";
+    },
+    onSnap() {
+      console.log("SNAP!");
     },
   },
 });
