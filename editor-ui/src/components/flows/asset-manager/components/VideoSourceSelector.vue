@@ -3,7 +3,7 @@
     <div class="fit row col-12 text-center justify-center items-center">
       <h6>Select Video Source</h6>
     </div>
-
+    {{ selectedVideoSource }}
     <div
       class="fit row col-12 text-center justify-center items-center"
       height="500px"
@@ -15,7 +15,7 @@
             :key="item.value"
             clickable
             v-close-popup
-            @click="selectedVideoSource = item"
+            @click="this.$emit('selectedSource', item)"
           >
             <q-item-section>
               <q-item-label>{{ item.text }}</q-item-label>
@@ -31,7 +31,10 @@
     <div class="fit row col-12 text-center justify-center items-center">
       <q-btn
         @click="
-          selectedVideoSource = { text: 'Screen Capture', value: 'screen' }
+          this.$emit('selectedSource', {
+            text: 'Screen Capture',
+            value: 'screen',
+          })
         "
         class="option-btn"
         icon="mdi-monitor"
@@ -55,16 +58,9 @@ export default defineComponent({
 
     const selectedVideoSource = ref(null);
 
-    watch(selectedVideoSource, (currentValue, oldValue) => {
-      if (currentValue != oldValue) {
-        emit("selectedSource", currentValue);
-      }
-    });
-
     const width = ref(0);
 
     return {
-      selectedVideoSource,
       width,
     };
   },
