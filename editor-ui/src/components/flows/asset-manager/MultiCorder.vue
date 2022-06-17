@@ -20,7 +20,7 @@
             muted="recorderMuted"
           />
           <div class="top-right text-body2">
-            {{ sourceName }}
+            {{ videoSourceName }}
             <q-icon
               name="mdi-close-circle"
               @click="this.onCloseVideo(videoId)"
@@ -235,7 +235,7 @@ export default defineComponent({
 
     const snapshot = ref(null);
 
-    const sourceName = ref(null);
+    const videoSourceName = ref(null);
 
     onMounted(() => {
       initVideoOptions(props.videoTypes);
@@ -283,7 +283,7 @@ export default defineComponent({
       cameras, // List of source options
       startScreenshare,
       changeVideoSource,
-      sourceName,
+      videoSourceName,
       stopVideo,
       videoId,
       micOn,
@@ -304,14 +304,14 @@ export default defineComponent({
       videoElem = this.$refs[this.videoId];
       this.videoElem = videoElem;
       this.changeVideoSource(videoSource.value, videoElem);
-      this.sourceName = videoSource.text;
+      this.videoSourceName = videoSource.text;
       this.view = "video";
     },
     onCloseVideo() {
       const videoElem = this.$refs[this.videoId];
       this.stopVideo(this.videoElem);
-      console.log(this.sourceName);
-      this.sourceName = null;
+      console.log(this.videoSourceName);
+      this.videoSourceName = null;
       //this.selectedVideoSource = null;
       this.view = "selectSource";
     },
