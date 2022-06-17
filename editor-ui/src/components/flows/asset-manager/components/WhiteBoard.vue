@@ -1,97 +1,7 @@
-<script>
-import VueDrawingCanvas from "vue-drawing-canvas";
-
-export default {
-  name: "WhiteBoard",
-  components: {
-    VueDrawingCanvas,
-  },
-  data() {
-    return {
-      initialImage: [
-        {
-          type: "dash",
-          from: {
-            x: 262,
-            y: 154,
-          },
-          coordinates: [],
-          color: "#000000",
-          width: 5,
-          fill: false,
-        },
-      ],
-      x: 0,
-      y: 0,
-      image: "",
-      eraser: false,
-      disabled: false,
-      fillShape: false,
-      line: 5,
-      color: "#000000",
-      strokeType: "dash",
-      lineCap: "square",
-      lineJoin: "miter",
-      backgroundColor: "#FFFFFF",
-      backgroundImage: null,
-      watermark: null,
-      additionalImages: [],
-    };
-  },
-  mounted() {
-    if ("vue-drawing-canvas" in window.localStorage) {
-      this.initialImage = JSON.parse(
-        window.localStorage.getItem("vue-drawing-canvas")
-      );
-    }
-  },
-  methods: {
-    async setImage(event) {
-      let URL = window.URL;
-      this.backgroundImage = URL.createObjectURL(event.target.files[0]);
-      await this.$refs.VueCanvasDrawing.redraw();
-    },
-    async setWatermarkImage(event) {
-      let URL = window.URL;
-      this.watermark = {
-        type: "Image",
-        source: URL.createObjectURL(event.target.files[0]),
-        x: 0,
-        y: 0,
-        imageStyle: {
-          width: 600,
-          height: 400,
-        },
-      };
-      await this.$refs.VueCanvasDrawing.redraw();
-    },
-    getCoordinate(event) {
-      let coordinates = this.$refs.VueCanvasDrawing.getCoordinates(event);
-      this.x = coordinates.x;
-      this.y = coordinates.y;
-    },
-    getStrokes() {
-      window.localStorage.setItem(
-        "vue-drawing-canvas",
-        JSON.stringify(this.$refs.VueCanvasDrawing.getAllStrokes())
-      );
-      alert(
-        "Strokes saved, reload your browser to see the canvas with previously saved image"
-      );
-    },
-    removeSavedStrokes() {
-      window.localStorage.removeItem("vue-drawing-canvas");
-      alert("Strokes cleared from local storage");
-    },
-  },
-};
-</script>
-
 <template>
-  <div id="app">
-    <div class="flex-row">
-      <div class="source">
-        <p>Canvas:</p>
+  <div class="flex flex-center">
+    <div class="row wrap justify-around items-start content-start">
+      <div class="row relative-position">
         <vue-drawing-canvas
           ref="VueCanvasDrawing"
           v-model:image="image"
@@ -116,6 +26,14 @@ export default {
           @mousemove="getCoordinate($event)"
           :additional-images="additionalImages"
         />
+        <q-btn
+          icon="mdi-image-edit"
+          class="top-right"
+          @click="showControls = !showControls"
+        ></q-btn>
+      </div>
+
+      <div v-show="showControls" row>
         <p>
           x-axis: <strong>{{ x }}</strong
           >, y-axis: <strong>{{ y }}</strong>
@@ -355,14 +273,131 @@ export default {
           </div>
         </div>
       </div>
-
-      <div class="output">
-        <p>Output:</p>
-        <img :src="image" style="border: solid 1px #000000" />
-      </div>
+      <!--
+    <div class="output">
+      <p>Output:</p>
+      <img :src="image" style="border: solid 1px #000000" />
     </div>
+    --></div>
   </div>
 </template>
+
+<script>
+import VueDrawingCanvas from "vue-drawing-canvas";
+
+import { defineComponent, ref, onMounted } from "vue";
+
+import { useQuasar } from "quasar";
+
+import useMultiCorder from "../useMultiCorder";
+
+export default defineComponent({
+  name: "WhiteBoard",
+  components: {
+    VueDrawingCanvas,
+  },
+  props: [],
+  setup(props, { emit }) {
+    const showControls = ref(false);
+    const initialImage = ref([
+      {
+        type: "dash",
+        from: {
+          x: 262,
+          y: 154,
+        },
+        coordinates: [],
+        color: "#000000",
+        width: 5,
+        fill: false,
+      },
+    ]);
+    const x = ref(0);
+    const y = ref(0);
+    const image = ref("");
+    const eraser = ref(false);
+    const disabled = ref(false);
+    const fillShape = ref(false);
+    const line = ref(5);
+    const color = ref("#000000");
+    const strokeType = ref("dash");
+    const lineCap = ref("square");
+    const lineJoin = ref("miter");
+    const backgroundColor = ref("#FFFFFF");
+    const backgroundImage = ref(null);
+    const watermark = ref(null);
+    const additionalImages = ref([]);
+
+    onMounted(() => {
+      if ("vue-drawing-canvas" in window.localStorage) {
+        initialImage.value = JSON.parse(
+          window.localStorage.getItem("vue-drawing-canvas")
+        );
+      }
+    });
+
+    return {
+      showControls,
+      initialImage,
+      x,
+      y,
+      image,
+      eraser,
+      disabled,
+      fillShape,
+      line,
+      color,
+      strokeType,
+      lineCap,
+      lineJoin,
+      backgroundColor,
+      backgroundImage,
+      watermark,
+      additionalImages,
+    };
+  },
+
+  methods: {
+    async setImage(event) {
+      let URL = window.URL;
+      this.backgroundImage = URL.createObjectURL(event.target.files[0]);
+      await this.$refs.VueCanvasDrawing.redraw();
+    },
+    async setWatermarkImage(event) {
+      let URL = window.URL;
+      this.watermark = {
+        type: "Image",
+        source: URL.createObjectURL(event.target.files[0]),
+        x: 0,
+        y: 0,
+        imageStyle: {
+          width: 300,
+          height: 200,
+        },
+      };
+      await this.$refs.VueCanvasDrawing.redraw();
+    },
+    getCoordinate(event) {
+      let coordinates = this.$refs.VueCanvasDrawing.getCoordinates(event);
+      this.x = coordinates.x;
+      this.y = coordinates.y;
+    },
+    getStrokes() {
+      window.localStorage.setItem(
+        "vue-drawing-canvas",
+        JSON.stringify(this.$refs.VueCanvasDrawing.getAllStrokes())
+      );
+      alert(
+        "Strokes saved, reload your browser to see the canvas with previously saved image"
+      );
+    },
+    removeSavedStrokes() {
+      window.localStorage.removeItem("vue-drawing-canvas");
+      alert("Strokes cleared from local storage");
+    },
+  },
+});
+</script>
 
 <style scoped>
 body {

@@ -5,9 +5,7 @@
       class="row col-12"
       :style="'width=: ' + vWidth + 'px'"
     >
-      <div
-        class="videobox shrink row wrap justify-around items-start content-start"
-      >
+      <div class="videobox row wrap justify-around items-start content-start">
         <q-resize-observer @resize="onResize"></q-resize-observer>
         <div class="relative-position">
           <video
@@ -26,108 +24,111 @@
               @click="this.onCloseVideo(videoId)"
             ></q-icon>
           </div>
-        </div>
-        <div v-show="view != 'selectSource'" class="row col-12 video-controls">
-          <q-btn
-            round
-            icon="mdi-camera-iris"
-            v-show="recorderState != 'stopped'"
-            class="video-control-btn"
-            @click="onSnap()"
-          ></q-btn>
-          <q-btn
-            round
-            icon="mdi-play"
-            v-show="recorderState === 'stopped'"
-            @click="this.recorderState = 'playing'"
-            class="video-control-btn"
-          ></q-btn>
-
-          <q-space></q-space>
-
-          <q-btn
-            round
-            icon="mdi-record"
-            text-color="red"
-            v-show="['idle', 'paused'].includes(recorderState)"
-            @click="this.recorderState = 'recording'"
-            class="video-control-btn"
-          ></q-btn>
-
-          <q-btn
-            round
-            icon="mdi-pause"
-            v-show="recorderState === 'recording'"
-            @click="this.recorderState = 'paused'"
-            class="video-control-btn"
-          ></q-btn>
-
-          <q-btn
-            round
-            icon="mdi-stop"
-            v-show="['recording', 'paused'].includes(recorderState)"
-            @click="this.recorderState = 'stopped'"
-            class="video-control-btn"
-          ></q-btn>
-
-          <q-btn
-            round
-            icon="mdi-content-save"
-            v-show="recorderState === 'stopped'"
-            @click="this.recorderState = 'saving'"
-            class="video-control-btn"
-          ></q-btn>
-          <q-btn
-            round
-            icon="mdi-download"
-            v-show="recorderState === 'stopped'"
-            @click="this.recorderState = 'downloading'"
-            class="video-control-btn"
-          ></q-btn>
-
-          <q-space></q-space>
-          <div v-show="recorderState != 'stopped'">
+          <div
+            v-show="view != 'selectSource'"
+            class="row col-12 video-controls"
+          >
             <q-btn
               round
-              icon="mdi-microphone"
-              v-show="micOn"
-              @click="micOn = false"
+              icon="mdi-camera-iris"
+              v-show="recorderState != 'stopped'"
+              class="video-control-btn"
+              @click="onSnap()"
+            ></q-btn>
+            <q-btn
+              round
+              icon="mdi-play"
+              v-show="recorderState === 'stopped'"
+              @click="this.recorderState = 'playing'"
+              class="video-control-btn"
+            ></q-btn>
+
+            <q-space></q-space>
+
+            <q-btn
+              round
+              icon="mdi-record"
+              text-color="red"
+              v-show="['idle', 'paused'].includes(recorderState)"
+              @click="this.recorderState = 'recording'"
+              class="video-control-btn"
+            ></q-btn>
+
+            <q-btn
+              round
+              icon="mdi-pause"
+              v-show="recorderState === 'recording'"
+              @click="this.recorderState = 'paused'"
+              class="video-control-btn"
+            ></q-btn>
+
+            <q-btn
+              round
+              icon="mdi-stop"
+              v-show="['recording', 'paused'].includes(recorderState)"
+              @click="this.recorderState = 'stopped'"
+              class="video-control-btn"
+            ></q-btn>
+
+            <q-btn
+              round
+              icon="mdi-content-save"
+              v-show="recorderState === 'stopped'"
+              @click="this.recorderState = 'saving'"
               class="video-control-btn"
             ></q-btn>
             <q-btn
               round
-              icon="mdi-microphone-off"
-              v-show="!micOn"
-              @click="this.micOn = true"
+              icon="mdi-download"
+              v-show="recorderState === 'stopped'"
+              @click="this.recorderState = 'downloading'"
               class="video-control-btn"
             ></q-btn>
+
+            <q-space></q-space>
+            <div v-show="recorderState != 'stopped'">
+              <q-btn
+                round
+                icon="mdi-microphone"
+                v-show="micOn"
+                @click="micOn = false"
+                class="video-control-btn"
+              ></q-btn>
+              <q-btn
+                round
+                icon="mdi-microphone-off"
+                v-show="!micOn"
+                @click="this.micOn = true"
+                class="video-control-btn"
+              ></q-btn>
+              <q-btn
+                round
+                icon="mdi-volume-high"
+                v-show="!muted"
+                @click="muted = true"
+                class="video-control-btn"
+              ></q-btn>
+              <q-btn
+                round
+                icon="mdi-volume-off"
+                v-show="muted"
+                @click="muted = false"
+                class="video-control-btn"
+              ></q-btn>
+            </div>
             <q-btn
               round
-              icon="mdi-volume-high"
-              v-show="!muted"
-              @click="muted = true"
-              class="video-control-btn"
-            ></q-btn>
-            <q-btn
-              round
-              icon="mdi-volume-off"
-              v-show="muted"
-              @click="muted = false"
+              icon="mdi-delete"
+              v-show="recorderState === 'stopped'"
+              @click="this.recorderState = 'idle'"
               class="video-control-btn"
             ></q-btn>
           </div>
-          <q-btn
-            round
-            icon="mdi-delete"
-            v-show="recorderState === 'stopped'"
-            @click="this.recorderState = 'idle'"
-            class="video-control-btn"
-          ></q-btn>
         </div>
       </div>
-      <div v-show="view == 'whiteboard'">
-        <white-board></white-board>
-      </div>
+    </div>
+    <div v-show="view == 'whiteboard'">
+      <white-board :width="vWidth" :height="vHeight"></white-board>
     </div>
 
     <div
