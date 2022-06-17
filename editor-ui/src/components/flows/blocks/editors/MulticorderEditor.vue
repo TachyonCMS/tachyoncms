@@ -1,6 +1,8 @@
 <template>
-  <div class="fit row wrap justify-around items-start content-start mce">
-    <div class="col-8 justify-center mce">
+  <div
+    class="fit row wrap justify-around items-start content-start relative-position"
+  >
+    <div>
       <multi-corder
         :width="width"
         :height="height"
@@ -23,10 +25,11 @@ export default defineComponent({
     MultiCorder,
   },
   setup(props) {
-    const width = ref(350);
+    const width = ref(800);
     const height = computed(() => {
-      return width.value / 1.778;
+      return width.value / 1.333; //1.778;
     });
+
     return {
       height,
       width,
@@ -36,10 +39,10 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.videobox {
-  background-color: black;
-}
 .mce {
-  background-color: whitesmoke;
+  background-color: gray;
+}
+.video-controls {
+  background-color: platinum;
 }
 </style>

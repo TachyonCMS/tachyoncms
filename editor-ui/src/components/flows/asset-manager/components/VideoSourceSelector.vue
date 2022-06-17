@@ -1,10 +1,13 @@
 <template>
-  <div class="row col-12 text-center justify-center items-center">
-    <div class="row col-12 text-center justify-center items-center">
+  <div class="flex fit">
+    <div class="fit row col-12 text-center justify-center items-center">
       <h6>Select Video Source</h6>
     </div>
 
-    <div class="row col-8 text-center justify-center items-center">
+    <div
+      class="fit row col-12 text-center justify-center items-center"
+      height="500px"
+    >
       <q-btn-dropdown color="primary" icon="mdi-camera" label="Camera">
         <q-list>
           <q-item
@@ -21,11 +24,11 @@
         </q-list>
       </q-btn-dropdown>
     </div>
-    <div class="row col-8 text-center justify-center items-center q-mt-sm">
+    <div class="fit row col-12 text-center justify-center items-center q-mt-sm">
       - or -
     </div>
 
-    <div class="row col-8 text-center justify-center items-center">
+    <div class="fit row col-12 text-center justify-center items-center">
       <q-btn
         @click="
           selectedVideoSource = { text: 'Screen Capture', value: 'screen' }

@@ -57,6 +57,12 @@ export default function useFlows() {
   // Recorder state idle|recording|paused|stopped|saving
   const recorderState = ref("idle");
 
+  // Physical camera resolution
+  const cameraRes = ref({
+    height: null,
+    width: null,
+  });
+
   /**
    * FUNCTIONS
    */
@@ -193,6 +199,8 @@ export default function useFlows() {
         deviceId: {
           exact: device,
         },
+        width: { ideal: 1920 },
+        height: { ideal: 1080 },
       },
       audio: { echoCancellation: true },
     };
@@ -228,6 +236,23 @@ export default function useFlows() {
       // old broswers
       source.value = window.HTMLMediaElement.srcObject(stream);
     }
+
+    let stream_settings = stream.getVideoTracks()[0].getSettings();
+
+    // actual width & height of the camera video
+    let stream_width = stream_settings.width;
+    let stream_height = stream_settings.height;
+
+    const camRes = {
+      height: stream_height,
+      width: stream_width,
+    };
+
+    console.log("Width: " + stream_width + "px");
+    console.log("Height: " + stream_height + "px");
+
+    cameraRes.value = camRes;
+
     // Emit video start/live event
     videoElem.onloadedmetadata = () => {
       //("video-live", stream);
@@ -283,5 +308,7 @@ export default function useFlows() {
     muted,
     // Current state of recorder
     recorderState,
+    // Selected camera resultion
+    cameraRes,
   };
 }
