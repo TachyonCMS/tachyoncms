@@ -145,194 +145,136 @@
 </template>
 
 <script>
-import { defineComponent, ref, onMounted, computed } from "vue";
+import VueDrawingCanvas from "vue-drawing-canvas";
+
+import { defineComponent, ref, onMounted } from "vue";
 
 import { useQuasar } from "quasar";
 
-import useMultiCorder from "./useMultiCorder";
-
-import VideoSourceSelector from "./components/VideoSourceSelector.vue";
-import WhiteBoard from "./components/ImgCanvas.vue";
+import useMultiCorder from "../useMultiCorder";
 
 export default defineComponent({
-  name: "MultiCorder",
-  emits: ["error", "notification"],
-  props: {
-    uniq: {
-      type: String,
-      default: "0",
-    },
-    videoSource: {
-      type: Object,
-      default: null,
-    },
-    width: {
-      type: [Number, String, null],
-      default: null,
-    },
-    height: {
-      type: [Number, String, null],
-      default: null,
-    },
-    autoplay: {
-      type: Boolean,
-      default: true,
-    },
-    playsInline: {
-      type: Boolean,
-      default: true,
-    },
-    recorderMuted: {
-      type: Boolean,
-      default: true,
-    },
-    playerMuted: {
-      type: Boolean,
-      default: true,
-    },
-    snapshotFormat: {
-      type: String,
-      default: "image/jpeg",
-    },
-    videoTypes: {
-      type: Array,
-      default: () => {
-        return ["camera", "screen"];
-      },
-    },
-    recorderMode: {
-      type: String,
-      default: "single",
-    },
-  },
+  name: "WhiteBoard",
   components: {
-    VideoSourceSelector,
-    WhiteBoard,
+    //VueDrawingCanvas,
   },
+  props: [],
   setup(props, { emit }) {
-    console.log(props);
-
-    const $q = useQuasar();
-
-    const {
-      initVideoOptions,
-      cameras,
-      startScreenshare,
-      changeVideoSource,
-      stopVideo,
-      micOn,
-      videoLive,
-      recording,
-      paused,
-      muted,
-      recorderState,
-      cameraRes,
-    } = useMultiCorder();
-
-    const view = ref("selectSource");
-
-    const snapshot = ref(null);
-
-    const videoSourceName = ref(null);
+    const showControls = ref(false);
+    const initialImage = ref([
+      {
+        type: "dash",
+        from: {
+          x: 262,
+          y: 154,
+        },
+        coordinates: [],
+        color: "#000000",
+        width: 5,
+        fill: false,
+      },
+    ]);
+    const x = ref(0);
+    const y = ref(0);
+    const image = ref("");
+    const eraser = ref(false);
+    const disabled = ref(false);
+    const fillShape = ref(false);
+    const line = ref(5);
+    const color = ref("#000000");
+    const strokeType = ref("dash");
+    const lineCap = ref("square");
+    const lineJoin = ref("miter");
+    const backgroundColor = ref("#FFFFFF");
+    const backgroundImage = ref(null);
+    const watermark = ref(null);
+    const additionalImages = ref([]);
 
     onMounted(() => {
-      initVideoOptions(props.videoTypes);
-    });
-
-    const videoId = "video_" + props.uniq;
-
-    let resized = ref(false);
-
-    // Video height and width
-    let widthOverride = false;
-    const vWidth = computed(() => {
-      let targetWidth = props.width ? props.width : cameraRes.width;
-
-      const hwWidth = $q.screen.width;
-      if (targetWidth > hwWidth) {
-        targetWidth = hwWidth * 0.9;
-        widthOverride = true;
+      if ("vue-drawing-canvas" in window.localStorage) {
+        initialImage.value = JSON.parse(
+          window.localStorage.getItem("vue-drawing-canvas")
+        );
       }
-      return targetWidth;
     });
-    const vHeight = computed(() => {
-      let targetHeight = props.height ? props.height : cameraRes.height;
-      if (widthOverride || resized) {
-        targetHeight = vWidth.value * 0.75;
-      }
-      return targetHeight;
-    });
-
-    // We only carer about the event, not the content of the resize event.
-    const onResize = (size) => {
-      //report.value = size;
-      resized.value = true; // Trigger a vHeight recalculation
-      resized.value = false;
-    };
-
-    // Used during screen resize
-    const report = ref(null);
-
-    // The resolved video element
-    const videoElem = ref(null);
 
     return {
-      snapshot, // All the captured image to be displayed or manipulated
-      view, // The current selected view
-      cameras, // List of source options
-      startScreenshare,
-      changeVideoSource,
-      videoSourceName,
-      stopVideo,
-      videoId,
-      micOn,
-      videoLive,
-      recording,
-      paused,
-      muted,
-      recorderState,
-      vWidth,
-      vHeight,
-      onResize,
+      showControls,
+      initialImage,
+      x,
+      y,
+      image,
+      eraser,
+      disabled,
+      fillShape,
+      line,
+      color,
+      strokeType,
+      lineCap,
+      lineJoin,
+      backgroundColor,
+      backgroundImage,
+      watermark,
+      additionalImages,
     };
   },
+
   methods: {
-    onChangeVideoSource(videoSource) {
-      if (videoSource.value === "whiteboard") {
-        this.view = "whiteboard";
-      } else {
-        console.log(videoSource);
-        let videoElem;
-        videoElem = this.$refs[this.videoId];
-        this.videoElem = videoElem;
-        this.changeVideoSource(videoSource.value, videoElem);
-        this.videoSourceName = videoSource.text;
-        this.view = "video";
-      }
+    async setImage(event) {
+      let URL = window.URL;
+      this.backgroundImage = URL.createObjectURL(event.target.files[0]);
+      await this.$refs.VueCanvasDrawing.redraw();
     },
-    onCloseVideo() {
-      const videoElem = this.$refs[this.videoId];
-      this.stopVideo(this.videoElem);
-      console.log(this.videoSourceName);
-      this.videoSourceName = null;
-      //this.selectedVideoSource = null;
-      this.view = "selectSource";
+    async setWatermarkImage(event) {
+      let URL = window.URL;
+      this.watermark = {
+        type: "Image",
+        source: URL.createObjectURL(event.target.files[0]),
+        x: 0,
+        y: 0,
+        imageStyle: {
+          width: 300,
+          height: 200,
+        },
+      };
+      await this.$refs.VueCanvasDrawing.redraw();
     },
-    onSnap() {
-      console.log("SNAP!");
+    getCoordinate(event) {
+      let coordinates = this.$refs.VueCanvasDrawing.getCoordinates(event);
+      this.x = coordinates.x;
+      this.y = coordinates.y;
+    },
+    getStrokes() {
+      window.localStorage.setItem(
+        "vue-drawing-canvas",
+        JSON.stringify(this.$refs.VueCanvasDrawing.getAllStrokes())
+      );
+      alert(
+        "Strokes saved, reload your browser to see the canvas with previously saved image"
+      );
+    },
+    removeSavedStrokes() {
+      window.localStorage.removeItem("vue-drawing-canvas");
+      alert("Strokes cleared from local storage");
     },
   },
 });
 </script>
 
 <style scoped>
-.videobox {
-  background-color: black;
+body {
+  font-family: "Roboto", sans-serif;
 }
-.video-controls {
-  background-color: #e8e8e8;
+.flex-row {
+  display: flex;
+  flex-direction: row;
 }
-.video-control-btn {
-  background-color: #f8f8f8;
+.button-container {
+  display: flex;
+  flex-direction: row;
+}
+.button-container > * {
+  margin-top: 15px;
+  margin-right: 10px;
 }
 </style>

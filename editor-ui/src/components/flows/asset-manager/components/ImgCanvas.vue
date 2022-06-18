@@ -1,47 +1,55 @@
 <template>
-  <div class="flex flex-center">
-    <q-resize-observer @resize="onResize"></q-resize-observer>
-    <div class="row col-12">
-      <div v-show="showControls" class="row col-12 justify-center tools">
-        Edit Tool panel
+  <div class="row">
+    <div class="column">
+      <div class="row">
+        <div v-show="showTools" class="col-12">Edit Tool panel</div>
       </div>
-      <div class="row col-12 justify-center">
-        <div class="row relative-position canvas">
-          <vue-drawing-canvas
-            ref="VueCanvasDrawing"
-            v-model:image="image"
-            :width="cWidth"
-            :height="cHeight"
-            :stroke-type="strokeType"
-            :line-cap="lineCap"
-            :line-join="lineJoin"
-            :fill-shape="fillShape"
-            :eraser="eraser"
-            :lineWidth="line"
-            :color="color"
-            :background-color="backgroundColor"
-            :background-image="backgroundImage"
-            :watermark="watermark"
-            :initial-image="initialImage"
-            saveAs="png"
-            :styles="{
-              border: 'solid 1px #000',
-            }"
-            :lock="disabled"
-            @mousemove="getCoordinate($event)"
-            :additional-images="additionalImages"
-          />
+      <div class="row">
+        <div class="col-12">
+          <div class="row relative-position canvas">
+            <canvas id="imgCanvas" width="600" height="400"></canvas>
+            <q-btn
+              icon="mdi-image-edit"
+              class="top-right"
+              @click="showTools = !showTools"
+            ></q-btn>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12">
           <q-btn
-            icon="mdi-image-edit"
-            class="top-right"
-            @click="showControls = !showControls"
+            round
+            icon="mdi-microphone"
+            v-show="micOn"
+            @click="micOn = false"
+            class="video-control-btn"
+          ></q-btn>
+          <q-btn
+            round
+            icon="mdi-microphone-off"
+            v-show="!micOn"
+            @click="this.micOn = true"
+            class="video-control-btn"
+          ></q-btn>
+          <q-btn
+            round
+            icon="mdi-volume-high"
+            v-show="!muted"
+            @click="muted = true"
+            class="video-control-btn"
+          ></q-btn>
+          <q-btn
+            round
+            icon="mdi-volume-off"
+            v-show="muted"
+            @click="muted = false"
+            class="video-control-btn"
           ></q-btn>
         </div>
       </div>
-      <div class="row col-12 justify-center controls">CMS Control buttons</div>
     </div>
-    <q-input v-model="cWidth"></q-input>
-    {{ divSize }}
   </div>
 </template>
 
@@ -56,12 +64,10 @@ import useMultiCorder from "../useMultiCorder";
 
 export default defineComponent({
   name: "WhiteBoard",
-  components: {
-    VueDrawingCanvas,
-  },
+  components: {},
   props: [],
   setup(props, { emit }) {
-    const showControls = ref(false);
+    const showTools = ref(false);
     const initialImage = ref([
       {
         type: "dash",
@@ -91,9 +97,6 @@ export default defineComponent({
     const watermark = ref(null);
     const additionalImages = ref([]);
 
-    const cHeight = ref(300);
-    const cWidth = ref(900);
-
     onMounted(() => {
       if ("vue-drawing-canvas" in window.localStorage) {
         initialImage.value = JSON.parse(
@@ -102,19 +105,8 @@ export default defineComponent({
       }
     });
 
-    const divSize = ref(0);
-
-    // We only carer about the event, not the content of the resize event.
-    const onResize = (size) => {
-      console.log(size);
-      divSize.value = size;
-      // cWidth.value = size.width + 10;
-      //resized.value = true; // Trigger a vHeight recalculation
-      //resized.value = false;
-    };
-
     return {
-      showControls,
+      showTools,
       initialImage,
       x,
       y,
@@ -131,10 +123,6 @@ export default defineComponent({
       backgroundImage,
       watermark,
       additionalImages,
-      cWidth,
-      cHeight,
-      onResize,
-      divSize,
     };
   },
 
@@ -187,8 +175,6 @@ export default defineComponent({
 
 .canvas {
   background-color: blue;
-  margin: 0;
-  padding: 0;
 }
 
 .tools {
