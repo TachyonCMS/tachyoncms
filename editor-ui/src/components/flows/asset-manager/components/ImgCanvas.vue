@@ -19,34 +19,14 @@
 
       <div class="row">
         <div class="col-12">
-          <q-btn
-            round
-            icon="mdi-microphone"
-            v-show="micOn"
-            @click="micOn = false"
-            class="video-control-btn"
-          ></q-btn>
+          <q-btn round icon="mdi-microphone" class="video-control-btn"></q-btn>
           <q-btn
             round
             icon="mdi-microphone-off"
-            v-show="!micOn"
-            @click="this.micOn = true"
             class="video-control-btn"
           ></q-btn>
-          <q-btn
-            round
-            icon="mdi-volume-high"
-            v-show="!muted"
-            @click="muted = true"
-            class="video-control-btn"
-          ></q-btn>
-          <q-btn
-            round
-            icon="mdi-volume-off"
-            v-show="muted"
-            @click="muted = false"
-            class="video-control-btn"
-          ></q-btn>
+          <q-btn round icon="mdi-volume-high" class="video-control-btn"></q-btn>
+          <q-btn round icon="mdi-volume-off" class="video-control-btn"></q-btn>
         </div>
       </div>
     </div>

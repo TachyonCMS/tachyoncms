@@ -251,8 +251,8 @@ export default function useFlows() {
       width: stream_width,
     };
 
-    console.log("Width: " + stream_width + "px");
-    console.log("Height: " + stream_height + "px");
+    console.log("Video Native Width: " + stream_width + "px");
+    console.log("Video Native Height: " + stream_height + "px");
 
     cameraRes.value = camRes;
 

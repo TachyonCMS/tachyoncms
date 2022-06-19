@@ -1,33 +1,59 @@
 <template>
   <div class="flex flex-center">
-    <div
-      class="row col-12"
-      v-show="['video'].includes(view)"
-      :style="'width=: ' + vWidth + 'px'"
-    >
+    <div class="row col-12" :style="'width=: ' + vWidth + 'px'">
+      <q-resize-observer @resize="onResize"></q-resize-observer>
       <div class="videobox row wrap justify-around items-start content-start">
-        <q-resize-observer @resize="onResize"></q-resize-observer>
-        <div class="relative-position">
-          <video
-            :ref="videoId"
-            :src="videoSource"
-            :autoplay="autoplay"
-            :playsInline="playsInline"
-            :width="vWidth"
-            :height="vHeight"
-            muted="recorderMuted"
-          />
-          <div class="top-right text-body2">
-            {{ videoSourceName }}
-            <q-icon
-              name="mdi-close-circle"
-              @click="this.onCloseVideo(videoId)"
-            ></q-icon>
+        <div>
+          <div class="relative-position nospc">
+            <video
+              v-show="['video'].includes(view)"
+              :ref="videoId"
+              :src="videoSource"
+              :autoplay="autoplay"
+              :playsInline="playsInline"
+              :width="vWidth"
+              :height="vHeight"
+              muted="recorderMuted"
+            />
+            <div v-show="['video'].includes(view)" class="top-right text-body2">
+              {{ videoSourceName }}
+              <q-icon
+                name="mdi-close-circle"
+                @click="this.onCloseVideo()"
+              ></q-icon>
+            </div>
           </div>
-          <div
-            v-show="view != 'selectSource'"
-            class="row col-12 video-controls"
-          >
+
+          <div v-show="showSnapshot" class="v-max">
+            <canvas :ref="canvasId" :width="vWidth" :height="vHeight">
+              <img
+                :ref="imgId"
+                :src="snapshotImgUrl"
+                :width="vWidth"
+                :height="vHeight"
+              />
+            </canvas>
+          </div>
+
+          <div v-show="view == 'snapshot'" class="row col-12 video-controls">
+            <q-space></q-space>
+            <q-btn
+              round
+              icon="mdi-delete"
+              class="video-control-btn"
+              @click="onSnapDelete()"
+            ></q-btn>
+            <q-btn
+              round
+              icon="mdi-download"
+              class="video-control-btn"
+              @click="onSnapDownload()"
+            ></q-btn>
+
+            <q-space></q-space>
+          </div>
+
+          <div v-show="view == 'video'" class="row col-12 video-controls">
             <q-btn
               round
               icon="mdi-camera-iris"
@@ -124,6 +150,10 @@
               class="video-control-btn"
             ></q-btn>
           </div>
+          <div class="col-12">
+            Div Width: {{ divWidth }} Video Width: {{ vWidth }} Video Height:
+            {{ vHeight }} Hardware Width: {{ hwWidth }}
+          </div>
         </div>
       </div>
     </div>
@@ -167,12 +197,12 @@ export default defineComponent({
       default: null,
     },
     width: {
-      type: [Number, String, null],
-      default: null,
+      type: [Number, String],
+      default: 0,
     },
     height: {
-      type: [Number, String, null],
-      default: null,
+      type: [Number, String],
+      default: 0,
     },
     autoplay: {
       type: Boolean,
@@ -231,41 +261,45 @@ export default defineComponent({
 
     const view = ref("selectSource");
 
-    const snapshot = ref(null);
+    const snapshotImgUrl = ref(null);
 
     const videoSourceName = ref(null);
+
+    const showSnapshot = ref(false);
 
     onMounted(() => {
       initVideoOptions(props.videoTypes);
     });
 
     const videoId = "video_" + props.uniq;
+    const canvasId = "canvas_" + props.uniq;
+    const imgId = "img_" + props.uniq;
 
     let resized = ref(false);
 
+    const hwWidth = ref($q.screen.width);
+
     // Video height and width
     let widthOverride = false;
-    const vWidth = computed(() => {
-      let targetWidth = props.width ? props.width : cameraRes.width;
 
-      const hwWidth = $q.screen.width;
-      if (targetWidth > hwWidth) {
-        targetWidth = hwWidth * 0.9;
-        widthOverride = true;
-      }
+    const vWidth = computed(() => {
+      let targetWidth;
+
+      targetWidth = props.width < hwWidth.value ? props.width : hwWidth.value;
+      console.log(targetWidth);
+
       return targetWidth;
     });
     const vHeight = computed(() => {
-      let targetHeight = props.height ? props.height : cameraRes.height;
-      if (widthOverride || resized) {
-        targetHeight = vWidth.value * 0.75;
-      }
-      return targetHeight;
+      return vWidth.value * 0.562;
     });
 
-    // We only carer about the event, not the content of the resize event.
+    const divWidth = ref(0);
+
+    // We only care about the event, not the content of the resize event.
     const onResize = (size) => {
-      //report.value = size;
+      console.log(size);
+      divWidth.value = size.width;
       resized.value = true; // Trigger a vHeight recalculation
       resized.value = false;
     };
@@ -276,8 +310,14 @@ export default defineComponent({
     // The resolved video element
     const videoElem = ref(null);
 
+    // The resolved canvas element
+    const canvasElem = ref(null);
+
+    // The resolved img element
+    const imgElem = ref(null);
+
     return {
-      snapshot, // All the captured image to be displayed or manipulated
+      snapshotImgUrl, // All the captured image to be displayed or manipulated
       view, // The current selected view
       cameras, // List of source options
       startScreenshare,
@@ -285,6 +325,8 @@ export default defineComponent({
       videoSourceName,
       stopVideo,
       videoId,
+      canvasId,
+      imgId,
       micOn,
       videoLive,
       recording,
@@ -294,6 +336,12 @@ export default defineComponent({
       vWidth,
       vHeight,
       onResize,
+      videoElem,
+      canvasElem,
+      imgElem,
+      showSnapshot,
+      divWidth,
+      hwWidth,
     };
   },
   methods: {
@@ -305,21 +353,46 @@ export default defineComponent({
         let videoElem;
         videoElem = this.$refs[this.videoId];
         this.videoElem = videoElem;
-        this.changeVideoSource(videoSource.value, videoElem);
+        let canvasElem;
+        canvasElem = this.$refs[this.canvasId];
+        this.canvasElem = canvasElem;
+        let imgElem;
+        imgElem = this.$refs[this.imgId];
+        this.imgElem = imgElem;
+        this.changeVideoSource(
+          videoSource.value,
+          videoElem,
+          canvasElem,
+          imgElem
+        );
         this.videoSourceName = videoSource.text;
         this.view = "video";
       }
     },
     onCloseVideo() {
-      const videoElem = this.$refs[this.videoId];
       this.stopVideo(this.videoElem);
-      console.log(this.videoSourceName);
       this.videoSourceName = null;
-      //this.selectedVideoSource = null;
       this.view = "selectSource";
     },
     onSnap() {
       console.log("SNAP!");
+      var canvasCtx = this.canvasElem.getContext("2d");
+      console.log(canvasCtx);
+      canvasCtx.drawImage(this.videoElem, 0, 0, this.vWidth, this.vHeight);
+      var data = this.canvasElem.toDataURL("image/png");
+      this.snapshot = data;
+      this.showSnapshot = true;
+      console.log(data);
+    },
+    onSnapDelete() {
+      console.log("SNAP! delete");
+      this.snapshot = null;
+      this.showSnapshot = false;
+    },
+    onSnapDownload() {
+      console.log("SNAP! download");
+
+      this.onSnapDelete();
     },
   },
 });
@@ -327,12 +400,17 @@ export default defineComponent({
 
 <style scoped>
 .videobox {
-  background-color: black;
+  background-color: #e8e8e8;
 }
 .video-controls {
   background-color: #e8e8e8;
 }
 .video-control-btn {
   background-color: #f8f8f8;
+}
+
+.nospc {
+  padding: 0;
+  margin: 0;
 }
 </style>

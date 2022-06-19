@@ -3,11 +3,7 @@
     class="fit row wrap justify-around items-start content-start relative-position"
   >
     <div>
-      <multi-corder
-        :width="width"
-        :height="height"
-        :videoTypes="['camera']"
-      ></multi-corder>
+      <multi-corder :width="width" :videoTypes="['camera']"></multi-corder>
     </div>
   </div>
 </template>
@@ -25,9 +21,9 @@ export default defineComponent({
     MultiCorder,
   },
   setup(props) {
-    const width = ref(800);
+    const width = ref(2500);
     const height = computed(() => {
-      return width.value / 1.333; //1.778;
+      return width.value * 0.75; //1.778;
     });
 
     return {
