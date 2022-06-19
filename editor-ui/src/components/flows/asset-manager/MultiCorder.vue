@@ -1,9 +1,14 @@
 <template>
   <div class="flex flex-center">
-    <div class="row col-12" :style="'width=: ' + vWidth + 'px'">
-      <q-resize-observer @resize="onResize"></q-resize-observer>
-      <div class="videobox row wrap justify-around items-start content-start">
+    <div class="row col-12">
+      <div
+        class="container videobox row wrap justify-around items-start content-start"
+      >
         <div>
+          <q-resize-observer
+            @resize="onResize"
+            debounce="1000"
+          ></q-resize-observer>
           <div class="relative-position nospc">
             <video
               v-show="['video'].includes(view)"
@@ -24,7 +29,7 @@
             </div>
           </div>
 
-          <div v-show="showSnapshot" class="v-max">
+          <div v-show="view == 'snapshot'">
             <canvas :ref="canvasId" :width="vWidth" :height="vHeight">
               <img
                 :ref="imgId"
@@ -48,6 +53,12 @@
               icon="mdi-download"
               class="video-control-btn"
               @click="onSnapDownload()"
+            ></q-btn>
+            <q-btn
+              round
+              icon="mdi-content-save"
+              class="video-control-btn"
+              @click="onSnapSave()"
             ></q-btn>
 
             <q-space></q-space>
@@ -150,10 +161,11 @@
               class="video-control-btn"
             ></q-btn>
           </div>
+          <!--
           <div class="col-12">
-            Div Width: {{ divWidth }} Video Width: {{ vWidth }} Video Height:
-            {{ vHeight }} Hardware Width: {{ hwWidth }}
+            Calculated Width: {{ vWidth }} Calculated Height: {{ vHeight }}
           </div>
+          -->
         </div>
       </div>
     </div>
@@ -275,37 +287,31 @@ export default defineComponent({
     const canvasId = "canvas_" + props.uniq;
     const imgId = "img_" + props.uniq;
 
-    let resized = ref(false);
+    const viewWidth = ref(0);
 
-    const hwWidth = ref($q.screen.width);
-
-    // Video height and width
-    let widthOverride = false;
-
-    const vWidth = computed(() => {
+    const calcWidth = () => {
       let targetWidth;
+      viewWidth.value = $q.screen.width;
 
-      targetWidth = props.width < hwWidth.value ? props.width : hwWidth.value;
+      targetWidth =
+        props.width < viewWidth.value ? props.width : viewWidth.value;
       console.log(targetWidth);
 
       return targetWidth;
-    });
+    };
+
+    const vWidth = ref(calcWidth());
+
     const vHeight = computed(() => {
       return vWidth.value * 0.562;
     });
 
     const divWidth = ref(0);
 
-    // We only care about the event, not the content of the resize event.
     const onResize = (size) => {
       console.log(size);
-      divWidth.value = size.width;
-      resized.value = true; // Trigger a vHeight recalculation
-      resized.value = false;
+      // vWidth.value = calcWidth();
     };
-
-    // Used during screen resize
-    const report = ref(null);
 
     // The resolved video element
     const videoElem = ref(null);
@@ -340,8 +346,6 @@ export default defineComponent({
       canvasElem,
       imgElem,
       showSnapshot,
-      divWidth,
-      hwWidth,
     };
   },
   methods: {
@@ -381,17 +385,21 @@ export default defineComponent({
       canvasCtx.drawImage(this.videoElem, 0, 0, this.vWidth, this.vHeight);
       var data = this.canvasElem.toDataURL("image/png");
       this.snapshot = data;
-      this.showSnapshot = true;
+      this.view = "snapshot";
       console.log(data);
     },
     onSnapDelete() {
       console.log("SNAP! delete");
       this.snapshot = null;
-      this.showSnapshot = false;
+      this.view = "video";
     },
     onSnapDownload() {
       console.log("SNAP! download");
 
+      this.onSnapDelete();
+    },
+    onSnapSave() {
+      console.log("SNAP! save");
       this.onSnapDelete();
     },
   },

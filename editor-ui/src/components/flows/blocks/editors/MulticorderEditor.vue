@@ -21,7 +21,7 @@ export default defineComponent({
     MultiCorder,
   },
   setup(props) {
-    const width = ref(2500);
+    const width = ref(1024);
     const height = computed(() => {
       return width.value * 0.75; //1.778;
     });
