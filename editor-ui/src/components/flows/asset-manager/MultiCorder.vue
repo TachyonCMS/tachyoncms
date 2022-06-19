@@ -1,14 +1,11 @@
 <template>
   <div class="flex flex-center">
+    <q-resize-observer @resize="onResize" debounce="100"></q-resize-observer>
     <div class="row col-12">
       <div
-        class="container videobox row wrap justify-around items-start content-start"
+        class="block videobox row wrap justify-around items-start content-start"
       >
         <div>
-          <q-resize-observer
-            @resize="onResize"
-            debounce="1000"
-          ></q-resize-observer>
           <div class="relative-position nospc">
             <video
               v-show="['video'].includes(view)"
@@ -268,7 +265,6 @@ export default defineComponent({
       paused,
       muted,
       recorderState,
-      cameraRes,
     } = useMultiCorder();
 
     const view = ref("selectSource");
@@ -395,12 +391,24 @@ export default defineComponent({
     },
     onSnapDownload() {
       console.log("SNAP! download");
-
-      this.onSnapDelete();
+      //this.canvasElem.toBlob((blob) => {
+      //  console.log(blob);
+      //
+      // });
+      this.downloadSnapshot();
     },
     onSnapSave() {
       console.log("SNAP! save");
       this.onSnapDelete();
+    },
+
+    async downloadSnapshot() {
+      const a = document.createElement("a");
+      document.body.appendChild(a);
+      a.style = "display: none";
+      a.href = this.snapshot;
+      a.download = "image.png";
+      a.click();
     },
   },
 });
