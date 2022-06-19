@@ -1,6 +1,5 @@
 <template>
   <div class="flex flex-center">
-    <q-resize-observer @resize="onResize"></q-resize-observer>
     <div class="row col-12">
       <div v-show="showControls" class="row col-12 justify-center tools">
         Edit Tool panel

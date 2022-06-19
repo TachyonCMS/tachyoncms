@@ -188,6 +188,7 @@ import { defineComponent, ref, onMounted, computed } from "vue";
 
 import { useQuasar } from "quasar";
 
+import useFlows from "../../../composables/useFlows";
 import useMultiCorder from "./useMultiCorder";
 
 import VideoSourceSelector from "./components/VideoSourceSelector.vue";
@@ -265,11 +266,16 @@ export default defineComponent({
       paused,
       muted,
       recorderState,
+      getMediaName,
     } = useMultiCorder();
 
     const view = ref("selectSource");
 
     const snapshotImgUrl = ref(null);
+
+    const snapshotName = ref(null);
+
+    const snapshotExt = ref("png");
 
     const videoSourceName = ref(null);
 
@@ -342,6 +348,8 @@ export default defineComponent({
       canvasElem,
       imgElem,
       showSnapshot,
+      snapshotName,
+      snapshotExt,
     };
   },
   methods: {
@@ -379,10 +387,20 @@ export default defineComponent({
       var canvasCtx = this.canvasElem.getContext("2d");
       console.log(canvasCtx);
       canvasCtx.drawImage(this.videoElem, 0, 0, this.vWidth, this.vHeight);
-      var data = this.canvasElem.toDataURL("image/png");
+      var data = this.canvasElem.toDataURL("image/" + this.snapshotExt);
       this.snapshot = data;
+      this.snapshotName = this.getMediaName("snap"); // DOwnload and Save use the same name
       this.view = "snapshot";
-      console.log(data);
+      //console.log(data);
+    },
+    getMediaName(media) {
+      const snapTime = new Date().toISOString();
+
+      const timeString = snapTime.replace(/[:.Z]/g, "");
+      console.log(timeString);
+      const snapName = media + "-" + timeString;
+      console.log(snapName);
+      return snapName;
     },
     onSnapDelete() {
       console.log("SNAP! delete");
@@ -391,24 +409,21 @@ export default defineComponent({
     },
     onSnapDownload() {
       console.log("SNAP! download");
-      //this.canvasElem.toBlob((blob) => {
-      //  console.log(blob);
-      //
-      // });
       this.downloadSnapshot();
     },
-    onSnapSave() {
-      console.log("SNAP! save");
-      this.onSnapDelete();
-    },
-
     async downloadSnapshot() {
       const a = document.createElement("a");
       document.body.appendChild(a);
       a.style = "display: none";
       a.href = this.snapshot;
-      a.download = "image.png";
+      a.download = this.snapshotName + "." + this.snapshotExt;
       a.click();
+    },
+    onSnapSave() {
+      console.log("SNAP! save");
+
+      // Saving the image to the CMS is the goal, close when done.
+      this.onSnapDelete();
     },
   },
 });
