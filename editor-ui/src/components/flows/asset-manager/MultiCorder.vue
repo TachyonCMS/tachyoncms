@@ -41,12 +41,6 @@
             <q-space></q-space>
             <q-btn
               round
-              icon="mdi-delete"
-              class="video-control-btn"
-              @click="onSnapDelete()"
-            ></q-btn>
-            <q-btn
-              round
               icon="mdi-download"
               class="video-control-btn"
               @click="onSnapDownload()"
@@ -59,6 +53,14 @@
             ></q-btn>
 
             <q-space></q-space>
+
+            <q-btn
+              round
+              flat
+              icon="mdi-delete"
+              class="video-control-btn"
+              @click="onSnapDelete()"
+            ></q-btn>
           </div>
 
           <div v-show="view == 'video'" class="row col-12 video-controls">
@@ -357,6 +359,7 @@ export default defineComponent({
       snapshotName,
       snapshotExt,
       storeNuggetMedia,
+      getMediaName,
     };
   },
   methods: {
@@ -399,15 +402,6 @@ export default defineComponent({
       this.snapshotName = this.getMediaName("snap"); // DOwnload and Save use the same name
       this.view = "snapshot";
       //console.log(data);
-    },
-    getMediaName(media) {
-      const snapTime = new Date().toISOString();
-
-      const timeString = snapTime.replace(/[:.Z]/g, "");
-      console.log(timeString);
-      const snapName = media + "-" + timeString;
-      console.log(snapName);
-      return snapName;
     },
     onSnapDelete() {
       console.log("SNAP! delete");

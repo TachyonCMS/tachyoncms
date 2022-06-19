@@ -305,6 +305,16 @@ export default function useFlows() {
     this.snapshot = null;
   };
 
+  const getMediaName = (media) => {
+    const snapTime = new Date().toISOString();
+
+    const timeString = snapTime.replace(/[:.Z]/g, "");
+    console.log(timeString);
+    const snapName = media + "-" + timeString;
+    console.log(snapName);
+    return snapName;
+  };
+
   /**
    * RETURN
    * Allow access to these outside of `setup`
@@ -345,5 +355,7 @@ export default function useFlows() {
     videoSnapshot,
     // Close a snapshot
     closeSnapshot,
+    // Get a hopefully unique file name
+    getMediaName,
   };
 }
