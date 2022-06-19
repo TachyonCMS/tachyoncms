@@ -546,6 +546,33 @@ export default function useFlows() {
     }
   };
 
+  const storeNuggetMedia = async (nuggetId, fileName, fileData) => {
+    try {
+      console.log("storeNuggetMedia " + nuggetId);
+      // Use the defined connector
+      flowConnectors[flowConnector.value]
+        .storeNuggetMedia(nuggetId, fileName, fileData)
+        .then((result) => {
+          console.log(result);
+          // nuggetAssetMap.set(nuggetId, result);
+          nuggetAssetMapInsert(nuggetId, fileName);
+        });
+    } catch (e) {
+      console.error("Error Storing Media");
+      console.error(e);
+    }
+  };
+
+  const nuggetAssetMapInsert = async (nuggetId, fileName) => {
+    let assets = [fileName];
+    const currentAssets = nuggetAssetMap.get(nuggetId);
+    console.log(currentAssets);
+    if (currentAssets) {
+      assets = [...assets, ...currentAssets];
+    }
+    nuggetAssetMap.set(nuggetId, assets);
+  };
+
   return {
     loadNuggetAssets,
     loadFlows,
@@ -581,5 +608,6 @@ export default function useFlows() {
     nuggetBlocksMap,
     deleteNuggetAsset,
     storeNuggetAssets,
+    storeNuggetMedia,
   };
 }

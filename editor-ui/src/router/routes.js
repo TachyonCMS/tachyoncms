@@ -101,6 +101,21 @@ const routes = [
     },
   },
 
+  {
+    path: "/spring",
+    name: "spring",
+    component: () => import("src/layouts/FlowsLayout.vue"),
+    children: [
+      {
+        path: "",
+        component: () => import("pages/flows/Spring.vue"),
+      },
+    ],
+    meta: {
+      requiresAuth: false,
+    },
+  },
+
   // Always leave this as last one,
   // but you can also remove it
   {

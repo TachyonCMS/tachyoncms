@@ -930,6 +930,32 @@ export default () => {
     }
   };
 
+  const storeNuggetMedia = async (nuggetId, fileName, fileData) => {
+    try {
+      // Get the Nugget asset dirHandle that all files will use.
+      const dirHandle = await getDirHandle([
+        "nugget",
+        nuggetId,
+        "assets-" + nuggetId,
+      ]);
+      console.log(fileData);
+
+      const writeFileHandle = await dirHandle.getFileHandle(fileName, {
+        create: true,
+      });
+
+      const base64 = await fetch(fileData);
+      const blob = await base64.blob();
+
+      const writeResult = await writeToFileHandle(writeFileHandle, blob);
+
+      return { nuggetId, fileName };
+    } catch (e) {
+      console.log("Error Adding Nugget Assets");
+      console.error(e);
+    }
+  };
+
   // exposed
   return {
     loadFlows,
@@ -949,5 +975,6 @@ export default () => {
     loadNuggetAssets,
     deleteNuggetAsset,
     storeNuggetAssets,
+    storeNuggetMedia,
   };
 };

@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-center">
+  <div class="flex flex-center text-center justify-center">
     <q-resize-observer @resize="onResize" debounce="100"></q-resize-observer>
     <div class="row col-12">
       <div
@@ -198,6 +198,10 @@ export default defineComponent({
   name: "MultiCorder",
   emits: ["error", "notification"],
   props: {
+    nuggetId: {
+      type: String,
+      default: "0",
+    },
     uniq: {
       type: String,
       default: "0",
@@ -268,6 +272,8 @@ export default defineComponent({
       recorderState,
       getMediaName,
     } = useMultiCorder();
+
+    const { storeNuggetMedia } = useFlows();
 
     const view = ref("selectSource");
 
@@ -350,6 +356,7 @@ export default defineComponent({
       showSnapshot,
       snapshotName,
       snapshotExt,
+      storeNuggetMedia,
     };
   },
   methods: {
@@ -419,9 +426,10 @@ export default defineComponent({
       a.download = this.snapshotName + "." + this.snapshotExt;
       a.click();
     },
-    onSnapSave() {
+    async onSnapSave() {
       console.log("SNAP! save");
-
+      const fileName = this.snapshotName + "." + this.snapshotExt;
+      await this.storeNuggetMedia(this.nuggetId, fileName, this.snapshot);
       // Saving the image to the CMS is the goal, close when done.
       this.onSnapDelete();
     },

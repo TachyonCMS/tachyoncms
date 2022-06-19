@@ -13,10 +13,11 @@
       <q-tab name="audio" icon="mdi-microphone" label="Audio"></q-tab>
       <q-tab name="screen" icon="monitor" label="Screen"></q-tab>
       -->
-      <q-tab name="files" icon="mdi-file-multiple" label="Files"></q-tab>
+      <q-tab name="file-manager" icon="mdi-file-multiple" label="Files"></q-tab>
+      <q-tab name="multi-corder" icon="camera" label="Multicorder"></q-tab>
     </q-tabs>
-    <div class="row col-12 text-center">
-      <component :is="tabView" :nuggetId="nuggetId"></component>
+    <div class="row col-12 text-center justify-center">
+      <component :is="tabView" :nuggetId="nuggetId" width="1024"></component>
     </div>
   </div>
 </template>
@@ -29,17 +30,19 @@ const {
   nuggetAssestMap,
 } = require("../../../composables/useFlows.js");
 
-import Files from "./AMFiles";
+import FileManager from "./AMFiles";
+import MultiCorder from "./MultiCorder";
 
 export default defineComponent({
   name: "AssetManager",
   components: {
-    Files,
+    FileManager,
+    MultiCorder,
   },
   props: ["nuggetId"],
   setup(props) {
     console.log(props);
-    const tabView = ref("files");
+    const tabView = ref("file-manager");
     const nuggetAssets = computed(() => {
       return nuggetAssetMap.get(nuggetId);
     });
