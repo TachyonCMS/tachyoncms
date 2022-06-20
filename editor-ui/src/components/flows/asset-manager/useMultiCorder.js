@@ -67,10 +67,21 @@ export default function useMultiCorder() {
 
   // Recorder state streaming|recording|paused|stopped|saving
   const recorderState = ref("streaming");
+  const recorderStates = [
+    "streaming", // live video visible but not recorded
+    "recording", // Video being recorded
+    "paused", // Recording paused, can be restarted
+    "stopped", // Recording stopped and available for download or saving.
+    "saving", // In the process of saving, it will go back to streaming when done
+  ];
 
-  // Set the state, logic can be applied here
   const setRecorderState = (state) => {
-    recorderState.value = state;
+    if (recorderStates.includes(state)) {
+      console.log("Recorder is currently : " + state);
+      recorderState.value = state;
+    } else {
+      console.error("Invalid recorder state: " + state);
+    }
   };
 
   // The image format for snapshots
@@ -376,16 +387,57 @@ export default function useMultiCorder() {
   // Pause recording, can be restarted
   const recordPause = () => {
     videoElem.value.pause();
+    setRecorderState("paused");
   };
 
   // Resume recording after pause
   const recordResume = () => {
     videoElem.value.play();
+    setRecorderState("recording");
   };
 
   // Stop recording, cannot be restarted. New video required.
   const recordStop = () => {
     recorder.value.stop();
+    setRecorderState("stopped");
+  };
+
+  // Stop recording, cannot be restarted. New video required.
+  const recordDelete = () => {
+    setRecorderState("streaming");
+    recorder.value = null;
+  };
+
+  // Stop recording, cannot be restarted. New video required.
+  const recordDownload = async (recordingIndex = 0) => {
+    const blob = recordings.value[recordingIndex];
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    document.body.appendChild(a);
+    a.style = "display: none";
+    a.href = url;
+    a.download = blob.name;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
+
+  const deleteRecording = (recordingIndex) => {
+    //if (this.recorderMode == "single") {
+    //  this.setView("video");
+    //}
+    recordings.value.splice(index, 1);
+    //this.$emit("delete-recording", index);
+    setRecorderState("stopped");
+  };
+
+  // Stop recording, cannot be restarted. New video required.
+  const recordSave = async (nuggetId, recordingIndex = 0) => {
+    const blob = recordings.value[recordingIndex];
+    const url = URL.createObjectURL(blob);
+    const fileName = blob.name;
+    await storeNuggetMedia(nuggetId, fileName, url);
+    setRecorderState("streaming");
+    recorder.value = null;
   };
 
   /**
@@ -458,5 +510,11 @@ export default function useMultiCorder() {
     recordResume,
     // Stop recording, cannot be restarted. New video required.
     recordStop,
+    // Delete the current recording
+    recordDelete,
+    // Download the resulting the video
+    recordDownload,
+    // Save the recording the the TachyonCMS
+    recordSave,
   };
 }

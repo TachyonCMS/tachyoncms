@@ -1,5 +1,6 @@
 <template>
   <div class="flex flex-center text-center justify-center">
+    {{ recorderState }}
     <q-resize-observer @resize="onResize" debounce="100"></q-resize-observer>
     <div class="row col-12">
       <div
@@ -123,14 +124,14 @@
               round
               icon="mdi-download"
               v-show="recorderState === 'stopped'"
-              @click="this.recorderState = 'downloading'"
+              @click="this.onRecordDownload()"
               class="video-control-btn"
             ></q-btn>
             <q-btn
               round
               icon="mdi-content-save"
               v-show="recorderState === 'stopped'"
-              @click="this.recorderState = 'saving'"
+              @click="this.onRecordSave()"
               class="video-control-btn"
             ></q-btn>
 
@@ -169,7 +170,7 @@
               round
               icon="mdi-delete"
               v-show="recorderState === 'stopped'"
-              @click="this.recorderState = 'idle'"
+              @click="this.onRecordDelete()"
               class="video-control-btn"
             ></q-btn>
           </div>
@@ -300,6 +301,9 @@ export default defineComponent({
       recordPause,
       recordResume,
       recordStop,
+      recordDelete,
+      recordDownload,
+      recordSave,
     } = useMultiCorder();
 
     const view = ref("selectSource");
@@ -318,10 +322,15 @@ export default defineComponent({
 
     const calcWidth = () => {
       let targetWidth;
+
+      // Get the available width as reported by Quasar
+      // This isn't hardware width, but browser window width.
       viewWidth.value = $q.screen.width;
 
       targetWidth =
-        props.width < viewWidth.value ? props.width : viewWidth.value;
+        props.width < viewWidth.value * 0.95
+          ? props.width
+          : viewWidth.value * 0.95;
       console.log(targetWidth);
 
       return targetWidth;
@@ -387,6 +396,9 @@ export default defineComponent({
       recordPause,
       recordResume,
       recordStop,
+      recordDelete,
+      recordDownload,
+      recordSave,
     };
   },
   methods: {
@@ -430,29 +442,47 @@ export default defineComponent({
       this.downloadSnapshot();
     },
     async onSnapSave() {
-      await this.saveNuggetMedia(this.nuggetId);
       this.onSnapDelete();
     },
     onRecord() {
       console.log("MC - onRecord");
+
       this.recordStart();
     },
 
     onRecordPause() {
       console.log("MC - onRecordPause");
       this.recordPause();
-      this.recorderState = "paused";
     },
 
     onRecordResume() {
       console.log("MC - onRecordResume");
+
       this.recordResume();
-      this.recorderState = "recording";
     },
+
     onRecordStop() {
       console.log("MC - onRecordStop");
+
       this.recordStop();
-      this.recorderState = "stopped";
+    },
+
+    onRecordDelete() {
+      console.log("MC - onRecordDelete");
+
+      this.recordDelete();
+    },
+
+    onRecordDownload() {
+      console.log("MC - onRecordDownload");
+
+      this.recordDownload();
+    },
+
+    onRecordSave() {
+      console.log("MC - onRecordSave");
+
+      this.recordSave(this.nuggetId);
     },
   },
 });

@@ -61,7 +61,7 @@
         icon="mdi-drawing-box"
         flat
         size="md"
-        label="Whiteboard (new)"
+        label="Whiteboard (Coming Soon!)"
         :data-cy="dataCySlug + '-whiteboard-btn'"
       ></q-btn>
     </div>
