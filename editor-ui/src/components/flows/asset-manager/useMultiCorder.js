@@ -52,6 +52,9 @@ export default function useMultiCorder() {
   // Recording from mic/video
   const recording = ref(false);
 
+  // Array of recordings
+  const recordings = ref([]);
+
   // Recording paused
   const paused = ref(false);
 
@@ -343,7 +346,21 @@ export default function useMultiCorder() {
     await storeNuggetMedia(nuggetId, fileName, snapshot.value);
   };
 
-  const recordStart = () => {};
+  const recordStart = () => {
+    console.log("useMC - recordStart");
+    const stream = videoElem.value;
+    const recorder = new MediaRecorder(stream);
+    recorder.ondataavailable = (event) => pushVideoData(event.data);
+    recorder.start();
+    recorder.value = recorder;
+  };
+
+  const pushVideoData = async (data) => {
+    if (data.size > 0) {
+      data.name = getMediaName("clip") + ".webm";
+      recordings.value.push(data);
+    }
+  };
 
   /**
    * RETURN

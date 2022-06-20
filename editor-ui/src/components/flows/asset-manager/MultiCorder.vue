@@ -413,6 +413,7 @@ export default defineComponent({
       this.onSnapDelete();
     },
     onRecord() {
+      console.log('MC - onRecord')
       this.recordStart();
     },
 
