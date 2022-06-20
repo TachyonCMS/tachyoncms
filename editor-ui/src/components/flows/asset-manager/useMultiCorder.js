@@ -373,6 +373,21 @@ export default function useMultiCorder() {
     }
   };
 
+  // Pause recording, can be restarted
+  const recordPause = () => {
+    videoElem.value.pause();
+  };
+
+  // Resume recording after pause
+  const recordResume = () => {
+    videoElem.value.play();
+  };
+
+  // Stop recording, cannot be restarted. New video required.
+  const recordStop = () => {
+    recorder.value.stop();
+  };
+
   /**
    * RETURN
    * Allow access to these outside of `setup`
@@ -437,5 +452,11 @@ export default function useMultiCorder() {
     saveNuggetMedia,
     // Start recording
     recordStart,
+    // Pause recording, can be restarted
+    recordPause,
+    // Resume recording after pause
+    recordResume,
+    // Stop recording, cannot be restarted. New video required.
+    recordStop,
   };
 }

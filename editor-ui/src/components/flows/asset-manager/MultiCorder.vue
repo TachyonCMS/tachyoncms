@@ -37,6 +37,8 @@
             </canvas>
           </div>
 
+          <!-- SNAPSHOT CONTROLS -->
+
           <div v-show="view == 'snapshot'" class="row col-12 video-controls">
             <q-space></q-space>
             <q-btn
@@ -63,6 +65,8 @@
             ></q-btn>
           </div>
 
+          <!-- VIDEO CONTROLS -->
+
           <div v-show="view == 'video'" class="row col-12 video-controls">
             <q-btn
               round
@@ -75,7 +79,7 @@
               round
               icon="mdi-play"
               v-show="recorderState === 'stopped'"
-              @click="this.recorderState = 'playing'"
+              @click="this.onResume()"
               class="video-control-btn"
             ></q-btn>
 
@@ -85,8 +89,17 @@
               round
               icon="mdi-record"
               text-color="red"
-              v-show="['streaming', 'paused'].includes(recorderState)"
+              v-show="['streaming'].includes(recorderState)"
               @click="this.onRecord()"
+              class="video-control-btn"
+            ></q-btn>
+
+            <q-btn
+              round
+              icon="mdi-record"
+              text-color="red"
+              v-show="['paused'].includes(recorderState)"
+              @click="this.onRecordResume()"
               class="video-control-btn"
             ></q-btn>
 
@@ -94,7 +107,7 @@
               round
               icon="mdi-pause"
               v-show="this.recorderState === 'recording'"
-              @click="this.recorderState = 'paused'"
+              @click="this.onRecordPause()"
               class="video-control-btn"
             ></q-btn>
 
@@ -102,7 +115,7 @@
               round
               icon="mdi-stop"
               v-show="['recording', 'paused'].includes(this.recorderState)"
-              @click="this.recorderState = 'stopped'"
+              @click="this.onRecordStop()"
               class="video-control-btn"
             ></q-btn>
 
@@ -284,6 +297,9 @@ export default defineComponent({
       downloadSnapshot,
       saveNuggetMedia,
       recordStart,
+      recordPause,
+      recordResume,
+      recordStop,
     } = useMultiCorder();
 
     const view = ref("selectSource");
@@ -368,6 +384,9 @@ export default defineComponent({
       videoSnapshot,
       downloadSnapshot,
       recordStart,
+      recordPause,
+      recordResume,
+      recordStop,
     };
   },
   methods: {
@@ -422,13 +441,19 @@ export default defineComponent({
     onRecordPause() {
       console.log("MC - onRecordPause");
       this.recordPause();
+      this.recorderState = "paused";
     },
-    onRecordStop() {},
-    async onRecordDownload() {},
-    async onRecordSave() {},
-    onRecordDelete() {},
-    onPlay() {},
-    onPlayPause() {},
+
+    onRecordResume() {
+      console.log("MC - onRecordResume");
+      this.recordResume();
+      this.recorderState = "recording";
+    },
+    onRecordStop() {
+      console.log("MC - onRecordStop");
+      this.recordStop();
+      this.recorderState = "stopped";
+    },
   },
 });
 </script>
