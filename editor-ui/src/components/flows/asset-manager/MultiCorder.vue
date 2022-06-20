@@ -190,7 +190,6 @@ import { defineComponent, ref, onMounted, computed } from "vue";
 
 import { useQuasar } from "quasar";
 
-import useFlows from "../../../composables/useFlows";
 import useMultiCorder from "./useMultiCorder";
 
 import VideoSourceSelector from "./components/VideoSourceSelector.vue";
@@ -283,9 +282,8 @@ export default defineComponent({
       imgElem,
       videoSnapshot,
       downloadSnapshot,
+      saveNuggetMedia,
     } = useMultiCorder();
-
-    const { storeNuggetMedia } = useFlows();
 
     const view = ref("selectSource");
 
@@ -363,7 +361,7 @@ export default defineComponent({
       showSnapshot,
       snapshotName,
       snapshotExt,
-      storeNuggetMedia,
+      saveNuggetMedia,
       getMediaName,
       setView,
       videoSnapshot,
@@ -404,38 +402,20 @@ export default defineComponent({
       this.setView("snapshot");
     },
     onSnapDelete() {
-      console.log("SNAP! delete");
       this.snapshot = null;
-      this.view = "video";
+      this.setView("video");
     },
     async onSnapDownload() {
       this.downloadSnapshot();
     },
     async onSnapSave() {
-      console.log("SNAP! save");
-      await this.storeNuggetMedia()
-      const fileName = this.snapshotName + "." + this.snapshotExt;
-      await this.storeNuggetMedia(this.nuggetId, fileName, this.snapshot);
+      await this.saveNuggetMedia(this.nuggetId);
       this.onSnapDelete();
     },
     onRecord() {
-      const stream = this.videoElem;
-      const recorder = new MediaRecorder(stream);
-      this.recorder = recorder;
+      this.recordStart();
+    },
 
-      this.recorder.ondataavailable = (event) => this.pushVideoData(event.data);
-      this.recorder.start();
-    },
-    async pushVideoData(data) {
-      if (data.size > 0) {
-        data.name = this.getMediaName("clip-" + uniq) + ".webm";
-        this.recordings.push(data);
-        if (this.recorderMode == "single") {
-          this.setView("videoPlayer");
-        }
-        this.$emit("new-recording", { name: data.name, size: data.size });
-      }
-    },
     onRecordPause() {},
     onRecordStop() {},
     async onRecordDownload() {},

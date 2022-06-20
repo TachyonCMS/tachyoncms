@@ -1,5 +1,8 @@
 import { ref, computed } from "vue";
 
+// Allows us to store the resulting media
+import useFlows from "../../../composables/useFlows";
+
 /**
  * SHARED
  * The following are defined outside of the function because they only need to be set once.
@@ -14,11 +17,13 @@ const camerasLoaded = ref(false);
 // Is HTML5 screeenshare/capture supported?
 const screenshareSupported = ref(false);
 
+const { storeNuggetMedia } = useFlows();
+
 /**
  * EXPORTED FUNCTION
  */
 
-export default function useFlows() {
+export default function useMultiCorder() {
   /**
    * REACTIVE PROPERTIES
    */
@@ -333,6 +338,13 @@ export default function useFlows() {
     a.click();
   };
 
+  const saveNuggetMedia = async (nuggetId) => {
+    const fileName = snapshotName.value + "." + snapshotExt.value;
+    await storeNuggetMedia(nuggetId, fileName, snapshot.value);
+  };
+
+  const recordStart = () => {};
+
   /**
    * RETURN
    * Allow access to these outside of `setup`
@@ -393,5 +405,9 @@ export default function useFlows() {
     imgElem,
     // Download a snapshot
     downloadSnapshot,
+    // Store new media for a Nugget
+    saveNuggetMedia,
+    // Start recording
+    recordStart,
   };
 }
