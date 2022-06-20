@@ -171,7 +171,7 @@ export default function useMulticorder() {
     // this.initVideoOptions();
   },
   beforeUnmount() {
-    this.stopVideo();
+    this.closeVideoSource();
   },
   methods: {
     // ALL
@@ -180,7 +180,7 @@ export default function useMulticorder() {
       this.$emit("view-change", view);
     },
     changeVideoSource(videoSource) {
-      this.stopVideo();
+      this.closeVideoSource();
       this.$emit("video-change", videoSource);
       if (videoSource) {
         if (videoSource.value == "screenshare") {
@@ -233,7 +233,7 @@ export default function useMulticorder() {
       this.$emit("started", stream);
     },
 
-    stopVideo() {
+    closeVideoSource() {
       if (this.$refs.video !== null && this.$refs.video.srcObject) {
         this.stopStreamedVideo(this.$refs.video);
       }

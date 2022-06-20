@@ -49,6 +49,9 @@ export default function useMultiCorder() {
   // Video display on|off
   const videoLive = ref(false);
 
+  // The recorder
+  const recorder = ref(null);
+
   // Recording from mic/video
   const recording = ref(false);
 
@@ -212,7 +215,7 @@ export default function useMultiCorder() {
     console.log(videoSource);
     console.log(videoElem);
 
-    stopVideo(videoElem);
+    closeVideoSource(videoElem);
 
     if (videoSource) {
       if (videoSource == "screen") {
@@ -292,7 +295,7 @@ export default function useMultiCorder() {
   };
 
   // Stop video in a player, it may be restarted.
-  const stopVideo = () => {
+  const closeVideoSource = () => {
     if (videoElem.value.srcObject) {
       let stream = videoElem.value.srcObject;
       let tracks = stream.getTracks();
@@ -324,13 +327,13 @@ export default function useMultiCorder() {
   };
 
   const getMediaName = (media) => {
-    const snapTime = new Date().toISOString();
+    const createTime = new Date().toISOString();
 
-    const timeString = snapTime.replace(/[:.Z]/g, "");
+    const timeString = createTime.replace(/[:.Z]/g, "");
     console.log(timeString);
-    const snapName = media + "-" + timeString;
-    console.log(snapName);
-    return snapName;
+    const fileName = media + "-" + timeString;
+    console.log(fileName);
+    return fileName;
   };
 
   const snapshotFullName = computed(() => {
@@ -353,17 +356,20 @@ export default function useMultiCorder() {
 
   const recordStart = () => {
     console.log("useMC - recordStart");
-    const stream = videoElem.value;
-    const recorder = new MediaRecorder(stream);
-    recorder.ondataavailable = (event) => pushVideoData(event.data);
-    recorder.start();
-    recorder.value = recorder;
+    let stream = videoElem.value.srcObject;
+    const rec = new MediaRecorder(stream);
+    rec.ondataavailable = (event) => pushVideoData(event.data);
+    rec.start();
+    recorder.value = rec;
+    setRecorderState("recording");
   };
 
   const pushVideoData = async (data) => {
     if (data.size > 0) {
       data.name = getMediaName("clip") + ".webm";
       recordings.value.push(data);
+      console.log("Recording...");
+      console.log(data);
     }
   };
 
@@ -384,7 +390,7 @@ export default function useMultiCorder() {
     // Allow changing the videoSource
     changeVideoSource,
     // Permitting stopping video
-    stopVideo,
+    closeVideoSource,
     // Permit loading a single camera
     loadCamera,
     // Allow screen capture via HTML5 screen share

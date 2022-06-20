@@ -264,7 +264,7 @@ export default defineComponent({
       cameras,
       startScreenshare,
       changeVideoSource,
-      stopVideo,
+      closeVideoSource,
       micOn,
       videoLive,
       recording,
@@ -283,6 +283,7 @@ export default defineComponent({
       videoSnapshot,
       downloadSnapshot,
       saveNuggetMedia,
+      recordStart,
     } = useMultiCorder();
 
     const view = ref("selectSource");
@@ -342,7 +343,7 @@ export default defineComponent({
       startScreenshare,
       changeVideoSource,
       videoSourceName,
-      stopVideo,
+      closeVideoSource,
       videoId,
       canvasId,
       imgId,
@@ -366,6 +367,7 @@ export default defineComponent({
       setView,
       videoSnapshot,
       downloadSnapshot,
+      recordStart,
     };
   },
   methods: {
@@ -393,7 +395,7 @@ export default defineComponent({
       }
     },
     onCloseVideo() {
-      this.stopVideo();
+      this.closeVideoSource();
       this.videoSourceName = null;
       this.setView("selectSource");
     },
@@ -417,7 +419,10 @@ export default defineComponent({
       this.recordStart();
     },
 
-    onRecordPause() {},
+    onRecordPause() {
+      console.log("MC - onRecordPause");
+      this.recordPause();
+    },
     onRecordStop() {},
     async onRecordDownload() {},
     async onRecordSave() {},
