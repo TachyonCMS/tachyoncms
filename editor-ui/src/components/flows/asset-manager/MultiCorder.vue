@@ -1,6 +1,5 @@
 <template>
   <div class="flex flex-center text-center justify-center">
-    {{ recorderState }}
     <q-resize-observer @resize="onResize" debounce="100"></q-resize-observer>
     <div class="row col-12">
       <div
