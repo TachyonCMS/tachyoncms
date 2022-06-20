@@ -60,6 +60,21 @@ export default function useFlows() {
   // The image format for snapshots
   const snapshotFormat = ref("image/png");
 
+  const snapshotImgUrl = ref(null);
+
+  const snapshotName = ref(null);
+
+  const snapshotExt = ref("png");
+
+  // The resolved video element
+  const videoElem = ref(null);
+
+  // The resolved canvas element
+  const canvasElem = ref(null);
+
+  // The resolved img element
+  const imgElem = ref(null);
+
   // Physical camera resolution
   const cameraRes = ref({
     height: null,
@@ -315,6 +330,10 @@ export default function useFlows() {
     return snapName;
   };
 
+  const snapshotFullName = () => {
+    return this.snapshotName + "." + this.snapshotExt;
+  };
+
   /**
    * RETURN
    * Allow access to these outside of `setup`
@@ -357,5 +376,21 @@ export default function useFlows() {
     closeSnapshot,
     // Get a hopefully unique file name
     getMediaName,
+    // URL to allow browser download of image
+    snapshotImgUrl,
+    // name of the snapshot w/o extension
+    snapshotName,
+    // Snapshot extension
+    snapshotExt,
+    //Computed fullname of snapshot w/ extension
+    snapshotFullName,
+    // Friendly name for selected Video source
+    videoSourceName,
+    // Video HTML element
+    videoElem,
+    //Canvas HTML element
+    canvasElem,
+    // Img HTML element
+    imgElem,
   };
 }
