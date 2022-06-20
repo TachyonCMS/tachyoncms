@@ -68,7 +68,7 @@
           >
         </q-item-section>
       </q-item>
-
+      <!--
       <q-expansion-item
         expand-separator
         icon="api"
@@ -86,7 +86,7 @@
           dataCySlug="drawer"
         ></api-credentials-form>
       </q-expansion-item>
-
+-->
       <template v-if="hasAmplifyS3">
         <q-item
           clickable
@@ -610,7 +610,7 @@ export default defineComponent({
   components: {
     NewFlowForm,
     DateDisplay,
-    ApiCredentialsForm,
+    // ApiCredentialsForm,
   },
   setup() {
     const $q = useQuasar();
