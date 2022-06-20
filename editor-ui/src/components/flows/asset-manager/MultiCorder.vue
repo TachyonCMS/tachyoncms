@@ -85,15 +85,15 @@
               round
               icon="mdi-record"
               text-color="red"
-              v-show="['idle', 'paused'].includes(recorderState)"
-              @click="this.recorderState = 'recording'"
+              v-show="['streaming', 'paused'].includes(recorderState)"
+              @click="this.onRecord()"
               class="video-control-btn"
             ></q-btn>
 
             <q-btn
               round
               icon="mdi-pause"
-              v-show="recorderState === 'recording'"
+              v-show="this.recorderState === 'recording'"
               @click="this.recorderState = 'paused'"
               class="video-control-btn"
             ></q-btn>
@@ -101,7 +101,7 @@
             <q-btn
               round
               icon="mdi-stop"
-              v-show="['recording', 'paused'].includes(recorderState)"
+              v-show="['recording', 'paused'].includes(this.recorderState)"
               @click="this.recorderState = 'stopped'"
               class="video-control-btn"
             ></q-btn>
@@ -413,7 +413,7 @@ export default defineComponent({
       this.onSnapDelete();
     },
     onRecord() {
-      console.log('MC - onRecord')
+      console.log("MC - onRecord");
       this.recordStart();
     },
 

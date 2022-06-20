@@ -62,8 +62,13 @@ export default function useMultiCorder() {
   const muted = ref(true);
   // The HTML <video> element for THIS multicorder
 
-  // Recorder state idle|recording|paused|stopped|saving
-  const recorderState = ref("idle");
+  // Recorder state streaming|recording|paused|stopped|saving
+  const recorderState = ref("streaming");
+
+  // Set the state, logic can be applied here
+  const setRecorderState = (state) => {
+    recorderState.value = state;
+  };
 
   // The image format for snapshots
   const snapshotFormat = ref("image/png");
@@ -328,16 +333,16 @@ export default function useMultiCorder() {
     return snapName;
   };
 
-  const snapshotFullName = () => {
-    return this.snapshotName + "." + this.snapshotExt;
-  };
+  const snapshotFullName = computed(() => {
+    return snapshotName.value + "." + snapshotExt.value;
+  });
 
   const downloadSnapshot = async () => {
     const a = document.createElement("a");
     document.body.appendChild(a);
     a.style = "display: none";
     a.href = snapshot.value;
-    a.download = snapshotName.value + "." + snapshotExt.value;
+    a.download = snapshotFullName.value;
     a.click();
   };
 
