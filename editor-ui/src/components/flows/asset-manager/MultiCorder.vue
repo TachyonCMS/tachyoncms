@@ -276,10 +276,13 @@ export default defineComponent({
       snapshotImgUrl,
       snapshotName,
       snapshotExt,
+      snapshotFullname,
       videoSourceName,
       videoElem,
       canvasElem,
       imgElem,
+      videoSnapshot,
+      downloadSnapshot,
     } = useMultiCorder();
 
     const { storeNuggetMedia } = useFlows();
@@ -363,6 +366,8 @@ export default defineComponent({
       storeNuggetMedia,
       getMediaName,
       setView,
+      videoSnapshot,
+      downloadSnapshot,
     };
   },
   methods: {
@@ -370,7 +375,6 @@ export default defineComponent({
       if (videoSource.value === "whiteboard") {
         this.setView("whiteboard");
       } else {
-        console.log(videoSource);
         let videoElem;
         videoElem = this.$refs[this.videoId];
         this.videoElem = videoElem;
@@ -391,20 +395,13 @@ export default defineComponent({
       }
     },
     onCloseVideo() {
-      this.stopVideo(this.videoElem);
+      this.stopVideo();
       this.videoSourceName = null;
       this.setView("selectSource");
     },
     onSnap() {
-      console.log("SNAP!");
-      var canvasCtx = this.canvasElem.getContext("2d");
-      console.log(canvasCtx);
-      canvasCtx.drawImage(this.videoElem, 0, 0, this.vWidth, this.vHeight);
-      var data = this.canvasElem.toDataURL("image/" + this.snapshotExt);
-      this.snapshot = data;
-      this.snapshotName = this.getMediaName("snap"); // DOwnload and Save use the same name
+      this.videoSnapshot(this.vWidth, this.vHeight);
       this.setView("snapshot");
-      //console.log(data);
     },
     onSnapDelete() {
       console.log("SNAP! delete");
@@ -412,19 +409,13 @@ export default defineComponent({
       this.view = "video";
     },
     async onSnapDownload() {
-      console.log("SNAP! download");
-      const a = document.createElement("a");
-      document.body.appendChild(a);
-      a.style = "display: none";
-      a.href = this.snapshot;
-      a.download = this.snapshotName + "." + this.snapshotExt;
-      a.click();
+      this.downloadSnapshot();
     },
     async onSnapSave() {
       console.log("SNAP! save");
+      await this.storeNuggetMedia()
       const fileName = this.snapshotName + "." + this.snapshotExt;
       await this.storeNuggetMedia(this.nuggetId, fileName, this.snapshot);
-      // Saving the image to the CMS is the goal, close when done.
       this.onSnapDelete();
     },
     onRecord() {

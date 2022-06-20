@@ -279,40 +279,30 @@ export default function useFlows() {
   };
 
   // Stop video in a player, it may be restarted.
-  const stopVideo = (videoElem) => {
-    if (videoElem.srcObject) {
-      let stream = videoElem.srcObject;
+  const stopVideo = () => {
+    if (videoElem.value.srcObject) {
+      let stream = videoElem.value.srcObject;
       let tracks = stream.getTracks();
 
       tracks.forEach((track) => {
         track.stop();
 
-        videoElem.srcObject = null;
+        videoElem.value.srcObject = null;
         source.value = null;
       });
     }
   };
 
   // Take a snapshot of the video element content
-  const videoSnapshot = (videoElem) => {
-    snapshot.value = prepCanvas().toDataURL(screenshotFormat.value);
-  };
+  const videoSnapshot = async (vWidth, vHeight) => {
+    snapshotName.value = getMediaName("snap"); // Download and Save use the same name
 
-  // Return a canvas element to display new media
-  const prepCanvas = (videoElem) => {
-    if (!this.ctx) {
-      let canvas = document.createElement("canvas");
-      canvas.height = videoElem.videoHeight;
-      canvas.width = videoElem.videoWidth;
-      this.canvas = canvas;
-
-      this.ctx = canvas.getContext("2d");
-    }
-
-    const { ctx, canvas } = this;
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-    return canvas;
+    const canvasCtx = canvasElem.value.getContext("2d");
+    console.log(canvasCtx);
+    canvasCtx.drawImage(videoElem.value, 0, 0, vWidth, vHeight);
+    const data = await canvasElem.value.toDataURL("image/" + snapshotExt.value);
+    console.log(data);
+    snapshot.value = data;
   };
 
   // Close a snapshot
@@ -332,6 +322,15 @@ export default function useFlows() {
 
   const snapshotFullName = () => {
     return this.snapshotName + "." + this.snapshotExt;
+  };
+
+  const downloadSnapshot = async () => {
+    const a = document.createElement("a");
+    document.body.appendChild(a);
+    a.style = "display: none";
+    a.href = snapshot.value;
+    a.download = snapshotName.value + "." + snapshotExt.value;
+    a.click();
   };
 
   /**
@@ -392,5 +391,7 @@ export default function useFlows() {
     canvasElem,
     // Img HTML element
     imgElem,
+    // Download a snapshot
+    downloadSnapshot,
   };
 }
