@@ -108,16 +108,16 @@
 
             <q-btn
               round
-              icon="mdi-content-save"
+              icon="mdi-download"
               v-show="recorderState === 'stopped'"
-              @click="this.recorderState = 'saving'"
+              @click="this.recorderState = 'downloading'"
               class="video-control-btn"
             ></q-btn>
             <q-btn
               round
-              icon="mdi-download"
+              icon="mdi-content-save"
               v-show="recorderState === 'stopped'"
-              @click="this.recorderState = 'downloading'"
+              @click="this.recorderState = 'saving'"
               class="video-control-btn"
             ></q-btn>
 
@@ -310,7 +310,9 @@ export default defineComponent({
       return targetWidth;
     };
 
-    const vWidth = ref(calcWidth());
+    const vWidth = computed(() => {
+      return calcWidth();
+    });
 
     const vHeight = computed(() => {
       return vWidth.value * 0.562;
@@ -408,11 +410,8 @@ export default defineComponent({
       this.snapshot = null;
       this.view = "video";
     },
-    onSnapDownload() {
+    async onSnapDownload() {
       console.log("SNAP! download");
-      this.downloadSnapshot();
-    },
-    async downloadSnapshot() {
       const a = document.createElement("a");
       document.body.appendChild(a);
       a.style = "display: none";
@@ -427,6 +426,8 @@ export default defineComponent({
       // Saving the image to the CMS is the goal, close when done.
       this.onSnapDelete();
     },
+    onRecord() {},
+    onPause() {},
   },
 });
 </script>

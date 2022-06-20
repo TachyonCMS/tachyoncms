@@ -16,7 +16,7 @@
       <q-tab name="file-manager" icon="mdi-file-multiple" label="Files"></q-tab>
       <q-tab name="multi-corder" icon="camera" label="Multicorder"></q-tab>
     </q-tabs>
-    <div class="row col-12 text-center justify-center">
+    <div class="row col-12 text-center fit justify-center">
       <component :is="tabView" :nuggetId="nuggetId" width="1024"></component>
     </div>
   </div>
