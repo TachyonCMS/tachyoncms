@@ -198,7 +198,7 @@ import WhiteBoard from "./components/ImgCanvas.vue";
 
 export default defineComponent({
   name: "MultiCorder",
-  emits: ["error", "notification"],
+  emits: ["error", "notification", "new-recording"],
   props: {
     nuggetId: {
       type: String,
@@ -273,19 +273,18 @@ export default defineComponent({
       muted,
       recorderState,
       getMediaName,
+      snapshotImgUrl,
+      snapshotName,
+      snapshotExt,
+      videoSourceName,
+      videoElem,
+      canvasElem,
+      imgElem,
     } = useMultiCorder();
 
     const { storeNuggetMedia } = useFlows();
 
     const view = ref("selectSource");
-
-    const snapshotImgUrl = ref(null);
-
-    const snapshotName = ref(null);
-
-    const snapshotExt = ref("png");
-
-    const videoSourceName = ref(null);
 
     const showSnapshot = ref(false);
 
@@ -318,21 +317,22 @@ export default defineComponent({
       return vWidth.value * 0.562;
     });
 
-    const divWidth = ref(0);
-
     const onResize = (size) => {
       console.log(size);
       // vWidth.value = calcWidth();
     };
 
-    // The resolved video element
-    const videoElem = ref(null);
+    // Set view, logic can be enforced here
+    const setView = (newView) => {
+      console.log("setting view to " + newView);
+      view.value = newView;
+    };
 
-    // The resolved canvas element
-    const canvasElem = ref(null);
+    // The recorder instance
+    const recorder = ref(null);
 
-    // The resolved img element
-    const imgElem = ref(null);
+    // The recorder mode for number of segments single|multi
+    const recorderMode = ref("single");
 
     return {
       snapshotImgUrl, // All the captured image to be displayed or manipulated
@@ -362,12 +362,13 @@ export default defineComponent({
       snapshotExt,
       storeNuggetMedia,
       getMediaName,
+      setView,
     };
   },
   methods: {
     onChangeVideoSource(videoSource) {
       if (videoSource.value === "whiteboard") {
-        this.view = "whiteboard";
+        this.setView("whiteboard");
       } else {
         console.log(videoSource);
         let videoElem;
@@ -386,13 +387,13 @@ export default defineComponent({
           imgElem
         );
         this.videoSourceName = videoSource.text;
-        this.view = "video";
+        this.setView("video");
       }
     },
     onCloseVideo() {
       this.stopVideo(this.videoElem);
       this.videoSourceName = null;
-      this.view = "selectSource";
+      this.setView("selectSource");
     },
     onSnap() {
       console.log("SNAP!");
@@ -402,7 +403,7 @@ export default defineComponent({
       var data = this.canvasElem.toDataURL("image/" + this.snapshotExt);
       this.snapshot = data;
       this.snapshotName = this.getMediaName("snap"); // DOwnload and Save use the same name
-      this.view = "snapshot";
+      this.setView("snapshot");
       //console.log(data);
     },
     onSnapDelete() {
@@ -426,8 +427,31 @@ export default defineComponent({
       // Saving the image to the CMS is the goal, close when done.
       this.onSnapDelete();
     },
-    onRecord() {},
-    onPause() {},
+    onRecord() {
+      const stream = this.videoElem;
+      const recorder = new MediaRecorder(stream);
+      this.recorder = recorder;
+
+      this.recorder.ondataavailable = (event) => this.pushVideoData(event.data);
+      this.recorder.start();
+    },
+    async pushVideoData(data) {
+      if (data.size > 0) {
+        data.name = this.getMediaName("clip-" + uniq) + ".webm";
+        this.recordings.push(data);
+        if (this.recorderMode == "single") {
+          this.setView("videoPlayer");
+        }
+        this.$emit("new-recording", { name: data.name, size: data.size });
+      }
+    },
+    onRecordPause() {},
+    onRecordStop() {},
+    async onRecordDownload() {},
+    async onRecordSave() {},
+    onRecordDelete() {},
+    onPlay() {},
+    onPlayPause() {},
   },
 });
 </script>
