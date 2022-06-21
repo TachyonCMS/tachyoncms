@@ -1,7 +1,7 @@
 <template>
   <q-page>
     <q-card flat class="text-center">
-      <div class="text-h2 q-pa-md">TachyonCMS</div>
+      <div class="text-h3 q-pa-md">TachyonCMS, the FREE CMS</div>
       <q-card-section class="font-weight-bolder"
         ><div class="text-h4 q-pa-md">
           No cost, No installation, No commitments
