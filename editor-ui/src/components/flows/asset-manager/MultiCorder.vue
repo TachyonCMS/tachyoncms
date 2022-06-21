@@ -438,9 +438,10 @@ export default defineComponent({
       this.setView("video");
     },
     async onSnapDownload() {
-      this.downloadSnapshot();
+      await this.downloadSnapshot();
     },
     async onSnapSave() {
+      await this.saveNuggetMedia(this.nuggetId);
       this.onSnapDelete();
     },
     onRecord() {

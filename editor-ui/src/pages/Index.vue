@@ -16,6 +16,16 @@
           >Select Directory</q-btn
         >
       </q-card-actions>
+      <q-card-section class="font-weight-bolder"
+        ><div class="text-subtitle2 q-pa-md">
+          This software is in BETA, you are free to use it with no warranty or
+          guarantee.
+        </div>
+        <div class="text-caption q-pa-md">
+          No data is ever sent to the server. Your browser loads the files from
+          the server, after that the server is no longer involved.
+        </div>
+      </q-card-section>
     </q-card>
   </q-page>
 </template>
