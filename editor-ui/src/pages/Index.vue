@@ -2,7 +2,6 @@
   <q-page>
     <q-card flat class="text-center">
       <div class="text-h2 q-pa-md">TachyonCMS</div>
-      <div class="text-h3 q-pa-md">A free web-based, local-first CMS</div>
       <q-card-section class="font-weight-bolder"
         ><div class="text-h4 q-pa-md">
           No cost, No installation, No commitments
@@ -12,7 +11,11 @@
         </p>
       </q-card-section>
       <q-card-actions class="justify-center text-center">
-        <q-btn size="xl" class="cta" @click="onFilesystem()"
+        <q-btn
+          size="xl"
+          class="cta text-weight-bolder"
+          padding="xl"
+          @click="onFilesystem()"
           >Select Directory</q-btn
         >
       </q-card-actions>
