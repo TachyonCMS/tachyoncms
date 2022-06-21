@@ -25,8 +25,8 @@
           guarantee.
         </div>
         <div class="text-caption q-pa-md">
-          No data is ever sent to the server. Your browser loads the files from
-          the server, after that the server is no longer involved.
+          No data is ever sent to the server. Your browser loads the app files
+          from the server, after that the server is no longer involved.
         </div>
       </q-card-section>
     </q-card>
