@@ -1,0 +1,22 @@
+{
+  "name": "Instructions",
+  "title": "",
+  "id": "uXYpGxkNtJwm1MqhbTcyK",
+  "createdAt": "2022-06-21T06:51:59.819Z",
+  "updatedAt": "2022-06-21T06:53:07.396Z",
+  "blocks": [
+    {
+      "id": "15PytOa4",
+      "type": "h2",
+      "data": {
+        "level": "2",
+        "heading": "Creating an EZ App"
+      }
+    },
+    {
+      "id": "wAOwK8Kj",
+      "type": "richText",
+      "data": "<ul><li>Add routes</li><li>Create drawer</li><li>Create new pages</li><li>Create new blocks as needed</li></ul>"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "name": "Second Nugget",
+  "title": "",
+  "id": "8SfBMxHZ9hdJlWEbGGUDl",
+  "createdAt": "2022-06-21T18:48:36.865Z",
+  "updatedAt": "2022-06-21T18:49:49.652Z",
+  "blocks": [
+    {
+      "id": "Ls08KZYk",
+      "type": "h2",
+      "data": {
+        "level": "2",
+        "heading": "Nugget 2"
+      }
+    }
+  ],
+  "pubAt": "2022-06-09T00:00:00.000Z"
+}
