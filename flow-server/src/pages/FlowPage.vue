@@ -5,9 +5,11 @@
       <h1>{{ flowData.title }}</h1>
       <template v-if="nuggets.length > 0">
         <!-- Reactive list of Nuggets from within the Flow object. -->
+
         <q-list v-for="nugget in nuggets" :key="nugget.id">
           <div class="nugget-container row col-12">
-            <render-blocks :blockData="nugget.blockData"> </render-blocks>
+            <render-blocks :blocks="nuggetBlocksMap.get(nugget.id)">
+            </render-blocks>
           </div>
         </q-list>
       </template>
@@ -60,6 +62,9 @@ export default defineComponent({
     // Reactive array of Nuggets
     const nuggets = ref([]);
 
+    // A map of blocks by nuggetId
+    const nuggetBlocksMap = reactive(new Map());
+
     // The current flowId
     const flowId = computed(() => {
       return route.params.flowId;
@@ -106,11 +111,23 @@ export default defineComponent({
           nuggetSeq.value = response.data.nuggetSeq;
           response.data.nuggetSeq.forEach((nuggetId) => {
             console.log("Fetching data for nugget: " + nuggetId);
+            console.log(response.data.nuggetSeq);
+            // Use Axios to fetch JSON files from app public directory
             tcms
               .get("/nuggets/" + nuggetId + "/nugget.json")
               .then((response) => {
                 console.log(response.data);
                 nuggets.value.push(response.data);
+
+                tcms
+                  .get("/nuggets/" + nuggetId + "/blocks.json")
+                  .then((response) => {
+                    console.log(response.data);
+                    nuggetBlocksMap.set(nuggetId, response.data.blocks);
+                  })
+                  .catch((e) => {
+                    console.log(e);
+                  });
               })
               .catch((e) => {
                 console.log(e);
@@ -120,6 +137,8 @@ export default defineComponent({
         .catch((e) => {
           console.log(e);
         });
+
+      console.log(nuggets.value);
     };
 
     onMounted(async () => {
@@ -141,6 +160,7 @@ export default defineComponent({
       nuggetsLoading.value = false;
       nuggetSeq.value = null;
       nuggets.value = [];
+      nuggetBlocksMap.clear();
       fetchFlowData(flowId);
     });
 
@@ -150,7 +170,13 @@ export default defineComponent({
       flowData,
       nuggetsLoading,
       nuggets,
+      nuggetBlocksMap,
     };
   },
 });
 </script>
+
+<style scoped>
+.nugget-container {
+}
+</style>
