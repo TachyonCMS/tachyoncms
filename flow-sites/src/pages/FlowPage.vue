@@ -1,6 +1,5 @@
 <template>
   <q-page>
-    {{ siteName }} {{ hostName }} {{ siteFlowId }}
     <!-- Show a spinner over the div if the flow hasn't finished loading. -->
     <template v-if="flowLoaded">
       <h1>{{ flowData.title }}</h1>
@@ -24,7 +23,15 @@
 </template>
 
 <script>
-import { defineComponent, computed, ref, reactive, onMounted } from "vue";
+import {
+  defineComponent,
+  computed,
+  ref,
+  reactive,
+  watch,
+  onMounted,
+} from "vue";
+import { useRoute } from "vue-router";
 
 import { useQuasar, useMeta } from "quasar";
 
@@ -32,59 +39,13 @@ import { tcms } from "boot/axios";
 
 import RenderBlocks from "../components/flows/blocks/RenderBlocks";
 
-// Lookup for - Given a hostname find the siteName
-const hostSite = {
-  "www.bikemechanic.info": "bikemechanic",
-  "www.ezvegetarian.com": "ezvegetarian",
-  "www.financeaproperty.com": "financeaproperty",
-  "www.netrealestateguide.com": "netrealestateguide",
-  "www.opensourcebike.com": "opensourcebike",
-  "www.tachyoncms.com": "tachyoncms-com",
-  "www.etownmall.com": "etownmall",
-  "etownmall.com": "etownmall",
-  "bikemechanic.info": "bikemechanic",
-  "ezvegetarian.com": "ezvegetarian",
-  "financeaproperty.com": "financeaproperty",
-  "netrealestateguide.com": "netrealestateguide",
-  "opensourcebike.com": "opensourcebike",
-  "tachyoncms.com": "tachyoncms-com",
-  localhost: "dev",
-};
-
-// Lookup for - Given a siteName find the primary hostname
-const siteHost = {};
-for (var hostName in hostSite) {
-  siteHost[hostSite[hostName]] = hostName;
-}
-
-// Lookup for - Given a siteName find the siteFlowId
-const siteFlow = {
-  bikemechanic: "vB8rP92DGg1kU7LqogQP1",
-  ezvegetarian: "1s2JoMSbjxniL7xWDXwpq",
-  financeaproperty: "91cyatdi4ge4SwhpA6pfa",
-  netrealestateguide: "0rCDm5KE5ZH8wFCvnNOzz",
-  opensourcebike: "uAe1K3b2Rg6EnndK6J2SO",
-  "tachyoncms-com": "ETdq9r9QsWMFgEluXYi0Q",
-  dev: "-YXeNVsNk9Y9e6sgbnFNi",
-};
-
-// Main export
-
 export default defineComponent({
-  name: "FlowSitesIndexPage",
+  name: "FlowPage",
   components: {
     RenderBlocks,
   },
   setup() {
-    const hostName = computed(() => {
-      return window.location.hostname;
-    });
-
-    const siteName = ref(null);
-    const siteFlowId = ref(null);
-
-    siteName.value = hostSite[hostName.value];
-    siteFlowId.value = siteFlow[siteName.value];
+    const route = useRoute();
 
     // Is any flow data loaded?
     const flowLoaded = ref(false);
@@ -104,14 +65,36 @@ export default defineComponent({
     // A map of blocks by nuggetId
     const nuggetBlocksMap = reactive(new Map());
 
+    // The current flowId
+    const flowId = computed(() => {
+      return route.params.flowId;
+    });
+
     const title = ref("fetching greatness...");
+
+    // Include Quasar for dialog and loading indicator
+    // @todo Move this to a component
+    const $q = useQuasar();
+    // Configure the loading indicator
+    // https://quasar.dev/quasar-plugins/loading
+    $q.loading.show({
+      delay: 400, // ms
+    });
+    $q.loading.hide();
+
+    const showLoading = () => {
+      $q.loading.show({
+        message: "Transporting nuggets...",
+      });
+    };
+
     // Fetch the JSON files for this flow and nuggets
-    const fetchFlowData = (siteFlowId) => {
-      console.log("Fetching data for flow: " + siteFlowId);
+    const fetchFlowData = (flowId) => {
+      console.log("Fetching data for flow: " + flowId);
 
       // Get the flow.json to get the title
       tcms
-        .get("/flows/" + siteFlowId + "/flow.json")
+        .get("/flows/" + flowId + "/flow.json")
         .then((response) => {
           flowData.value = response.data;
           flowLoaded.value = true;
@@ -123,7 +106,7 @@ export default defineComponent({
 
       // Get the nugget seq so we can start loading nuggets
       tcms
-        .get("/flows/" + siteFlowId + "/nuggetSeq.json")
+        .get("/flows/" + flowId + "/nuggetSeq.json")
         .then((response) => {
           nuggetSeq.value = response.data.nuggetSeq;
           response.data.nuggetSeq.forEach((nuggetId) => {
@@ -159,7 +142,7 @@ export default defineComponent({
     };
 
     onMounted(async () => {
-      fetchFlowData(siteFlowId.value);
+      fetchFlowData(flowId.value);
     });
 
     // NOTICE the parameter here is a function
@@ -171,16 +154,29 @@ export default defineComponent({
       };
     });
 
+    watch(flowId, (flowId) => {
+      flowData.value = { id: flowId };
+      flowLoaded.value = false;
+      nuggetsLoading.value = false;
+      nuggetSeq.value = null;
+      nuggets.value = [];
+      nuggetBlocksMap.clear();
+      fetchFlowData(flowId);
+    });
+
     return {
-      hostName,
-      siteName,
-      siteFlowId,
+      flowId,
       flowLoaded,
       flowData,
-      nuggetSeq,
+      nuggetsLoading,
       nuggets,
       nuggetBlocksMap,
     };
   },
 });
 </script>
+
+<style scoped>
+.nugget-container {
+}
+</style>
