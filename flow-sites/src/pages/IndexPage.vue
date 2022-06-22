@@ -65,6 +65,7 @@ const siteFlow = {
   netrealestateguide: "0rCDm5KE5ZH8wFCvnNOzz",
   opensourcebike: "uAe1K3b2Rg6EnndK6J2SO",
   "tachyoncms-com": "ETdq9r9QsWMFgEluXYi0Q",
+  etownmall: "WlKGtMVcGlcmUXEtFGQsM",
   dev: "-YXeNVsNk9Y9e6sgbnFNi",
 };
 
