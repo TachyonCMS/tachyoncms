@@ -4,14 +4,23 @@
     <div class="row col-12 blocks-container">
       <!-- Template to repeat a card section for each block -->
       <template v-for="block in blocks" :key="block.id">
+        <!-- RENDERERS -->
         <div class="row col-12 text-center">
+          <!-- Section to show when rendering this block. -->
+          <!-- Using v-show the component gets rendered, but hidden. -->
+          <!-- Use v-if to render ONLY the block editor for this block type. -->
+
+          <!-- Display the appropriate renderer for the nug.type-->
+
+          <!-- Display Rich Text / HTML content -->
           <div class="row col-12">
             <component
               :is="renderers[block.type]"
-              :displayData="block.displayData"
+              :data="block.data"
             ></component>
           </div>
         </div>
+        <!--/ END RENDERERS -->
       </template>
     </div>
   </div>
@@ -19,49 +28,45 @@
 
 <script>
 import { defineComponent, ref } from "vue";
+import { useQuasar } from "quasar";
 
 // Renderers
-import HtmlDisplay from "./renders/HtmlDisplay";
-import Heading from "./renders/Heading";
-import Image from "./renders/Image";
-import BasicSeparator from "./renders/Separator";
+import RichText from "./renders/RichtextBlock";
+import Heading from "./renders/HeadingBlock";
+import Image from "./renders/ImageBlock";
+import BasicSeparator from "./renders/SeparatorBlock";
 
 export default defineComponent({
   name: "RenderBlocks",
   props: {
-    blockData: {
-      type: String,
+    blocks: {
+      type: Array,
     },
   },
   emits: ["save"],
   components: {
-    HtmlDisplay,
+    RichText,
     Heading,
     Image,
     BasicSeparator,
+    //    Font
   },
   setup(props, { emit }) {
     // We'll receive a string that can be converted to a JSON object.
     // That object will have an array of block objects.
-    // Block object have an id, type and displayData.
-    // displayData is stringified data that the renderers and editors handle by type.
+    // Block object have an id, type and data.
+    // data is stringified data that the renderers and editors handle by type.
+
     console.log(props);
 
-    const convertToBlocks = (blockData) => {
-      if (!blockData) {
-        return [];
-      }
-      const blockArr = JSON.parse(blockData);
-
-      return blockArr;
-    };
+    const $q = useQuasar();
 
     // Reactive blocks array
-    const blocks = ref(convertToBlocks(props.blockData));
+    //const blocks = ref(convertToBlocks(props.blocks));
 
     // Map a block type to a renderer
     const renderers = {
-      richText: "html-display",
+      richText: "rich-text",
       image: "image",
       basicSeparator: "basic-separator",
       h2: "heading",
@@ -72,9 +77,10 @@ export default defineComponent({
     };
 
     return {
-      blocks,
+      //blocks,
       renderers,
     };
   },
+  methods: {},
 });
 </script>
