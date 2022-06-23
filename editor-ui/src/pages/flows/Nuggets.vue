@@ -263,6 +263,15 @@
                       </div>
                     </div>
 
+                    <nugget-text-property
+                      label="Editor Override"
+                      propName="editMode"
+                      :propValue="nuggetMap.get(nuggetId).editMode"
+                      :nuggetId="nuggetId"
+                      hintText="Enable Editor.js mode"
+                      :required="false"
+                    ></nugget-text-property>
+
                     <div class="row">
                       <div class="col-3 collection-item-label">Created:</div>
                       <div class="col-9 collection-item-value">
@@ -318,8 +327,17 @@
                   :blocks="nuggetBlocksMap.get(nuggetId)"
                   @save="(event) => saveBlocks(nuggetId, event)"
                   :nix="nix"
+                  v-if="nuggetMap.get(nuggetId).editMode != 'editor.js'"
                 >
                 </blocks-handler>
+
+                <editorjs-blocks-handler
+                  :blocks="nuggetBlocksMap.get(nuggetId)"
+                  @save="(event) => saveBlocks(nuggetId, event)"
+                  :nix="nix"
+                  v-if="nuggetMap.get(nuggetId).editMode == 'editor.js'"
+                >
+                </editorjs-blocks-handler>
               </div>
             </div>
 
@@ -359,6 +377,7 @@ import useFlows from "../../composables/useFlows";
 import NewNuggetForm from "../../components/flows/forms/NewNuggetForm";
 import DateDisplay from "../../components/site/widgets/DateDisplay";
 import BlocksHandler from "../../components/flows/blocks/BlocksHandler";
+import EditorjsBlocksHandler from "../../components/flows/blocks/EditorjsBlocksHandler";
 import NuggetTextProperty from "../../components/flows/forms/fields/NuggetTextProperty";
 import NoFlowSourceSetPage from "../../pages/flows/NoFlowSourceSetPage";
 
@@ -371,6 +390,7 @@ export default defineComponent({
     NewNuggetForm,
     DateDisplay,
     BlocksHandler,
+    EditorjsBlocksHandler,
     NuggetTextProperty,
     NoFlowSourceSetPage,
     AssetManager,

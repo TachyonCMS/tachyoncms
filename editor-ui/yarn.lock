@@ -1145,6 +1145,15 @@
     debug "^3.1.0"
     lodash.once "^4.1.1"
 
+"@editorjs/editorjs@^2.18.0":
+  version "2.25.0"
+  resolved "https://registry.yarnpkg.com/@editorjs/editorjs/-/editorjs-2.25.0.tgz#d0dc445260fa8f4f02f26da9b7b592f479e8b4e4"
+  integrity sha512-TEu7h7EPh6Lx2VGIM1jVn2dky23TbpVJBd3AGvXcam1lyHuJwZ1iydbsQGF9pFkHSCiaQptTfIjZ8Y24v47Wag==
+  dependencies:
+    codex-notifier "^1.1.2"
+    codex-tooltip "^1.0.5"
+    nanoid "^3.1.22"
+
 "@electron/get@^1.13.0", "@electron/get@^1.6.0":
   version "1.14.1"
   resolved "https://registry.yarnpkg.com/@electron/get/-/get-1.14.1.tgz#16ba75f02dffb74c23965e72d617adc721d27f40"
@@ -1808,6 +1817,13 @@
   dependencies:
     "@vue/compiler-dom" "3.2.33"
     "@vue/shared" "3.2.33"
+
+"@vue/composition-api@^0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@vue/composition-api/-/composition-api-0.5.0.tgz#2dbaa02a5d1f5d0d407d53d5529fe444aa8362f3"
+  integrity sha512-9QDFWq7q839G1CTTaxeruPOTrrVOPSaVipJ2TxxK9QAruePNTHOGbOOFRpc8WLl4YPsu1/c29yBhMVmrXz8BZw==
+  dependencies:
+    tslib "^1.9.3"
 
 "@vue/devtools-api@^6.0.0":
   version "6.1.4"
@@ -3069,6 +3085,16 @@ clone@^1.0.2:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/clone/-/clone-1.0.4.tgz#da309cc263df15994c688ca902179ca3c7cd7c7e"
   integrity sha1-2jCcwmPfFZlMaIypAheco8fNfH4=
+
+codex-notifier@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/codex-notifier/-/codex-notifier-1.1.2.tgz#a733079185f4c927fa296f1d71eb8753fe080895"
+  integrity sha512-DCp6xe/LGueJ1N5sXEwcBc3r3PyVkEEDNWCVigfvywAkeXcZMk9K41a31tkEFBW0Ptlwji6/JlAb49E3Yrxbtg==
+
+codex-tooltip@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/codex-tooltip/-/codex-tooltip-1.0.5.tgz#ba25fd5b3a58ba2f73fd667c2b46987ffd1edef2"
+  integrity sha512-IuA8LeyLU5p1B+HyhOsqR6oxyFQ11k3i9e9aXw40CrHFTRO2Y1npNBVU3W1SvhKAbUU7R/YikUBdcYFP0RcJag==
 
 coffeeify@^3.0.1:
   version "3.0.1"
@@ -6743,7 +6769,7 @@ mute-stream@0.0.8:
   resolved "https://registry.yarnpkg.com/mute-stream/-/mute-stream-0.0.8.tgz#1630c42b2251ff81e2a283de96a5497ea92e5e0d"
   integrity sha512-nnbWWOkoWyUsTjKrhgD0dcz22mdkSnpYqbEjIm2nhwhuxlSkpywJmBo8h0ZqJdkp73mb90SssHkN4rsRaBAfAA==
 
-nanoid@^3.3.3:
+nanoid@^3.1.22, nanoid@^3.3.3:
   version "3.3.4"
   resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.4.tgz#730b67e3cd09e2deacf03c027c81c9d9dbc5e8ab"
   integrity sha512-MqBkQh/OHTS2egovRtLk45wEyNXwF+cokD+1YPf9u5VfJiRdAiRwB2froX5Co9Rh20xs4siNPm8naNotSD6RBw==
@@ -9054,6 +9080,11 @@ ts-loader@9.2.6:
     micromatch "^4.0.0"
     semver "^7.3.4"
 
+tslib@^1.9.3:
+  version "1.14.1"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.14.1.tgz#cf2d38bdc34a134bcaf1091c41f6619e2f672d00"
+  integrity sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==
+
 tslib@^2.0.3, tslib@^2.1.0:
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.4.0.tgz#7cecaa7f073ce680a05847aa77be941098f36dc3"
@@ -9375,6 +9406,14 @@ vue-drawing-canvas@^1.0.14:
   integrity sha512-afsG6bGXD1DDP7pKslJX3LNLi07R/S97e/9/LNXnPZQBlsNnrL3T68rmodBHeMHr83onhMfym+t3kLkDuApW1Q==
   dependencies:
     vue-demi latest
+
+vue-editor-js@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/vue-editor-js/-/vue-editor-js-2.0.2.tgz#02de3fc03ff301dcf0da78096aac95f9f8172b89"
+  integrity sha512-Y07q/Nj4/BJOQlvlKN5R4UFCMUVgnDbJxDSZvMGXNCnMJyT1TEQmS2HAuc9euCp8EDGo/sJnm3y0NUQ+gonx2w==
+  dependencies:
+    "@editorjs/editorjs" "^2.18.0"
+    "@vue/composition-api" "^0.5.0"
 
 vue-eslint-parser@^8.0.1:
   version "8.3.0"

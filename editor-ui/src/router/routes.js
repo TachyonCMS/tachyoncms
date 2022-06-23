@@ -116,6 +116,21 @@ const routes = [
     },
   },
 
+  {
+    path: "/editor",
+    name: "editorjs",
+    component: () => import("src/layouts/FlowsLayout.vue"),
+    children: [
+      {
+        path: "",
+        component: () => import("pages/EditorJs.vue"),
+      },
+    ],
+    meta: {
+      requiresAuth: false,
+    },
+  },
+
   // Always leave this as last one,
   // but you can also remove it
   {
