@@ -1,33 +1,82 @@
 <template>
   <q-page>
     <template v-if="flowSource">
-      <q-list bordered>
-        <!-- Expansion form to add new Nuggets -->
-        <q-expansion-item
-          expand-separator
-          icon="mdi-puzzle-plus"
-          :label="collectionFormLabel"
-          header-class="form-header text-h6"
-          v-model="collectionFormOpen"
-          data-cy="nuggets-new-nugget-form-toggle-btn"
-        >
-          <q-card class="no-margin full-height">
-            <new-nugget-form
-              :flowId="flowId"
-              :condensed="true"
-              class="collection-form-body"
-              @closeForm="collectionFormOpen = false"
-              dataCySlug="nuggets"
-            ></new-nugget-form>
-          </q-card>
-        </q-expansion-item>
-        <!-- END expansion form -->
-
-        <!-- Show a spinner over the div if the flow hasn't finished loading. -->
-        <template v-if="flowLoaded && nuggetSeq">
-          <!-- Reactive list of Nuggets from within the Flow object. -->
+      <!-- Show a spinner over the div if the flow hasn't finished loading. -->
+      <template v-if="flowLoaded">
+        <!-- Reactive list of Nuggets from within the Flow object. -->
+        <template v-if="nuggetSeq">
           <q-list v-for="(nuggetId, nix) in nuggetSeq" :key="nuggetId">
             <div class="nugget-container">
+              <div class="row">
+                <q-btn icon="mdi-plus" flat padding="xs"
+                  ><q-menu>
+                    <q-list dense>
+                      <!-- Add an Editor.js nugget -->
+                      <q-item
+                        v-close-popup
+                        clickable
+                        @click="addNugget('editorJs')"
+                        :data-cy="dataCySlug + '-editorNugget'"
+                      >
+                        <q-item-section>Editor</q-item-section>
+                      </q-item>
+
+                      <q-separator></q-separator>
+                      <!-- TachyonCMS Vue/Quasar Nugget/Blocks -->
+                      <q-item
+                        v-close-popup
+                        clickable
+                        @click="addNugget('tcms')"
+                        :data-cy="dataCySlug + '-tachyonNugget'"
+                      >
+                        <q-item-section>Component</q-item-section>
+                      </q-item>
+                    </q-list>
+                  </q-menu></q-btn
+                >
+
+                <q-btn icon="mdi-dots-vertical" flat padding="xs"
+                  ><q-menu
+                    ><q-btn icon="mdi-arrow-up" padding="sm" flat></q-btn
+                    ><q-btn
+                      icon="mdi-delete"
+                      padding="sm"
+                      flat
+                      @click="confirmDeleteNugget(flowId, nuggetId)"
+                    ></q-btn
+                    ><q-btn
+                      icon="mdi-arrow-down"
+                      padding="sm"
+                      flat
+                    ></q-btn></q-menu
+                ></q-btn>
+
+                <q-btn icon="mdi-calendar-month" flat padding="xs"
+                  ><q-menu>Set publish dates</q-menu></q-btn
+                >
+                <q-space></q-space>
+                <q-btn icon="mdi-information-outline" flat padding="xs"
+                  ><q-menu>
+                    <div class="row">
+                      <div class="col-3 collection-item-label">Created:</div>
+                      <div class="col-9 collection-item-value">
+                        <date-display
+                          :rawDate="nuggetMap.get(nuggetId).createdAt"
+                          label="Created"
+                        ></date-display>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-3 collection-item-label">Updated:</div>
+                      <div class="col-9 collection-item-value">
+                        <date-display
+                          :rawDate="nuggetMap.get(nuggetId).updatedAt"
+                          label="Updated"
+                        ></date-display>
+                      </div>
+                    </div> </q-menu
+                ></q-btn>
+              </div>
               <q-expansion-item
                 expand-icon-toggle
                 header-class="text-h6 collection-item-header center"
@@ -35,7 +84,49 @@
               >
                 <template #header>
                   <div>
-                    <q-icon name="mdi-puzzle-edit" size="sm"></q-icon>
+                    <q-btn icon="mdi-plus" flat padding="xs"
+                      ><q-menu>
+                        <q-list dense>
+                          <!-- Add an Editor.js nugget -->
+                          <q-item
+                            v-close-popup
+                            clickable
+                            @click="addNugget('editorJs')"
+                            :data-cy="dataCySlug + '-editorNugget'"
+                          >
+                            <q-item-section>Editor</q-item-section>
+                          </q-item>
+
+                          <q-separator></q-separator>
+                          <!-- TachyonCMS Vue/Quasar Nugget/Blocks -->
+                          <q-item
+                            v-close-popup
+                            clickable
+                            @click="addNugget('tcms')"
+                            :data-cy="dataCySlug + '-tachyonNugget'"
+                          >
+                            <q-item-section>Component</q-item-section>
+                          </q-item>
+                        </q-list>
+                      </q-menu></q-btn
+                    >
+                  </div>
+                  <div>
+                    <q-btn icon="mdi-dots-grid" flat padding="xs"
+                      ><q-menu
+                        ><q-btn icon="mdi-arrow-up" padding="sm" flat></q-btn
+                        ><q-btn
+                          icon="mdi-delete"
+                          padding="sm"
+                          flat
+                          @click="confirmDeleteNugget(flowId, nuggetId)"
+                        ></q-btn
+                        ><q-btn
+                          icon="mdi-arrow-down"
+                          padding="sm"
+                          flat
+                        ></q-btn></q-menu
+                    ></q-btn>
                   </div>
                   <q-space></q-space>
                   <div class="text-center">
@@ -264,7 +355,7 @@
                     </div>
 
                     <nugget-text-property
-                      label="Editor Override"
+                      label="Nugget"
                       propName="editMode"
                       :propValue="nuggetMap.get(nuggetId).editMode"
                       :nuggetId="nuggetId"
@@ -291,16 +382,6 @@
                       </div>
                     </div>
                   </q-card-section>
-                  <q-card-actions
-                    align="center"
-                    class="q-px-xl collection-item-actions"
-                  >
-                    <q-btn
-                      class="subdued-btn"
-                      v-on:click="confirmDeleteNugget(flowId, nuggetId)"
-                      >Delete Nugget</q-btn
-                    >
-                  </q-card-actions>
                 </q-card>
               </q-expansion-item>
 
@@ -352,7 +433,23 @@
             </div>
           </q-list>
         </template>
-      </q-list>
+        <template v-else>
+          <!-- Display info on creating the first nugget-->
+          <first-nugget-instructions
+            @addNugget="
+              (event) =>
+                this.createNugget(
+                  flowId,
+                  { type: event.type },
+                  event.prevNuggetId
+                )
+            "
+          ></first-nugget-instructions>
+        </template>
+      </template>
+      <template v-else>
+        <!-- Show spinner-->
+      </template>
     </template>
     <template v-else><NoFlowSourceSetPage></NoFlowSourceSetPage></template>
   </q-page>
@@ -374,12 +471,12 @@ import { useRoute } from "vue-router";
 
 import useFlows from "../../composables/useFlows";
 
-import NewNuggetForm from "../../components/flows/forms/NewNuggetForm";
 import DateDisplay from "../../components/site/widgets/DateDisplay";
 import BlocksHandler from "../../components/flows/blocks/BlocksHandler";
 import EditorjsBlocksHandler from "../../components/flows/blocks/EditorjsBlocksHandler";
 import NuggetTextProperty from "../../components/flows/forms/fields/NuggetTextProperty";
 import NoFlowSourceSetPage from "../../pages/flows/NoFlowSourceSetPage";
+import FirstNuggetInstructions from "../../pages/flows/FirstNuggetInstructions";
 
 import AssetManager from "../../components/flows/asset-manager/AssetManager";
 
@@ -387,13 +484,13 @@ export default defineComponent({
   name: "PageFlow",
   emits: ["appNotification"],
   components: {
-    NewNuggetForm,
     DateDisplay,
     BlocksHandler,
     EditorjsBlocksHandler,
     NuggetTextProperty,
     NoFlowSourceSetPage,
     AssetManager,
+    FirstNuggetInstructions,
   },
   setup() {
     const route = useRoute();
@@ -420,11 +517,6 @@ export default defineComponent({
       return route.params.flowId;
     });
 
-    const collectionFormOpen = ref(false);
-    const collectionFormLabel = computed(() => {
-      const label = collectionFormOpen.value ? "New Nugget Form" : "Add Nugget";
-      return label;
-    });
     // Include Quasar for dialog and loading indicator
     // @todo Move this to a component
     const $q = useQuasar();
@@ -478,8 +570,6 @@ export default defineComponent({
       flowLoaded,
       flow,
       nuggetMap,
-      collectionFormLabel,
-      collectionFormOpen,
       flowId,
       updateNuggetProp,
       updateNuggetData,
@@ -492,6 +582,7 @@ export default defineComponent({
       nuggetSeq,
       loadNuggetAssets,
       nuggetBlocksMap,
+      createNugget,
     };
   },
   methods: {
