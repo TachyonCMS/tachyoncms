@@ -10,6 +10,7 @@
             <new-typed-nugget-button
               nuggetType="editor"
               btnLabel="Editor"
+              icon="mdi-format-text"
               @addNugget="(event) => this.$emit('addNugget', event)"
             >
             </new-typed-nugget-button>
@@ -22,6 +23,7 @@
             <new-typed-nugget-button
               nuggetType="media"
               btnLabel="Media"
+              icon="mdi-folder-multiple-image"
               @addNugget="(event) => this.$emit('addNugget', event)"
             >
             </new-typed-nugget-button>

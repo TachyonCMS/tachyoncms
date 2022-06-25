@@ -1,7 +1,7 @@
 <template>
   <!-- A button to add a new Nugget of a given type. -->
   <q-btn
-    icon="mdi-puzzle-plus"
+    :icon="icon"
     :label="btnLabel"
     class="option-btn"
     :size="btnSize"
@@ -35,6 +35,10 @@ export default defineComponent({
     btnSize: {
       type: String,
       default: "xl",
+    },
+    icon: {
+      type: String,
+      default: "mdi-puzzle-plus",
     },
   },
   emits: ["addNugget"],

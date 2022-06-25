@@ -229,10 +229,10 @@ export default function useFlows() {
   };
 
   // Create a new Flow and persist it
-  const createNugget = async (flowId, nuggetData, prevNugId = null) => {
+  const createNugget = async (flowId, nuggetData, relId = null, relType) => {
     try {
       flowConnectors[flowConnector.value]
-        .createNugget(flowId, nuggetData, prevNugId)
+        .createNugget(flowId, nuggetData, relId, relType)
         .then((nuggetResult) => {
           console.log(nuggetResult);
 
@@ -573,6 +573,21 @@ export default function useFlows() {
     nuggetAssetMap.set(nuggetId, assets);
   };
 
+  const moveNugget = async (direction, flowId, nuggetId) => {
+    try {
+      console.log("moveNugget " + nuggetId);
+      // Use the defined connector
+      flowConnectors[flowConnector.value]
+        .moveNugget(direction, flowId, nuggetId)
+        .then((result) => {
+          nuggetSeqMap.set(flowId, result);
+        });
+    } catch (e) {
+      console.error("Error Storing Media");
+      console.error(e);
+    }
+  };
+
   return {
     loadNuggetAssets,
     loadFlows,
@@ -609,5 +624,6 @@ export default function useFlows() {
     deleteNuggetAsset,
     storeNuggetAssets,
     storeNuggetMedia,
+    moveNugget,
   };
 }

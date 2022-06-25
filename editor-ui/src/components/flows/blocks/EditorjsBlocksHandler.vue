@@ -1,7 +1,13 @@
 <template>
   <div class="fit">
-    <div class="row col-12 justify-center">
-      <q-btn @click="this.onSave()">Save</q-btn>
+    <div class="row col-12 justify-center relative-position">
+      <q-btn
+        icon="mdi-content-save"
+        @click="onSave()"
+        class="top-right z-top"
+        padding="sm"
+        ><q-tooltip>Save Editor</q-tooltip></q-btn
+      >
     </div>
     <div class="fit" :id="divName" />
   </div>
@@ -50,7 +56,7 @@ export default defineComponent({
       };
 
       console.log(props.blocks);
-      state.editor = new EditorJS({
+      const editor = new EditorJS({
         holder: divName,
         data: {
           time: 1552744582955,
@@ -58,8 +64,12 @@ export default defineComponent({
           version: "2.24.3",
         },
         tools: {},
+        onReady: () => {
+          console.log("Editor.js is ready to work!");
+          state.editor = editor;
+          props.initialized(state.editor);
+        },
       });
-      props.initialized(state.editor);
     }
     function destroyEditor() {
       if (state.editor) {

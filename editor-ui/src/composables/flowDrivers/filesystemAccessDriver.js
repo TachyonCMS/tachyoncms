@@ -433,7 +433,7 @@ export default () => {
   /**
    * NUGGETS
    */
-  const createNugget = async (flowId, nuggetObj, prevNuggetId) => {
+  const createNugget = async (flowId, nuggetObj, relId, relType) => {
     try {
       console.log("Creating Nugget for Flow " + flowId);
 
@@ -452,11 +452,15 @@ export default () => {
         objId: flowId,
         dataElement: "nuggetSeq",
         insertVal: nuggetObj.id,
-        relId: prevNuggetId,
-        relType: "prev",
+        relId: relId,
+        relType: relType,
       };
 
+      console.log(seqObj);
+
       let newSeq = await insertIntoSeq(seqObj);
+
+      console.log(newSeq);
 
       return { nugget: nugget, nuggetSeq: newSeq };
     } catch (e) {
@@ -726,7 +730,7 @@ export default () => {
 
             case "next":
               // The related nugget is "next", the new nugget belongs immediately before it.
-              insertIx = currentSeq.nuggetSeq.indexOf(relId) + 1;
+              insertIx = currentSeq.nuggetSeq.indexOf(relId) - 1;
               break;
           }
           console.log(insertIx);
@@ -746,6 +750,59 @@ export default () => {
 
       // Return the new sequence
       return newSeq;
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const moveNugget = async (direction, flowId, nuggetId) => {
+    try {
+      // Make the new sequence value into an array
+      let newSeq = [nuggetId];
+
+      // Determine the path of the target file
+      const pathSegments = [objDirs["flow"], flowId, "nuggetSeq"];
+
+      // Get a fileHandle for that path.
+      const fileHandle = await getFileHandle(pathSegments);
+
+      // Read the current sequence from the fileHandle
+      const currentSeq = await readJsonHandle(fileHandle);
+
+      if (currentSeq) {
+        console.log("Current sequence found");
+        // Determine insert index
+        //if (relId ) {
+        console.log("NuggetId: " + nuggetId);
+
+        const currentIx = currentSeq.nuggetSeq.indexOf(nuggetId);
+        let newIx;
+        if (direction == "up") {
+          newIx = currentIx - 1;
+        } else if (direction == "down") {
+          newIx = currentIx + 1;
+        }
+
+        // Get an array without the id being moved
+        const filtered = currentSeq.nuggetSeq.filter(
+          (nugId) => nugId != nuggetId
+        );
+
+        newSeq = [
+          ...filtered.slice(0, newIx),
+          ...newSeq,
+          ...filtered.slice(newIx),
+        ];
+
+        console.log(newSeq);
+        // Write the new sequence out to same path
+        const writeResult = await writeJsonHandle(fileHandle, {
+          nuggetSeq: newSeq,
+        });
+
+        // Return the new sequence
+        return newSeq;
+      }
     } catch (e) {
       console.error(e);
     }
@@ -976,5 +1033,6 @@ export default () => {
     deleteNuggetAsset,
     storeNuggetAssets,
     storeNuggetMedia,
+    moveNugget,
   };
 };

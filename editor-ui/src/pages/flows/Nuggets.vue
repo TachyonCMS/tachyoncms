@@ -4,40 +4,98 @@
       <!-- Show a spinner over the div if the flow hasn't finished loading. -->
       <template v-if="flowLoaded">
         <!-- Reactive list of Nuggets from within the Flow object. -->
-        <template v-if="nuggetSeq">
+        <template v-if="nuggetSeq && nuggetSeq.length > 0">
           <q-list v-for="(nuggetId, nix) in nuggetSeq" :key="nuggetId">
             <div class="nugget-container">
-              <div class="row">
+              <div class="row collection-item-header">
                 <q-btn icon="mdi-plus" flat padding="xs"
+                  ><q-tooltip>Add Nugget</q-tooltip
                   ><q-menu>
                     <q-list dense>
-                      <!-- Add an Editor.js nugget -->
-                      <q-item
-                        v-close-popup
-                        clickable
-                        @click="addNugget('editorJs')"
-                        :data-cy="dataCySlug + '-editorNugget'"
-                      >
+                      <q-item clickable>
+                        <q-item-section avatar>
+                          <q-icon name="mdi-format-text"></q-icon>
+                        </q-item-section>
                         <q-item-section>Editor</q-item-section>
-                      </q-item>
+                        <q-item-section side>
+                          <q-icon name="keyboard_arrow_right"></q-icon>
+                        </q-item-section>
 
-                      <q-separator></q-separator>
-                      <!-- TachyonCMS Vue/Quasar Nugget/Blocks -->
-                      <q-item
-                        v-close-popup
-                        clickable
-                        @click="addNugget('tcms')"
-                        :data-cy="dataCySlug + '-tachyonNugget'"
-                      >
-                        <q-item-section>Component</q-item-section>
+                        <q-menu anchor="top end" self="top start">
+                          <q-list dense>
+                            <q-item
+                              clickable
+                              @click="
+                                this.onCreateNugget('editor', nuggetId, 'next')
+                              "
+                            >
+                              <q-item-section> Before </q-item-section>
+                              <q-item-section avatar>
+                                <q-icon name="mdi-arrow-up"></q-icon>
+                              </q-item-section>
+                            </q-item>
+                            <q-item
+                              clickable
+                              @click="
+                                this.onCreateNugget('editor', nuggetId, 'prev')
+                              "
+                            >
+                              <q-item-section> After </q-item-section>
+                              <q-item-section avatar>
+                                <q-icon name="mdi-arrow-down"></q-icon>
+                              </q-item-section>
+                            </q-item>
+                          </q-list>
+                        </q-menu>
                       </q-item>
-                    </q-list>
-                  </q-menu></q-btn
-                >
+                      <q-item clickable>
+                        <q-item-section avatar>
+                          <q-icon name="mdi-folder-multiple-image"></q-icon>
+                        </q-item-section>
+                        <q-item-section>Media</q-item-section>
+                        <q-item-section side>
+                          <q-icon name="keyboard_arrow_right"></q-icon>
+                        </q-item-section>
+
+                        <q-menu anchor="top end" self="top start">
+                          <q-list dense>
+                            <q-item
+                              clickable
+                              @click="
+                                this.onCreateNugget('media', nuggetId, 'next')
+                              "
+                            >
+                              <q-item-section> Before </q-item-section>
+                              <q-item-section avatar>
+                                <q-icon name="mdi-arrow-up"></q-icon>
+                              </q-item-section>
+                            </q-item>
+                            <q-item
+                              clickable
+                              @click="
+                                this.onCreateNugget('media', nuggetId, 'prev')
+                              "
+                            >
+                              <q-item-section> After </q-item-section>
+                              <q-item-section avatar>
+                                <q-icon name="mdi-arrow-down"></q-icon>
+                              </q-item-section>
+                            </q-item>
+                          </q-list>
+                        </q-menu>
+                      </q-item>
+                    </q-list> </q-menu
+                ></q-btn>
 
                 <q-btn icon="mdi-dots-vertical" flat padding="xs"
+                  ><q-tooltip>Tune</q-tooltip
                   ><q-menu
-                    ><q-btn icon="mdi-arrow-up" padding="sm" flat></q-btn
+                    ><q-btn
+                      icon="mdi-arrow-up"
+                      padding="sm"
+                      flat
+                      @click="this.moveNugget('up', flowId, nuggetId)"
+                    ></q-btn
                     ><q-btn
                       icon="mdi-delete"
                       padding="sm"
@@ -48,367 +106,84 @@
                       icon="mdi-arrow-down"
                       padding="sm"
                       flat
+                      @click="this.moveNugget('down', flowId, nuggetId)"
                     ></q-btn></q-menu
                 ></q-btn>
 
                 <q-btn icon="mdi-calendar-month" flat padding="xs"
+                  ><q-tooltip>Publish Dates</q-tooltip
                   ><q-menu>Set publish dates</q-menu></q-btn
                 >
-                <q-space></q-space>
-                <q-btn icon="mdi-information-outline" flat padding="xs"
-                  ><q-menu>
-                    <div class="row">
-                      <div class="col-3 collection-item-label">Created:</div>
-                      <div class="col-9 collection-item-value">
-                        <date-display
-                          :rawDate="nuggetMap.get(nuggetId).createdAt"
-                          label="Created"
-                        ></date-display>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-3 collection-item-label">Updated:</div>
-                      <div class="col-9 collection-item-value">
-                        <date-display
-                          :rawDate="nuggetMap.get(nuggetId).updatedAt"
-                          label="Updated"
-                        ></date-display>
-                      </div>
-                    </div> </q-menu
-                ></q-btn>
-              </div>
-              <q-expansion-item
-                expand-icon-toggle
-                header-class="text-h6 collection-item-header center"
-                :label="nuggetMap.get(nuggetId).name"
-              >
-                <template #header>
-                  <div>
-                    <q-btn icon="mdi-plus" flat padding="xs"
-                      ><q-menu>
-                        <q-list dense>
-                          <!-- Add an Editor.js nugget -->
-                          <q-item
-                            v-close-popup
-                            clickable
-                            @click="addNugget('editorJs')"
-                            :data-cy="dataCySlug + '-editorNugget'"
-                          >
-                            <q-item-section>Editor</q-item-section>
-                          </q-item>
 
-                          <q-separator></q-separator>
-                          <!-- TachyonCMS Vue/Quasar Nugget/Blocks -->
-                          <q-item
-                            v-close-popup
-                            clickable
-                            @click="addNugget('tcms')"
-                            :data-cy="dataCySlug + '-tachyonNugget'"
-                          >
-                            <q-item-section>Component</q-item-section>
-                          </q-item>
-                        </q-list>
-                      </q-menu></q-btn
-                    >
-                  </div>
-                  <div>
-                    <q-btn icon="mdi-dots-grid" flat padding="xs"
-                      ><q-menu
-                        ><q-btn icon="mdi-arrow-up" padding="sm" flat></q-btn
-                        ><q-btn
-                          icon="mdi-delete"
-                          padding="sm"
-                          flat
-                          @click="confirmDeleteNugget(flowId, nuggetId)"
-                        ></q-btn
-                        ><q-btn
-                          icon="mdi-arrow-down"
-                          padding="sm"
-                          flat
-                        ></q-btn></q-menu
-                    ></q-btn>
-                  </div>
-                  <q-space></q-space>
-                  <div class="text-center">
-                    <span class="cursor-pointer">
-                      {{ nuggetMap.get(nuggetId).name }}
-                      <q-icon
-                        size="xs"
-                        name="edit"
-                        v-if="
-                          !nuggetMap.get(nuggetId).name ||
-                          nuggetMap.get(nuggetId).name < 1
-                        "
-                      ></q-icon>
-                      <q-popup-edit
-                        :model-value="nuggetMap.get(nuggetId).name"
-                        auto-save
-                        @save="
-                          (v, iv) => {
-                            updateNuggetProp(nuggetId, 'name', v);
-                          }
-                        "
+                <q-btn
+                  icon="mdi-file-multiple"
+                  flat
+                  padding="xs"
+                  @click="toggleNuggetAssets(nuggetId)"
+                  ><q-tooltip>Files</q-tooltip></q-btn
+                >
+
+                <q-btn icon="mdi-information-outline" flat padding="xs">
+                  <q-tooltip>Info</q-tooltip>
+                  <q-menu cover anchor="top right" fit class="q-pa-md">
+                    <q-item-section no-wrap class="q-pb-xs">
+                      <q-item-label
+                        >ID:
+                        <span class="text-weight-bold">{{
+                          nuggetMap.get(nuggetId).id
+                        }}</span></q-item-label
                       >
-                        <template v-slot="scope">
-                          <q-input
-                            autofocus
-                            dense
-                            v-model="scope.value"
-                            :model-value="scope.value"
-                            hint="Name for management purposes"
-                            :rules="[
-                              (val) =>
-                                scope.validate(val) ||
-                                'You must include a name',
-                            ]"
-                          >
-                          </q-input>
-                          <div>
-                            <q-btn
-                              flat
-                              dense
-                              color="negative"
-                              icon="cancel"
-                              @click.stop="scope.cancel"
-                            ></q-btn>
-
-                            <q-btn
-                              flat
-                              dense
-                              color="positive"
-                              icon="check_circle"
-                              @click.stop="scope.set"
-                              :disable="scope.initialValue === scope.value"
-                            ></q-btn>
-                          </div>
-                        </template>
-                      </q-popup-edit>
-                    </span>
-                  </div>
-                  <q-space></q-space>
-                </template>
-                <q-card>
-                  <q-card-section class="collection-item-body">
-                    <div class="row">
-                      <div class="col-3 collection-item-label">ID:</div>
-                      <div class="col-9 collection-item-value">
-                        {{ nuggetId }}
-                      </div>
-                    </div>
-
-                    <nugget-text-property
-                      label="Name"
-                      propName="name"
-                      :propValue="nuggetMap.get(nuggetId).name"
-                      :nuggetId="nuggetId"
-                      hintText="Internal management name"
-                      :required="true"
-                    >
-                    </nugget-text-property>
-
-                    <nugget-text-property
-                      label="Title"
-                      propName="title"
-                      :propValue="nuggetMap.get(nuggetId).title"
-                      :nuggetId="nuggetId"
-                      hintText="Public Title (accessible in blocks)"
-                      :required="true"
-                    >
-                    </nugget-text-property>
-
-                    <div class="row">
-                      <div class="col-3 inline-form-label">Publish:</div>
-                      <div class="col-9 inline-form-value">
-                        <span class="cursor-pointer">
+                    </q-item-section>
+                    <q-item-section no-wrap class="q-pb-xs">
+                      <q-item-label
+                        >Type:overflowtypr
+                        <span class="text-weight-bold">
+                          {{ nuggetMap.get(nuggetId).type }}</span
+                        >
+                      </q-item-label>
+                    </q-item-section>
+                    <q-item-section no-wrap class="q-pb-xs">
+                      <q-item-label
+                        >Created:
+                        <span class="text-weight-bold">
                           <date-display
-                            :rawDate="nuggetMap.get(nuggetId).pubAt"
-                            displayFormat="YYYY/MM/DD hh:mm a"
-                            label="Publish At:"
-                          ></date-display>
-                          <q-icon
-                            size="xs"
-                            name="edit"
-                            v-if="
-                              !nuggetMap.get(nuggetId).pubAt ||
-                              nuggetMap.get(nuggetId).pubAt < 1
-                            "
-                          ></q-icon>
-                          <q-popup-edit
-                            :model-value="nuggetMap.get(nuggetId).pubAt"
-                            auto-save
-                            @save="
-                              (v, iv) => {
-                                const isoDate = v + ':00.000Z';
-                                updateNuggetProp(nuggetId, 'pubAt', isoDate);
-                              }
-                            "
-                          >
-                            <template v-slot="scope">
-                              <q-date
-                                dense
-                                v-model="scope.value"
-                                :model-value="scope.value"
-                                mask="YYYY-MM-DDTHH:mm"
-                                hint="The day the Nugget is published."
-                              >
-                              </q-date>
-                              <q-time
-                                dense
-                                v-model="scope.value"
-                                :model-value="scope.value"
-                                mask="YYYY-MM-DDTHH:mm"
-                                hint="The time the Nugget is published."
-                              >
-                              </q-time>
-
-                              <div>
-                                <q-btn
-                                  flat
-                                  dense
-                                  color="negative"
-                                  icon="cancel"
-                                  @click.stop="scope.cancel"
-                                ></q-btn>
-
-                                <q-btn
-                                  flat
-                                  dense
-                                  color="positive"
-                                  icon="check_circle"
-                                  @click.stop="scope.set"
-                                  :disable="scope.initialValue === scope.value"
-                                ></q-btn>
-                              </div>
-                            </template>
-                          </q-popup-edit>
-                        </span>
-                      </div>
-                    </div>
-
-                    <div class="row">
-                      <div class="col-3 inline-form-label">Expire:</div>
-                      <div class="col-9 inline-form-value">
-                        <span class="cursor-pointer">
+                            :rawDate="nuggetMap.get(nuggetId).createdAt"
+                            label="Created"
+                          ></date-display></span
+                      ></q-item-label>
+                    </q-item-section>
+                    <q-item-section no-wrap class="q-pb-xs">
+                      <q-item-label
+                        >Updated:
+                        <span class="text-weight-bold">
                           <date-display
-                            :rawDate="nuggetMap.get(nuggetId).unPubAt"
-                            displayFormat="YYYY/MM/DD hh:mm a"
-                            label="Expire At:"
-                          ></date-display>
-                          <q-icon
-                            size="xs"
-                            name="edit"
-                            v-if="
-                              !nuggetMap.get(nuggetId).unPubAt ||
-                              nuggetMap.get(nuggetId).unPubAt < 1
-                            "
-                          ></q-icon>
-                          <q-popup-edit
-                            :model-value="nuggetMap.get(nuggetId).unPubAt"
-                            auto-save
-                            @save="
-                              (v, iv) => {
-                                const isoDate = v + ':00.000Z';
-                                updateNuggetProp(nuggetId, 'unPubAt', isoDate);
-                              }
-                            "
-                          >
-                            <template v-slot="scope">
-                              <q-date
-                                dense
-                                v-model="scope.value"
-                                :model-value="scope.value"
-                                mask="YYYY-MM-DDTHH:mm"
-                                hint="The day the Nugget is removed from publication."
-                              >
-                              </q-date>
-                              <q-time
-                                dense
-                                v-model="scope.value"
-                                :model-value="scope.value"
-                                mask="YYYY-MM-DDTHH:mm"
-                                hint="The time the Nugget is removed from publication."
-                              >
-                              </q-time>
+                            :rawDate="nuggetMap.get(nuggetId).updatedAt"
+                            label="Updated"
+                          ></date-display></span
+                      ></q-item-label>
+                    </q-item-section>
+                  </q-menu>
+                </q-btn>
+                <q-space></q-space>
 
-                              <div>
-                                <q-btn
-                                  flat
-                                  dense
-                                  color="negative"
-                                  icon="cancel"
-                                  @click.stop="scope.cancel"
-                                ></q-btn>
+                <div
+                  class="q-pt-xs q-pr-sm subdued-header text-italics text-caption"
+                >
+                  {{ nuggetMap.get(nuggetId).id }}
+                </div>
+              </div>
 
-                                <q-btn
-                                  flat
-                                  dense
-                                  color="positive"
-                                  icon="check_circle"
-                                  @click.stop="scope.set"
-                                  :disable="scope.initialValue === scope.value"
-                                ></q-btn>
-                              </div>
-                            </template>
-                          </q-popup-edit>
-                        </span>
-                      </div>
-                    </div>
-
-                    <nugget-text-property
-                      label="Nugget"
-                      propName="editMode"
-                      :propValue="nuggetMap.get(nuggetId).editMode"
-                      :nuggetId="nuggetId"
-                      hintText="Enable Editor.js mode"
-                      :required="false"
-                    ></nugget-text-property>
-
-                    <div class="row">
-                      <div class="col-3 collection-item-label">Created:</div>
-                      <div class="col-9 collection-item-value">
-                        <date-display
-                          :rawDate="nuggetMap.get(nuggetId).createdAt"
-                          label="Created"
-                        ></date-display>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-3 collection-item-label">Updated:</div>
-                      <div class="col-9 collection-item-value">
-                        <date-display
-                          :rawDate="nuggetMap.get(nuggetId).updatedAt"
-                          label="Updated"
-                        ></date-display>
-                      </div>
-                    </div>
-                  </q-card-section>
-                </q-card>
-              </q-expansion-item>
-
-              <q-expansion-item
-                header-class="collection-item-subheader text-center"
-                :v-model="'nug-' + nuggetId + '-assets-toggle'"
-                @show="loadNuggetAssets(nuggetId)"
-              >
-                <template #header>
-                  <div>
-                    <q-icon name="image" size="sm"></q-icon>
-                  </div>
-                  <q-space></q-space>
-                  <div class="collection-item-subheader text-center">
-                    Assets
-                  </div>
-                  <q-space></q-space>
-                </template>
-                <asset-manager :nuggetId="nuggetId"></asset-manager>
-              </q-expansion-item>
+              <asset-manager
+                :nuggetId="nuggetId"
+                v-show="nuggetAssetStates.has(nuggetId)"
+              ></asset-manager>
 
               <div class="row col-12">
                 <blocks-handler
                   :blocks="nuggetBlocksMap.get(nuggetId)"
                   @save="(event) => saveBlocks(nuggetId, event)"
                   :nix="nix"
-                  v-if="nuggetMap.get(nuggetId).editMode != 'editor.js'"
+                  v-if="nuggetMap.get(nuggetId).type != 'editor'"
                 >
                 </blocks-handler>
 
@@ -416,20 +191,10 @@
                   :blocks="nuggetBlocksMap.get(nuggetId)"
                   @save="(event) => saveBlocks(nuggetId, event)"
                   :nix="nix"
-                  v-if="nuggetMap.get(nuggetId).editMode == 'editor.js'"
+                  v-if="nuggetMap.get(nuggetId).type == 'editor'"
                 >
                 </editorjs-blocks-handler>
               </div>
-            </div>
-
-            <!-- Button to trigger popup form to insert a Nugget between existing nuggets -->
-            <div class="row col-12">
-              <span class="col-4"></span
-              ><span
-                class="col-4 text-center optional-form-header align-center"
-                @click="insertNugget(nuggetId)"
-                ><q-icon size="xs" name="add"></q-icon> Insert Nugget</span
-              ><span class="col-4"></span>
             </div>
           </q-list>
         </template>
@@ -456,14 +221,7 @@
 </template>
 
 <script>
-import {
-  defineComponent,
-  ref,
-  computed,
-  toRef,
-  reactive,
-  onMounted,
-} from "vue";
+import { defineComponent, ref, computed, reactive, onMounted } from "vue";
 
 import { useQuasar, date } from "quasar";
 
@@ -474,7 +232,7 @@ import useFlows from "../../composables/useFlows";
 import DateDisplay from "../../components/site/widgets/DateDisplay";
 import BlocksHandler from "../../components/flows/blocks/BlocksHandler";
 import EditorjsBlocksHandler from "../../components/flows/blocks/EditorjsBlocksHandler";
-import NuggetTextProperty from "../../components/flows/forms/fields/NuggetTextProperty";
+//import NuggetTextProperty from "../../components/flows/forms/fields/NuggetTextProperty";
 import NoFlowSourceSetPage from "../../pages/flows/NoFlowSourceSetPage";
 import FirstNuggetInstructions from "../../pages/flows/FirstNuggetInstructions";
 
@@ -487,13 +245,17 @@ export default defineComponent({
     DateDisplay,
     BlocksHandler,
     EditorjsBlocksHandler,
-    NuggetTextProperty,
+    //NuggetTextProperty,
     NoFlowSourceSetPage,
     AssetManager,
     FirstNuggetInstructions,
   },
   setup() {
     const route = useRoute();
+
+    const dataCySlug = "nuggets";
+
+    const nuggetAssetStates = reactive(new Map());
 
     const {
       flowMap,
@@ -508,6 +270,7 @@ export default defineComponent({
       nuggetSeqMap,
       nuggetBlocksMap,
       loadNuggetAssets,
+      moveNugget,
     } = useFlows();
 
     console.log(flowMap);
@@ -542,7 +305,7 @@ export default defineComponent({
       updateNuggetData(nuggetId, "blocks", blocks);
     };
 
-    const insertNugget = (prevNugId) => {
+    const insertNugget = (type, relNuggetId, relType) => {
       const timeStamp = Date.now();
       const formattedString = date.formatDate(
         timeStamp,
@@ -566,6 +329,14 @@ export default defineComponent({
       return nuggetSeqMap.get(flowId.value);
     });
 
+    const toggleNuggetAssets = (nuggetId) => {
+      if (nuggetAssetStates.get(nuggetId)) {
+        nuggetAssetStates.delete(nuggetId);
+      } else {
+        nuggetAssetStates.set(nuggetId, true);
+      }
+    };
+
     return {
       flowLoaded,
       flow,
@@ -583,6 +354,10 @@ export default defineComponent({
       loadNuggetAssets,
       nuggetBlocksMap,
       createNugget,
+      dataCySlug,
+      nuggetAssetStates,
+      toggleNuggetAssets,
+      moveNugget,
     };
   },
   methods: {
@@ -603,6 +378,16 @@ export default defineComponent({
         .onDismiss(() => {
           // console.log('I am triggered on both OK and Cancel')
         });
+    },
+    async onCreateNugget(type, relId, relType) {
+      console.log("Adding Nugget");
+
+      const result = await this.createNugget(
+        this.flowId,
+        { type: type },
+        relId,
+        relType
+      );
     },
   },
 });

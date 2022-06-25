@@ -47,7 +47,11 @@ export default defineComponent({
       type: String,
       default: "Nugget",
     },
-    nextNugget: {
+    relId: {
+      type: String,
+      default: "",
+    },
+    relType: {
       type: String,
       default: "",
     },
@@ -63,7 +67,7 @@ export default defineComponent({
 
       console.log(props);
 
-      const def = { type: type, prevNuggetId: props.prevNuggetId };
+      const def = { type: type, relId: props.prevNuggetId };
 
       //  @todo Add debounce
       emit("addNugget", def);
