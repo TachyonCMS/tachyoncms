@@ -111,9 +111,165 @@
                 ></q-btn>
 
                 <q-btn icon="mdi-calendar-month" flat padding="xs"
-                  ><q-tooltip>Publish Dates</q-tooltip
-                  ><q-menu>Set publish dates</q-menu></q-btn
-                >
+                  ><q-menu>
+                    <q-list style="min-width: 100px" dense>
+                      <q-item>
+                        <q-item-section
+                          ><div class="row">
+                            <div class="col inline-form-label">Publish:</div>
+                            <div class="col inline-form-value">
+                              <span class="cursor-pointer">
+                                <date-display
+                                  :rawDate="nuggetMap.get(nuggetId).pubAt"
+                                  displayFormat="YYYY/MM/DD hh:mm a"
+                                  label="Publish At"
+                                ></date-display>
+                                <q-icon
+                                  size="xs"
+                                  name="edit"
+                                  v-if="
+                                    !nuggetMap.get(nuggetId).pubAt ||
+                                    nuggetMap.get(nuggetId).pubAt.length < 1
+                                  "
+                                ></q-icon>
+                                <q-popup-edit
+                                  :model-value="nuggetMap.get(nuggetId).pubAt"
+                                  auto-save
+                                  @save="
+                                    (v, iv) => {
+                                      const isoDate = v + ':00.000Z';
+                                      updateNuggetProp(
+                                        nuggetId,
+                                        'pubAt',
+                                        isoDate
+                                      );
+                                    }
+                                  "
+                                >
+                                  <template v-slot="scope">
+                                    <q-date
+                                      dense
+                                      v-model="scope.value"
+                                      :model-value="scope.value"
+                                      mask="YYYY-MM-DDTHH:mm"
+                                      hint="The day the Nugget is published."
+                                    >
+                                    </q-date>
+                                    <q-time
+                                      dense
+                                      v-model="scope.value"
+                                      :model-value="scope.value"
+                                      mask="YYYY-MM-DDTHH:mm"
+                                      hint="The time the Nugget is published."
+                                    >
+                                    </q-time>
+
+                                    <div>
+                                      <q-btn
+                                        flat
+                                        dense
+                                        color="negative"
+                                        icon="cancel"
+                                        @click.stop="scope.cancel"
+                                      ></q-btn>
+
+                                      <q-btn
+                                        flat
+                                        dense
+                                        color="positive"
+                                        icon="check_circle"
+                                        @click.stop="scope.set"
+                                        :disable="
+                                          scope.initialValue === scope.value
+                                        "
+                                      ></q-btn>
+                                    </div>
+                                  </template>
+                                </q-popup-edit>
+                              </span>
+                            </div></div
+                        ></q-item-section>
+                      </q-item>
+                      <q-item>
+                        <q-item-section
+                          ><div class="row">
+                            <div class="col inline-form-label">Expire:</div>
+                            <div class="col inline-form-value">
+                              <span class="cursor-pointer">
+                                <date-display
+                                  :rawDate="nuggetMap.get(nuggetId).unPubAt"
+                                  displayFormat="YYYY/MM/DD hh:mm a"
+                                  label="Expire At"
+                                ></date-display>
+                                <q-icon
+                                  size="xs"
+                                  name="edit"
+                                  v-if="
+                                    !nuggetMap.get(nuggetId).unPubAt ||
+                                    nuggetMap.get(nuggetId).unPubAt.length < 1
+                                  "
+                                ></q-icon>
+                                <q-popup-edit
+                                  :model-value="nuggetMap.get(nuggetId).unPubAt"
+                                  auto-save
+                                  @save="
+                                    (v, iv) => {
+                                      const isoDate = v + ':00.000Z';
+                                      updateNuggetProp(
+                                        nuggetId,
+                                        'unPubAt',
+                                        isoDate
+                                      );
+                                    }
+                                  "
+                                >
+                                  <template v-slot="scope">
+                                    <q-date
+                                      dense
+                                      v-model="scope.value"
+                                      :model-value="scope.value"
+                                      mask="YYYY-MM-DDTHH:mm"
+                                      hint="The day the Nugget is removed from publication."
+                                    >
+                                    </q-date>
+                                    <q-time
+                                      dense
+                                      v-model="scope.value"
+                                      :model-value="scope.value"
+                                      mask="YYYY-MM-DDTHH:mm"
+                                      hint="The time the Nugget is removed from publication."
+                                    >
+                                    </q-time>
+
+                                    <div>
+                                      <q-btn
+                                        flat
+                                        dense
+                                        color="negative"
+                                        icon="cancel"
+                                        @click.stop="scope.cancel"
+                                      ></q-btn>
+
+                                      <q-btn
+                                        flat
+                                        dense
+                                        color="positive"
+                                        icon="check_circle"
+                                        @click.stop="scope.set"
+                                        :disable="
+                                          scope.initialValue === scope.value
+                                        "
+                                      ></q-btn>
+                                    </div>
+                                  </template>
+                                </q-popup-edit>
+                              </span>
+                            </div></div
+                        ></q-item-section>
+                      </q-item>
+                      <q-separator></q-separator>
+                    </q-list> </q-menu
+                ></q-btn>
 
                 <q-btn
                   icon="mdi-file-multiple"
@@ -124,44 +280,45 @@
                 >
 
                 <q-btn icon="mdi-information-outline" flat padding="xs">
-                  <q-tooltip>Info</q-tooltip>
-                  <q-menu cover anchor="top right" fit class="q-pa-md">
-                    <q-item-section no-wrap class="q-pb-xs">
-                      <q-item-label
-                        >ID:
-                        <span class="text-weight-bold">{{
-                          nuggetMap.get(nuggetId).id
-                        }}</span></q-item-label
-                      >
-                    </q-item-section>
-                    <q-item-section no-wrap class="q-pb-xs">
-                      <q-item-label
-                        >Type:overflowtypr
-                        <span class="text-weight-bold">
-                          {{ nuggetMap.get(nuggetId).type }}</span
+                  <q-menu anchor="bottom left" fit class="q-pa-md">
+                    <q-list style="min-width: 100px" dense>
+                      <q-item>
+                        <q-item-section
+                          >ID:
+                          <span class="text-weight-bold">{{
+                            nuggetMap.get(nuggetId).id
+                          }}</span></q-item-section
                         >
-                      </q-item-label>
-                    </q-item-section>
-                    <q-item-section no-wrap class="q-pb-xs">
-                      <q-item-label
-                        >Created:
-                        <span class="text-weight-bold">
-                          <date-display
-                            :rawDate="nuggetMap.get(nuggetId).createdAt"
-                            label="Created"
-                          ></date-display></span
-                      ></q-item-label>
-                    </q-item-section>
-                    <q-item-section no-wrap class="q-pb-xs">
-                      <q-item-label
-                        >Updated:
-                        <span class="text-weight-bold">
-                          <date-display
-                            :rawDate="nuggetMap.get(nuggetId).updatedAt"
-                            label="Updated"
-                          ></date-display></span
-                      ></q-item-label>
-                    </q-item-section>
+                      </q-item>
+                      <q-item>
+                        <q-item-section>
+                          Type:
+                          <span class="text-weight-bold">
+                            {{ nuggetMap.get(nuggetId).type }}</span
+                          >
+                        </q-item-section>
+                      </q-item>
+                      <q-item>
+                        <q-item-section
+                          >Created:
+                          <span class="text-weight-bold">
+                            <date-display
+                              :rawDate="nuggetMap.get(nuggetId).createdAt"
+                              label="Created"
+                            ></date-display></span
+                        ></q-item-section>
+                      </q-item>
+                      <q-item>
+                        <q-item-section
+                          >Updated:
+                          <span class="text-weight-bold">
+                            <date-display
+                              :rawDate="nuggetMap.get(nuggetId).updatedAt"
+                              label="Updated"
+                            ></date-display></span
+                        ></q-item-section>
+                      </q-item>
+                    </q-list>
                   </q-menu>
                 </q-btn>
                 <q-space></q-space>
