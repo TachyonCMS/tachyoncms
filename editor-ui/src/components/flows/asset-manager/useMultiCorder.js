@@ -297,6 +297,7 @@ export default function useMultiCorder() {
     console.log("Video Native Height: " + stream_height + "px");
 
     cameraRes.value = camRes;
+    console.log(cameraRes.value);
 
     // Emit video start/live event
     videoElem.onloadedmetadata = () => {
@@ -328,7 +329,7 @@ export default function useMultiCorder() {
     console.log(canvasCtx);
     canvasCtx.drawImage(videoElem.value, 0, 0, vWidth, vHeight);
     const data = await canvasElem.value.toDataURL("image/" + snapshotExt.value);
-    console.log(data);
+    console.log(data, vWidth, vHeight);
     snapshot.value = data;
   };
 

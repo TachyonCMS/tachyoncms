@@ -16,6 +16,7 @@
               :width="vWidth"
               :height="vHeight"
               muted="recorderMuted"
+              @loadedmetadata="getVideoDimensions"
             />
             <div v-show="['video'].includes(view)" class="top-right text-body2">
               {{ videoSourceName }}
@@ -24,6 +25,29 @@
                 @click="this.onCloseVideo()"
               ></q-icon>
             </div>
+            <q-dialog v-model="showSnapNotes">
+              <q-card>
+                <q-toolbar>
+                  <q-avatar>
+                    <q-icon name="mdi-information"></q-icon>
+                  </q-avatar>
+
+                  <q-toolbar-title
+                    ><span class="text-weight-bold">Snapshot</span>
+                    Info</q-toolbar-title
+                  >
+
+                  <q-btn flat round dense icon="close" v-close-popup></q-btn>
+                </q-toolbar>
+
+                <q-card-section>
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum
+                  repellendus sit voluptate voluptas eveniet porro. Rerum
+                  blanditiis perferendis totam, ea at omnis vel numquam
+                  exercitationem aut, natus minima, porro labore.
+                </q-card-section>
+              </q-card>
+            </q-dialog>
           </div>
 
           <div v-show="view == 'snapshot'">
@@ -40,13 +64,22 @@
           <!-- SNAPSHOT CONTROLS -->
 
           <div v-show="view == 'snapshot'" class="row col-12 video-controls">
-            <q-space></q-space>
             <q-btn
               round
               icon="mdi-download"
               class="video-control-btn"
               @click="onSnapDownload()"
             ></q-btn>
+
+            <q-space></q-space>
+
+            <q-btn
+              round
+              icon="mdi-note"
+              class="video-control-btn"
+              @click="onToggleSnapNotes()"
+            ></q-btn>
+
             <q-btn
               round
               icon="mdi-content-save"
@@ -303,6 +336,7 @@ export default defineComponent({
       recordDelete,
       recordDownload,
       recordSave,
+      cameraRes,
     } = useMultiCorder();
 
     const view = ref("selectSource");
@@ -340,7 +374,7 @@ export default defineComponent({
     });
 
     const vHeight = computed(() => {
-      return vWidth.value * 0.562;
+      return vWidth.value * 0.5625;
     });
 
     const onResize = (size) => {
@@ -359,6 +393,11 @@ export default defineComponent({
 
     // The recorder mode for number of segments single|multi
     const recorderMode = ref("single");
+
+    // Flag to track whether a notes form should be displayed for media.
+    // These notes get saved to blocks in the Nugget with specific types.
+    const showSnapNotes = ref(false); // block type snap-note
+    const showRecordingNotes = ref(false); // block type recording-note
 
     return {
       snapshotImgUrl, // All the captured image to be displayed or manipulated
@@ -398,6 +437,9 @@ export default defineComponent({
       recordDelete,
       recordDownload,
       recordSave,
+      showSnapNotes,
+      showRecordingNotes,
+      cameraRes,
     };
   },
   methods: {
@@ -430,6 +472,8 @@ export default defineComponent({
       this.setView("selectSource");
     },
     onSnap() {
+      console.log(this.vWidth, this.vHeight);
+      console.log(this.cameraRes);
       this.videoSnapshot(this.vWidth, this.vHeight);
       this.setView("snapshot");
     },
@@ -483,6 +527,18 @@ export default defineComponent({
       console.log("MC - onRecordSave");
 
       this.recordSave(this.nuggetId);
+    },
+
+    onToggleSnapNotes() {
+      console.log("MC - onToggleSnapNotes");
+
+      this.showSnapNotes = !this.showSnapNotes;
+    },
+    getVideoDimensions(e) {
+      console.log(e.target.videoHeight);
+      console.log(e.target.videoWidth);
+      console.log(this.vHeight);
+      console.log(this.vWidth);
     },
   },
 });

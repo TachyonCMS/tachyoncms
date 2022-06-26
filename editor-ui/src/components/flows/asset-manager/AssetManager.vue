@@ -17,7 +17,7 @@
       <q-tab name="multi-corder" icon="camera" label="Multicorder"></q-tab>
     </q-tabs>
     <div class="row col-12 text-center fit justify-center">
-      <component :is="tabView" :nuggetId="nuggetId" width="1024"></component>
+      <component :is="tabView" :nuggetId="nuggetId" width="3440"></component>
     </div>
   </div>
 </template>
