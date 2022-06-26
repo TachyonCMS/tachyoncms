@@ -141,6 +141,8 @@ export default defineComponent({
       return route.params.flowId;
     });
 
+    console.log(route.meta.drawer);
+
     const pageFlowData = computed(() => {
       return flowMap.get(flowId.value);
     });

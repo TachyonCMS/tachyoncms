@@ -26,11 +26,7 @@
                             <q-item
                               clickable
                               @click="
-                                this.onCreateNugget(
-                                  'editor',
-                                  nuggetId,
-                                  'before'
-                                )
+                                this.onCreateNugget('editor', nuggetId, 'next')
                               "
                             >
                               <q-item-section> Before </q-item-section>
@@ -41,7 +37,7 @@
                             <q-item
                               clickable
                               @click="
-                                this.onCreateNugget('editor', nuggetId, 'after')
+                                this.onCreateNugget('editor', nuggetId, 'prev')
                               "
                             >
                               <q-item-section> After </q-item-section>
@@ -66,7 +62,7 @@
                             <q-item
                               clickable
                               @click="
-                                this.onCreateNugget('media', nuggetId, 'before')
+                                this.onCreateNugget('media', nuggetId, 'next')
                               "
                             >
                               <q-item-section> Before </q-item-section>
@@ -77,7 +73,7 @@
                             <q-item
                               clickable
                               @click="
-                                this.onCreateNugget('media', nuggetId, 'after')
+                                this.onCreateNugget('media', nuggetId, 'prev')
                               "
                             >
                               <q-item-section> After </q-item-section>
@@ -363,7 +359,12 @@
           <!-- Display info on creating the first nugget-->
           <first-nugget-instructions
             @addNugget="
-              (event) => this.createNugget(flowId, { type: event.type })
+              (event) =>
+                this.createNugget(
+                  flowId,
+                  { type: event.type },
+                  event.prevNuggetId
+                )
             "
           ></first-nugget-instructions>
         </template>
@@ -462,6 +463,13 @@ export default defineComponent({
     };
 
     const insertNugget = (type, relNuggetId, relType) => {
+      const timeStamp = Date.now();
+      const formattedString = date.formatDate(
+        timeStamp,
+        "YYYY-MM-DD HH:mm:ss:SS"
+      );
+      const name = "Nugget - " + formattedString;
+      const nugget = { name: name, title: "" };
       createNugget(flowId.value, nugget, prevNugId);
     };
 

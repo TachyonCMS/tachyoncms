@@ -229,7 +229,12 @@ export default function useFlows() {
   };
 
   // Create a new Flow and persist it
-  const createNugget = async (flowId, nuggetData, relId = null, relType) => {
+  const createNugget = async (
+    flowId,
+    nuggetData,
+    relId = null,
+    relType = null
+  ) => {
     try {
       flowConnectors[flowConnector.value]
         .createNugget(flowId, nuggetData, relId, relType)

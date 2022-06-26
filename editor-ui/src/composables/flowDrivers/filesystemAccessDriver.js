@@ -433,7 +433,12 @@ export default () => {
   /**
    * NUGGETS
    */
-  const createNugget = async (flowId, nuggetObj, relId, relType) => {
+  const createNugget = async (
+    flowId,
+    nuggetObj,
+    relId = null,
+    relType = null
+  ) => {
     try {
       console.log("Creating Nugget for Flow " + flowId);
 
@@ -686,6 +691,7 @@ export default () => {
       const { objType, objId, dataElement, insertVal, relId, relType } = {
         ...seqInput,
       };
+      console.log(objType, objId, dataElement, insertVal, relId, relType);
       // Make the new sequence value into an array
       let newSeq = [insertVal];
 
@@ -707,12 +713,12 @@ export default () => {
         if (relId === 0) {
           // The new nugget is either first or last in sequence
           switch (relType) {
-            case "prev":
+            case "before":
               // There is zero nugget previous. so this new nugget is first
               newSeq = [...newSeq, ...currentSeq.nuggetSeq];
               break;
 
-            case "next":
+            case "after":
               // There is no "next" nugget, the new nugget belongs on the end.
               newSeq = [...currentSeq.nuggetSeq, ...newSeq];
               break;
@@ -720,28 +726,43 @@ export default () => {
         } else {
           // An existing item was provided.
           // It is either the prev or next, relative to the new one.
-          let insertIx;
-          console.log(relType);
-          switch (relType) {
-            case "prev":
-              // The related nugget is previous. The new  nugget is immediately after it.
-              insertIx = currentSeq.nuggetSeq.indexOf(relId) + 1;
-              break;
 
-            case "next":
-              // The related nugget is "next", the new nugget belongs immediately before it.
-              insertIx = currentSeq.nuggetSeq.indexOf(relId) - 1;
-              break;
+          const relIx = currentSeq.nuggetSeq.indexOf(relId);
+          // If the relatedIx ix zero and it comes after the new one, the new one will now be first.
+          // So we shift it on with no hoopla
+          console.log("Related IX: " + relIx);
+          if (relIx === 0) {
+            console.log("IXFIRST");
+            console.log(newSeq);
+            newSeq = [...newSeq, ...currentSeq.nuggetSeq];
+          } else if (relIx === currentSeq.nuggetSeq.length) {
+            console.log("IXFLAST");
+            newSeq = [...newSeq, ...currentSeq.nuggetSeq];
+          } else {
+            console.log("IXMIDS");
+            let insertIx;
+            console.log("RelType: " + relType);
+
+            switch (relType) {
+              case "before":
+                insertIx = relIx;
+                break;
+
+              case "after":
+                insertIx = relIx + 1;
+                break;
+            }
+            console.log(insertIx);
+            newSeq = [
+              ...currentSeq.nuggetSeq.slice(0, insertIx),
+              ...newSeq,
+              ...currentSeq.nuggetSeq.slice(insertIx),
+            ];
           }
-          console.log(insertIx);
-          newSeq = [
-            ...currentSeq.nuggetSeq.slice(0, insertIx),
-            ...newSeq,
-            ...currentSeq.nuggetSeq.slice(insertIx),
-          ];
         }
         // }
       }
+      console.log("newSeq");
       console.log(newSeq);
       // Write the new sequence out to same path
       const writeResult = await writeJsonHandle(fileHandle, {

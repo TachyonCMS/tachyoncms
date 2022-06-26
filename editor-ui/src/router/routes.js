@@ -4,6 +4,10 @@ const routes = [
     name: "home",
     component: () => import("src/layouts/FlowsLayout.vue"),
     children: [{ path: "", component: () => import("pages/Index.vue") }],
+    meta: {
+      drawer: "Flows",
+      requiresAuth: false,
+    },
   },
 
   {
@@ -12,6 +16,7 @@ const routes = [
     component: () => import("src/layouts/FlowsLayout.vue"),
     children: [{ path: "", component: () => import("pages/flows/Flows.vue") }],
     meta: {
+      drawer: "Flows",
       requiresAuth: true,
     },
   },
@@ -22,6 +27,7 @@ const routes = [
     component: () => import("src/layouts/FlowsLayout.vue"),
     children: [{ path: "", component: () => import("pages/flows/Flow.vue") }],
     meta: {
+      drawer: "Flows",
       requiresAuth: true,
     },
   },
@@ -34,6 +40,7 @@ const routes = [
       { path: "", component: () => import("pages/flows/Nuggets.vue") },
     ],
     meta: {
+      drawer: "Flows",
       requiresAuth: true,
     },
   },
@@ -46,6 +53,7 @@ const routes = [
       { path: "", component: () => import("pages/flows/Sequence.vue") },
     ],
     meta: {
+      drawer: "Flows",
       requiresAuth: true,
     },
   },
@@ -58,6 +66,7 @@ const routes = [
       { path: "", component: () => import("pages/flows/PreviewFlow.vue") },
     ],
     meta: {
+      drawer: "Flows",
       requiresAuth: true,
     },
   },
@@ -70,6 +79,7 @@ const routes = [
       { path: "", component: () => import("pages/flows/PublishedFlow.vue") },
     ],
     meta: {
+      drawer: "Flows",
       requiresAuth: true,
     },
   },
@@ -82,6 +92,7 @@ const routes = [
       { path: "", component: () => import("pages/flows/PublishedFlow.vue") },
     ],
     meta: {
+      drawer: "Flows",
       requiresAuth: false,
     },
   },
@@ -97,6 +108,7 @@ const routes = [
       },
     ],
     meta: {
+      drawer: "Flows",
       requiresAuth: false,
     },
   },
@@ -112,6 +124,7 @@ const routes = [
       },
     ],
     meta: {
+      drawer: "Flows",
       requiresAuth: false,
     },
   },
@@ -127,7 +140,38 @@ const routes = [
       },
     ],
     meta: {
+      drawer: "Flows",
       requiresAuth: false,
+    },
+  },
+
+  {
+    path: "/pack-track",
+    name: "pack-track",
+    component: () => import("src/layouts/FlowsLayout.vue"),
+    children: [
+      {
+        path: "",
+        component: () => import("pages/pack-track/Home.vue"),
+      },
+    ],
+    meta: {
+      drawer: "PackTrack",
+    },
+  },
+
+  {
+    path: "/pack-track/storage",
+    name: "pack-track-storage",
+    component: () => import("src/layouts/FlowsLayout.vue"),
+    children: [
+      {
+        path: "",
+        component: () => import("pages/pack-track/Items.vue"),
+      },
+    ],
+    meta: {
+      drawer: "PackTrack",
     },
   },
 

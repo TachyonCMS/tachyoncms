@@ -46,8 +46,7 @@ export default defineComponent({
     const onAddNugget = () => {
       console.log("Adding " + props.nuggetType + " nugget.");
 
-      const def = { type: props.nuggetType, prevNuggetId: props.prevNuggetId };
-      console.log(def);
+      const def = { type: props.nuggetType };
 
       //  @todo Add debounce
       emit("addNugget", def);
