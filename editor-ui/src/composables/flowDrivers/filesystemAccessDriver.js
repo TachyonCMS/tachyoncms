@@ -649,6 +649,11 @@ export default () => {
       );
       dirHandleMap.set("nuggets", nuggetDirHandle);
 
+      const tagsDirHandle = await sourceDirHandle.getDirectoryHandle("tags", {
+        create: true,
+      });
+      dirHandleMap.set("tags", tagsDirHandle);
+
       return;
     } catch (e) {
       console.error(e);
@@ -890,62 +895,36 @@ export default () => {
     }
   };
 
-  const getDirHandle = async (pathSegments, create = true) => {
+  const getDirHandle = async (pathSegments) => {
     try {
       // All pathSegments are directories.
       // All segment names should be 100% resolved and can be used as-is.
-
-      // If the last segment doesn't exist we
       console.log(pathSegments);
-      let isHandleFound = false;
 
-      const processedSegments = [];
-
-      const targetHandleName = pathSegments.pop();
+      const targetHandleName = pathSegments[pathSegments.length - 1];
 
       // If we already have the desired handle, return it.
       if (dirHandleMap.has(targetHandleName)) {
         return dirHandleMap.get(targetHandleName);
       }
 
-      // Recurse up though pathSegments
-      let parentDirName;
-      let parentDirHandle;
+      console.log("dirHandle not found yet");
 
-      // Loop through remaining elements until we find one.
-      while (!isHandleFound) {
-        parentDirName = pathSegments.pop();
-        console.log(parentDirName);
-        if (dirHandleMap.has(parentDirName)) {
-          isHandleFound = true;
-          parentDirHandle = dirHandleMap.get(parentDirName);
-          console.log(parentDirHandle);
+      // The top level dirHandle MUST exist or allow failure
+      const topDirName = pathSegments.shift();
+      let dirHandle = dirHandleMap.get(objDirs[topDirName]);
+      console.log(dirHandle);
+      // Keep things simple, work our way from top to bottom, most should be found quickly in the map.
+      for (const segment of pathSegments) {
+        if (dirHandleMap.has(segment)) {
+          dirHandle = dirHandleMap.get(segment);
         } else {
-          processedSegments.push(parentDirName);
+          dirHandle = await dirHandle.getDirectoryHandle(segment, {
+            create: true,
+          });
+          dirHandleMap.set(segment, dirHandle);
         }
       }
-
-      // Recurse back though processedSegments
-      // creating dirHandles until we get to our original target dir
-      let childDirName;
-
-      while (processedSegments.length > 0) {
-        childDirName = processedSegments.pop();
-        console.log(childDirName);
-        parentDirHandle = await parentDirHandle.getDirectoryHandle(
-          childDirName,
-          { create: true }
-        );
-        dirHandleMap.set(childDirName, parentDirHandle);
-        console.log(parentDirHandle);
-      }
-
-      const dirHandle = await parentDirHandle.getDirectoryHandle(
-        targetHandleName,
-        {
-          create: true,
-        }
-      );
 
       console.log(dirHandle);
       return dirHandle;
@@ -1016,6 +995,7 @@ export default () => {
         nuggetId,
         "assets-" + nuggetId,
       ]);
+      console.log(dirHandle);
       console.log(fileData);
 
       const writeFileHandle = await dirHandle.getFileHandle(fileName, {

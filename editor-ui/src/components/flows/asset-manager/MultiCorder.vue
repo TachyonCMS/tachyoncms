@@ -25,8 +25,12 @@
                 @click="this.onCloseVideo()"
               ></q-icon>
             </div>
-            <q-dialog v-model="showSnapNotes">
-              <q-card>
+            <div
+              v-show="showSnapNotes"
+              class="top-left full-width z-max"
+              style="opacity: 100"
+            >
+              <q-card flat>
                 <q-toolbar>
                   <q-avatar>
                     <q-icon name="mdi-information"></q-icon>
@@ -37,17 +41,27 @@
                     Info</q-toolbar-title
                   >
 
-                  <q-btn flat round dense icon="close" v-close-popup></q-btn>
+                  <q-btn
+                    flat
+                    round
+                    dense
+                    icon="close"
+                    @click="onToggleSnapNotes()"
+                  ></q-btn>
                 </q-toolbar>
 
                 <q-card-section>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum
-                  repellendus sit voluptate voluptas eveniet porro. Rerum
-                  blanditiis perferendis totam, ea at omnis vel numquam
-                  exercitationem aut, natus minima, porro labore.
+                  <q-input label="Title" v-model="snapTitle"></q-input>
+                  <q-input label="Caption" v-model="snapCaption"></q-input>
+                  <q-input label="Alt text" v-model="snapAltText"></q-input>
+                  <q-input
+                    label="Description"
+                    v-model="snapDescription"
+                  ></q-input>
+                  <q-input label="Tags" v-model="snapTags"></q-input>
                 </q-card-section>
               </q-card>
-            </q-dialog>
+            </div>
           </div>
 
           <div v-show="view == 'snapshot'">
@@ -399,6 +413,18 @@ export default defineComponent({
     const showSnapNotes = ref(false); // block type snap-note
     const showRecordingNotes = ref(false); // block type recording-note
 
+    const snapTitle = ref(null);
+    const snapCaption = ref(null);
+    const snapAltText = ref(null);
+    const snapDescription = ref(null);
+    const snapTags = ref(null);
+
+    const recTitle = ref(null);
+    const recCaption = ref(null);
+    const recAltText = ref(null);
+    const recDescription = ref(null);
+    const recTags = ref(null);
+
     return {
       snapshotImgUrl, // All the captured image to be displayed or manipulated
       view, // The current selected view
@@ -440,6 +466,16 @@ export default defineComponent({
       showSnapNotes,
       showRecordingNotes,
       cameraRes,
+      snapTitle,
+      snapCaption,
+      snapAltText,
+      snapDescription,
+      snapTags,
+      recTitle,
+      recCaption,
+      recAltText,
+      recDescription,
+      recTags,
     };
   },
   methods: {
