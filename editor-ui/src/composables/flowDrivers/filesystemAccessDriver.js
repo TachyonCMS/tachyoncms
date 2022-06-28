@@ -608,6 +608,8 @@ export default () => {
       return fileData;
     } catch (e) {
       console.error(e);
+      console.log(pathSegments);
+      console.log(fileData);
     }
   };
 
@@ -922,7 +924,7 @@ export default () => {
     try {
       // Delete the asset
       const dirHandle = await getDirHandle([
-        "nugget",
+        "nuggets",
         nuggetId,
         "assets-" + nuggetId,
       ]);
@@ -939,7 +941,7 @@ export default () => {
     try {
       // Get the Nugget asset dirHandle that all files will use.
       const dirHandle = await getDirHandle([
-        "nugget",
+        "nuggets",
         nuggetId,
         "assets-" + nuggetId,
       ]);
@@ -975,7 +977,7 @@ export default () => {
     try {
       // Get the Nugget asset dirHandle that all files will use.
       const dirHandle = await getDirHandle([
-        "nugget",
+        "nuggets",
         nuggetId,
         "assets-" + nuggetId,
       ]);
@@ -1000,9 +1002,13 @@ export default () => {
 
   const storeNuggetMediaMeta = async (nuggetId, fileName, fileData) => {
     try {
+      console.log(nuggetId);
+      console.log(fileName);
+      console.log(fileData);
+
       // Get the Nugget asset dirHandle that all files will use.
       const pathSegments = [
-        "nugget",
+        "nuggets",
         nuggetId,
         "assets-" + nuggetId,
         "meta",

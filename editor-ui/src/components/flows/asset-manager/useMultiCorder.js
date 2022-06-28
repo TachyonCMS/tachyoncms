@@ -19,14 +19,6 @@ const screenshareSupported = ref(false);
 
 const { storeNuggetMedia, storeNuggetMediaMeta } = useFlows();
 
-const metaObjDef = {
-  title: "",
-  caption: "",
-  altText: "",
-  description: "",
-  tags: "",
-};
-
 /**
  * EXPORTED FUNCTION
  */
@@ -43,7 +35,13 @@ export default function useMultiCorder() {
   const snapshot = ref(null);
 
   // User entered snapshot meta data for current snapshot
-  const snapMeta = reactive(metaObjDef);
+  const snapMeta = reactive({
+    title: "",
+    caption: "",
+    altText: "",
+    description: "",
+    tags: "",
+  });
 
   // The currently selected videoSource
   const videoSource = ref(null);
@@ -87,7 +85,13 @@ export default function useMultiCorder() {
   ];
 
   // User entered recording meta data for current recording
-  const recMeta = reactive(metaObjDef);
+  const recMeta = reactive({
+    title: "",
+    caption: "",
+    altText: "",
+    description: "",
+    tags: "",
+  });
 
   const setRecorderState = (state) => {
     if (recorderStates.includes(state)) {
@@ -375,11 +379,24 @@ export default function useMultiCorder() {
     a.click();
   };
 
-  const saveNuggetMedia = async (nuggetId) => {
+  const saveNuggetSnap = async (nuggetId) => {
     const fileName = snapshotName.value + "." + snapshotExt.value;
     await storeNuggetMedia(nuggetId, fileName, snapshot.value);
     await storeNuggetMediaMeta(nuggetId, fileName, snapMeta);
     return fileName;
+  };
+
+  const deleteSnap = async (nuggetId) => {
+    snapshot.value = null;
+
+    snapMeta.title = "";
+    snapMeta.caption = "";
+    snapMeta.altText = "";
+    snapMeta.description = "";
+    snapMeta.tags = "";
+
+    snapshotImgUrl.value = null;
+    snapshotName.value = null;
   };
 
   const recordStart = () => {
@@ -423,7 +440,13 @@ export default function useMultiCorder() {
   const recordDelete = () => {
     setRecorderState("streaming");
     recorder.value = null;
-    recMeta.value = metaObjectDef;
+    recMeta.value = {
+      title: "",
+      caption: "",
+      altText: "",
+      description: "",
+      tags: "",
+    };
   };
 
   // Stop recording, cannot be restarted. New video required.
@@ -521,7 +544,7 @@ export default function useMultiCorder() {
     // Download a snapshot
     downloadSnapshot,
     // Store new media for a Nugget
-    saveNuggetMedia,
+    saveNuggetSnap,
     // Start recording
     recordStart,
     // Pause recording, can be restarted
@@ -538,5 +561,7 @@ export default function useMultiCorder() {
     recordSave,
     // User provided recording meta data
     recMeta,
+    // Delete a snapshot
+    deleteSnap,
   };
 }

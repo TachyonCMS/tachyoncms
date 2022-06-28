@@ -26,7 +26,7 @@
               ></q-icon>
             </div>
             <div
-              v-show="showSnapNotes"
+              v-show="showSnapMeta"
               class="top-left full-width z-max"
               style="opacity: 100"
             >
@@ -46,12 +46,16 @@
                     round
                     dense
                     icon="close"
-                    @click="onToggleSnapNotes()"
+                    @click="onToggleSnapMeta()"
                   ></q-btn>
                 </q-toolbar>
 
                 <q-card-section>
-                  <q-input label="Title" v-model="snapMeta.title"></q-input>
+                  <q-input
+                    label="Title"
+                    v-model="snapMeta.title"
+                    :value="snapMeta.title"
+                  ></q-input>
                   <q-input label="Caption" v-model="snapMeta.caption"></q-input>
                   <q-input
                     label="Alt text"
@@ -62,6 +66,44 @@
                     v-model="snapMeta.description"
                   ></q-input>
                   <q-input label="Tags" v-model="snapMeta.tags"></q-input>
+                </q-card-section>
+              </q-card>
+            </div>
+
+            <div
+              v-show="showRecMeta"
+              class="top-left full-width z-max"
+              style="opacity: 100"
+            >
+              <q-card flat>
+                <q-toolbar>
+                  <q-avatar>
+                    <q-icon name="mdi-information"></q-icon>
+                  </q-avatar>
+
+                  <q-toolbar-title
+                    ><span class="text-weight-bold">Recording</span>
+                    Info</q-toolbar-title
+                  >
+
+                  <q-btn
+                    flat
+                    round
+                    dense
+                    icon="close"
+                    @click="onToggleSnapMeta()"
+                  ></q-btn>
+                </q-toolbar>
+
+                <q-card-section>
+                  <q-input label="Title" v-model="recMeta.title"></q-input>
+                  <q-input label="Caption" v-model="recMeta.caption"></q-input>
+                  <q-input label="Alt text" v-model="recMeta.altText"></q-input>
+                  <q-input
+                    label="Description"
+                    v-model="recMeta.description"
+                  ></q-input>
+                  <q-input label="Tags" v-model="recMeta.tags"></q-input>
                 </q-card-section>
               </q-card>
             </div>
@@ -94,7 +136,7 @@
               round
               icon="mdi-note"
               class="video-control-btn"
-              @click="onToggleSnapNotes()"
+              @click="onToggleSnapMeta()"
             ></q-btn>
 
             <q-btn
@@ -130,6 +172,14 @@
               icon="mdi-play"
               v-show="recorderState === 'stopped'"
               @click="this.onResume()"
+              class="video-control-btn"
+            ></q-btn>
+
+            <q-btn
+              round
+              icon="mdi-download"
+              v-show="recorderState === 'stopped'"
+              @click="this.onRecordDownload()"
               class="video-control-btn"
             ></q-btn>
 
@@ -171,20 +221,8 @@
 
             <q-btn
               round
-              icon="mdi-download"
-              v-show="recorderState === 'stopped'"
-              @click="this.onRecordDownload()"
-              class="video-control-btn"
-            ></q-btn>
-
-            <q-space></q-space>
-
-            <q-btn
-              flat
-              round
-              dense
-              icon="close"
-              @click="onToggleRecNotes()"
+              icon="mdi-note"
+              @click="onToggleRecMeta()"
               v-show="recorderState === 'stopped'"
             ></q-btn>
 
@@ -358,8 +396,7 @@ export default defineComponent({
       imgElem,
       videoSnapshot,
       downloadSnapshot,
-      saveNuggetMedia,
-      saveNuggetMediaMeta,
+      saveNuggetSnap,
       recordStart,
       recordPause,
       recordResume,
@@ -370,6 +407,7 @@ export default defineComponent({
       cameraRes,
       snapMeta,
       recMeta,
+      deleteSnap,
     } = useMultiCorder();
 
     const view = ref("selectSource");
@@ -429,8 +467,8 @@ export default defineComponent({
 
     // Flag to track whether a notes form should be displayed for media.
     // These notes get saved to blocks in the Nugget with specific types.
-    const showSnapNotes = ref(false); // block type snap-note
-    const showRecordingNotes = ref(false); // block type recording-note
+    const showSnapMeta = ref(false); // block type snap-note
+    const showRecMeta = ref(false); // block type recording-note
 
     return {
       snapshotImgUrl, // All the captured image to be displayed or manipulated
@@ -458,8 +496,7 @@ export default defineComponent({
       showSnapshot,
       snapshotName,
       snapshotExt,
-      saveNuggetMedia,
-      saveNuggetMediaMeta,
+      saveNuggetSnap,
       getMediaName,
       setView,
       videoSnapshot,
@@ -471,11 +508,12 @@ export default defineComponent({
       recordDelete,
       recordDownload,
       recordSave,
-      showSnapNotes,
-      showRecordingNotes,
+      showSnapMeta,
+      showRecMeta,
       cameraRes,
       snapMeta,
       recMeta,
+      deleteSnap,
     };
   },
   methods: {
@@ -510,20 +548,21 @@ export default defineComponent({
     onSnap() {
       console.log(this.vWidth, this.vHeight);
       console.log(this.cameraRes);
+
       this.videoSnapshot(this.vWidth, this.vHeight);
       this.setView("snapshot");
     },
     onSnapDelete() {
-      this.snapshot = null;
-      this.snapMeta = null;
+      this.deleteSnap(this.nuggetId);
+      this.showSnapMeta = false;
       this.setView("video");
     },
     async onSnapDownload() {
       await this.downloadSnapshot();
     },
     async onSnapSave() {
-      await this.saveNuggetMedia(this.nuggetId);
-      this.onSnapDelete();
+      await this.saveNuggetSnap(this.nuggetId);
+      await this.onSnapDelete();
     },
     onRecord() {
       console.log("MC - onRecord");
@@ -559,16 +598,17 @@ export default defineComponent({
     onRecordSave() {
       console.log("MC - onRecordSave");
       this.recordSave(this.nuggetId);
+      this.onRecordDelete();
     },
 
-    onToggleSnapNotes() {
-      console.log("MC - onToggleSnapNotes");
-      this.showSnapNotes = !this.showSnapNotes;
+    onToggleSnapMeta() {
+      console.log("MC - onToggleSnapMeta");
+      this.showSnapMeta = !this.showSnapMeta;
     },
 
-    onToggleRecNotes() {
-      console.log("MC - onToggleSnapNotes");
-      this.showRecNotes = !this.showRecNotes;
+    onToggleRecMeta() {
+      console.log("MC - onToggleRecMeta");
+      this.showRecMeta = !this.showRecMeta;
     },
 
     getVideoDimensions(e) {
