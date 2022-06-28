@@ -51,14 +51,17 @@
                 </q-toolbar>
 
                 <q-card-section>
-                  <q-input label="Title" v-model="snapTitle"></q-input>
-                  <q-input label="Caption" v-model="snapCaption"></q-input>
-                  <q-input label="Alt text" v-model="snapAltText"></q-input>
+                  <q-input label="Title" v-model="snapMeta.title"></q-input>
+                  <q-input label="Caption" v-model="snapMeta.caption"></q-input>
+                  <q-input
+                    label="Alt text"
+                    v-model="snapMeta.altText"
+                  ></q-input>
                   <q-input
                     label="Description"
-                    v-model="snapDescription"
+                    v-model="snapMeta.description"
                   ></q-input>
-                  <q-input label="Tags" v-model="snapTags"></q-input>
+                  <q-input label="Tags" v-model="snapMeta.tags"></q-input>
                 </q-card-section>
               </q-card>
             </div>
@@ -173,6 +176,18 @@
               @click="this.onRecordDownload()"
               class="video-control-btn"
             ></q-btn>
+
+            <q-space></q-space>
+
+            <q-btn
+              flat
+              round
+              dense
+              icon="close"
+              @click="onToggleRecNotes()"
+              v-show="recorderState === 'stopped'"
+            ></q-btn>
+
             <q-btn
               round
               icon="mdi-content-save"
@@ -182,6 +197,7 @@
             ></q-btn>
 
             <q-space></q-space>
+
             <div v-show="recorderState != 'stopped'">
               <q-btn
                 round
@@ -343,6 +359,7 @@ export default defineComponent({
       videoSnapshot,
       downloadSnapshot,
       saveNuggetMedia,
+      saveNuggetMediaMeta,
       recordStart,
       recordPause,
       recordResume,
@@ -351,6 +368,8 @@ export default defineComponent({
       recordDownload,
       recordSave,
       cameraRes,
+      snapMeta,
+      recMeta,
     } = useMultiCorder();
 
     const view = ref("selectSource");
@@ -413,18 +432,6 @@ export default defineComponent({
     const showSnapNotes = ref(false); // block type snap-note
     const showRecordingNotes = ref(false); // block type recording-note
 
-    const snapTitle = ref(null);
-    const snapCaption = ref(null);
-    const snapAltText = ref(null);
-    const snapDescription = ref(null);
-    const snapTags = ref(null);
-
-    const recTitle = ref(null);
-    const recCaption = ref(null);
-    const recAltText = ref(null);
-    const recDescription = ref(null);
-    const recTags = ref(null);
-
     return {
       snapshotImgUrl, // All the captured image to be displayed or manipulated
       view, // The current selected view
@@ -452,6 +459,7 @@ export default defineComponent({
       snapshotName,
       snapshotExt,
       saveNuggetMedia,
+      saveNuggetMediaMeta,
       getMediaName,
       setView,
       videoSnapshot,
@@ -466,16 +474,8 @@ export default defineComponent({
       showSnapNotes,
       showRecordingNotes,
       cameraRes,
-      snapTitle,
-      snapCaption,
-      snapAltText,
-      snapDescription,
-      snapTags,
-      recTitle,
-      recCaption,
-      recAltText,
-      recDescription,
-      recTags,
+      snapMeta,
+      recMeta,
     };
   },
   methods: {
@@ -515,6 +515,7 @@ export default defineComponent({
     },
     onSnapDelete() {
       this.snapshot = null;
+      this.snapMeta = null;
       this.setView("video");
     },
     async onSnapDownload() {
@@ -537,39 +538,39 @@ export default defineComponent({
 
     onRecordResume() {
       console.log("MC - onRecordResume");
-
       this.recordResume();
     },
 
     onRecordStop() {
       console.log("MC - onRecordStop");
-
       this.recordStop();
     },
 
     onRecordDelete() {
       console.log("MC - onRecordDelete");
-
       this.recordDelete();
     },
 
     onRecordDownload() {
       console.log("MC - onRecordDownload");
-
       this.recordDownload();
     },
 
     onRecordSave() {
       console.log("MC - onRecordSave");
-
       this.recordSave(this.nuggetId);
     },
 
     onToggleSnapNotes() {
       console.log("MC - onToggleSnapNotes");
-
       this.showSnapNotes = !this.showSnapNotes;
     },
+
+    onToggleRecNotes() {
+      console.log("MC - onToggleSnapNotes");
+      this.showRecNotes = !this.showRecNotes;
+    },
+
     getVideoDimensions(e) {
       console.log(e.target.videoHeight);
       console.log(e.target.videoWidth);

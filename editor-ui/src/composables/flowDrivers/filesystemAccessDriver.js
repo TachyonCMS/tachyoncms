@@ -580,41 +580,24 @@ export default () => {
   };
 
   const writeJson = async (pathSegments = [], fileData) => {
-    // return new Promise((resolve, reject) => {
     try {
-      // We need to save to a named directory handle
+      // The last segment is the filename minus the `.json` extension.
+      const fileName = pathSegments.pop();
+      console.log(pathSegments);
+      console.log(fileName);
 
-      const handleName = pathSegments[0];
-      const objectDir = pathSegments[1];
-      const filename = pathSegments[2];
-      const fullName = filename + ".json";
+      // The remaining segments are directories.
+      const dirHandle = await getDirHandle(pathSegments);
+      console.log(dirHandle);
+
+      const fullName = fileName + ".json";
       const jsonString = JSON.stringify(fileData, null, 2);
 
-      console.log(
-        "writing to: " + handleName + " " + objectDir + " " + fullName
-      );
-
-      // This provides access to the first subdirectory level access (flows|nuggets)
-      const topDirHandle = dirHandleMap.get(handleName);
-
-      console.log(topDirHandle);
-
-      let objectDirHandle;
-
-      // Ensure the objectDir exists within the topDir.
-      // This object may or may not have been loaded previously.
-      if (dirHandleMap.has(objectDir)) {
-        objectDirHandle = dirHandleMap.get(objectDir);
-      } else {
-        objectDirHandle = await topDirHandle.getDirectoryHandle(objectDir, {
-          create: true,
-        });
-        dirHandleMap.set(objectDir, objectDirHandle);
-      }
-
-      const writeHandle = await objectDirHandle.getFileHandle(fullName, {
+      const writeHandle = await dirHandle.getFileHandle(fullName, {
         create: true,
       });
+
+      console.log(writeHandle);
 
       const writable = await writeHandle.createWritable();
       // Write the contents of the file to the stream.
@@ -625,9 +608,7 @@ export default () => {
       return fileData;
     } catch (e) {
       console.error(e);
-      //reject({ status: "failure" });
     }
-    //  });
   };
 
   // Initialize the chosen directory
@@ -903,6 +884,8 @@ export default () => {
 
       const targetHandleName = pathSegments[pathSegments.length - 1];
 
+      console.log(targetHandleName);
+
       // If we already have the desired handle, return it.
       if (dirHandleMap.has(targetHandleName)) {
         return dirHandleMap.get(targetHandleName);
@@ -912,7 +895,8 @@ export default () => {
 
       // The top level dirHandle MUST exist or allow failure
       const topDirName = pathSegments.shift();
-      let dirHandle = dirHandleMap.get(objDirs[topDirName]);
+      console.log(topDirName);
+      let dirHandle = dirHandleMap.get(topDirName);
       console.log(dirHandle);
       // Keep things simple, work our way from top to bottom, most should be found quickly in the map.
       for (const segment of pathSegments) {
@@ -1014,6 +998,26 @@ export default () => {
     }
   };
 
+  const storeNuggetMediaMeta = async (nuggetId, fileName, fileData) => {
+    try {
+      // Get the Nugget asset dirHandle that all files will use.
+      const pathSegments = [
+        "nugget",
+        nuggetId,
+        "assets-" + nuggetId,
+        "meta",
+        fileName,
+      ];
+
+      await writeJson(pathSegments, fileData);
+
+      return fileData;
+    } catch (e) {
+      console.log("Error Adding Nugget Asset Meta data");
+      console.error(e);
+    }
+  };
+
   // exposed
   return {
     loadFlows,
@@ -1034,6 +1038,7 @@ export default () => {
     deleteNuggetAsset,
     storeNuggetAssets,
     storeNuggetMedia,
+    storeNuggetMediaMeta,
     moveNugget,
   };
 };

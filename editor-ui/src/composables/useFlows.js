@@ -21,6 +21,9 @@ const nuggetSeqMap = reactive(new Map());
 // An map of nugget assets by nuggetId
 const nuggetAssetMap = reactive(new Map());
 
+// An map of nugget assets by nuggetId
+const nuggetAssetMetaMap = reactive(new Map());
+
 // An map of an array of blocks for a nugget by nuggetId
 const nuggetBlocksMap = reactive(new Map());
 
@@ -568,11 +571,29 @@ export default function useFlows() {
     }
   };
 
+  const storeNuggetMediaMeta = async (nuggetId, fileName, fileData) => {
+    try {
+      console.log("storeNuggetMediaMeta " + nuggetId);
+      // Use the defined connector
+      flowConnectors[flowConnector.value]
+        .storeNuggetMediaMeta(nuggetId, fileName + "-meta", fileData)
+        .then((result) => {
+          console.log(result);
+          // nuggetAssetMap.set(nuggetId, result);
+          nuggetAssetMetaMap.set(nuggetId, fileData);
+        });
+    } catch (e) {
+      console.error("Error Storing Media");
+      console.error(e);
+    }
+  };
+
   const nuggetAssetMapInsert = async (nuggetId, fileName) => {
     let assets = [fileName];
     const currentAssets = nuggetAssetMap.get(nuggetId);
-    console.log(currentAssets);
+
     if (currentAssets) {
+      console.log(currentAssets);
       assets = [...assets, ...currentAssets];
     }
     nuggetAssetMap.set(nuggetId, assets);
@@ -625,10 +646,12 @@ export default function useFlows() {
     nuggetSeqMap,
     checkAuth,
     nuggetAssetMap,
+    nuggetAssetMetaMap,
     nuggetBlocksMap,
     deleteNuggetAsset,
     storeNuggetAssets,
     storeNuggetMedia,
+    storeNuggetMediaMeta,
     moveNugget,
   };
 }

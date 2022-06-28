@@ -1,4 +1,4 @@
-import { ref, computed } from "vue";
+import { ref, reactive, computed } from "vue";
 
 // Allows us to store the resulting media
 import useFlows from "../../../composables/useFlows";
@@ -17,7 +17,15 @@ const camerasLoaded = ref(false);
 // Is HTML5 screeenshare/capture supported?
 const screenshareSupported = ref(false);
 
-const { storeNuggetMedia } = useFlows();
+const { storeNuggetMedia, storeNuggetMediaMeta } = useFlows();
+
+const metaObjDef = {
+  title: "",
+  caption: "",
+  altText: "",
+  description: "",
+  tags: "",
+};
 
 /**
  * EXPORTED FUNCTION
@@ -33,6 +41,9 @@ export default function useMultiCorder() {
 
   // The current snapshot image
   const snapshot = ref(null);
+
+  // User entered snapshot meta data for current snapshot
+  const snapMeta = reactive(metaObjDef);
 
   // The currently selected videoSource
   const videoSource = ref(null);
@@ -74,6 +85,9 @@ export default function useMultiCorder() {
     "stopped", // Recording stopped and available for download or saving.
     "saving", // In the process of saving, it will go back to streaming when done
   ];
+
+  // User entered recording meta data for current recording
+  const recMeta = reactive(metaObjDef);
 
   const setRecorderState = (state) => {
     if (recorderStates.includes(state)) {
@@ -364,6 +378,8 @@ export default function useMultiCorder() {
   const saveNuggetMedia = async (nuggetId) => {
     const fileName = snapshotName.value + "." + snapshotExt.value;
     await storeNuggetMedia(nuggetId, fileName, snapshot.value);
+    await storeNuggetMediaMeta(nuggetId, fileName, snapMeta);
+    return fileName;
   };
 
   const recordStart = () => {
@@ -407,6 +423,7 @@ export default function useMultiCorder() {
   const recordDelete = () => {
     setRecorderState("streaming");
     recorder.value = null;
+    recMeta.value = metaObjectDef;
   };
 
   // Stop recording, cannot be restarted. New video required.
@@ -453,6 +470,8 @@ export default function useMultiCorder() {
     cameras,
     // The current captured image
     snapshot,
+    // User provided meta data for snapshot
+    snapMeta,
     // The selected video source for this instance
     videoSource,
     // Allow changing the videoSource
@@ -517,5 +536,7 @@ export default function useMultiCorder() {
     recordDownload,
     // Save the recording the the TachyonCMS
     recordSave,
+    // User provided recording meta data
+    recMeta,
   };
 }
