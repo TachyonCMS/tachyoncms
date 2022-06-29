@@ -1,6 +1,7 @@
 <template>
-  <div class="fit">
-    <div class="row col-12 justify-center relative-position">
+  <div class="row fit">
+    <div class="col-2"></div>
+    <div class="col-8 justify-center relative-position">
       <q-btn
         icon="mdi-content-save"
         @click="onSave()"
@@ -16,6 +17,17 @@
 <script>
 import { reactive, onMounted, watch, defineComponent } from "vue";
 import EditorJS from "@editorjs/editorjs";
+import Header from "@editorjs/header";
+import LinkTool from "@editorjs/link";
+import List from "@editorjs/list";
+import RawTool from "@editorjs/raw";
+import SimpleImage from "@editorjs/simple-image";
+import Checklist from "@editorjs/checklist";
+import Embed from "@editorjs/embed";
+import Quote from "@editorjs/quote";
+import Table from "@editorjs/table";
+import CodeTool from "@editorjs/code";
+
 export default defineComponent({
   name: "vue-editor-js",
   emits: ["save"],
@@ -63,7 +75,29 @@ export default defineComponent({
           blocks: props.blocks,
           version: "2.24.3",
         },
-        tools: {},
+        tools: {
+          header: Header,
+          list: List,
+          link: LinkTool,
+          raw: RawTool,
+          checklist: {
+            class: Checklist,
+            inlineToolbar: true,
+          },
+          embed: Embed,
+          quote: {
+            class: Quote,
+            inlineToolbar: true,
+            shortcut: "CMD+SHIFT+O",
+            config: {
+              quotePlaceholder: "Enter a quote",
+              captionPlaceholder: "Quote's author",
+            },
+          },
+          table: Table,
+          image: SimpleImage,
+          code: CodeTool,
+        },
         onReady: () => {
           console.log("Editor.js is ready to work!");
           state.editor = editor;

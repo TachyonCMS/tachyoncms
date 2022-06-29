@@ -89,10 +89,20 @@
             <div class="text-body1 q-pa-md">Header</div>
             <div class="text-body1 q-pa-md">List</div>
             <div class="text-body1 q-pa-md">Image</div>
+            <div class="text-body1 q-pa-md">Links</div>
+            <div class="text-body1 q-pa-md">Raw HTML</div>
+            <div class="text-body1 q-pa-md">Code</div>
+            <div class="text-body1 q-pa-md">Checklist</div>
+            <div class="text-body1 q-pa-md">Embed</div>
+            <div class="text-body1 q-pa-md">Quote</div>
+            <div class="text-body1 q-pa-md">Table</div>
           </div>
           <div class="col-xs-12 col-sm-6 col-md-4 q-ma-lg chead">
             <div class="text-h5">Media Blocks</div>
             <div class="text-body1 q-pa-md">Captioned Image</div>
+            <div class="text-body1 q-pa-md">Header</div>
+            <div class="text-body1 q-pa-md">Rich text</div>
+            <div class="text-body1 q-pa-md">Separator</div>
           </div>
         </div>
       </q-card-section>
