@@ -97,7 +97,7 @@
 
 <script>
 // Vue 3 composition and reactive components
-import { defineComponent, ref, computed } from "vue";
+import { defineComponent, ref, computed, onMounted } from "vue";
 
 // We use route in determining navigation options
 import { useRoute } from "vue-router";
@@ -125,7 +125,7 @@ export default defineComponent({
 
     const currentDrawer = "flows-drawer";
 
-    const { updateFlowProp, flowMap } = useFlows();
+    const { updateFlowProp, flowMap, flushAll } = useFlows();
 
     // $q is the standard convention for calling Quasar.
     // We use it display notification toast to the user.
@@ -145,6 +145,10 @@ export default defineComponent({
 
     const pageFlowData = computed(() => {
       return flowMap.get(flowId.value);
+    });
+
+    onMounted(async () => {
+      flushAll();
     });
 
     // Return the values we want to be available under `this.` after setup.

@@ -19,8 +19,12 @@
           >Select Directory</q-btn
         >
       </q-card-actions>
-      <q-card-section class="font-weight-bolder"
-        ><div class="text-subtitle2 q-pa-md">
+      <q-card-section class="font-weight-bolder">
+        <p class="text-bolder q-pa-md warn">
+          Note: This only works with recent version of the Chrome desktop
+          browser.
+        </p>
+        <div class="text-subtitle2 q-pa-md">
           This software is in BETA, you are free to use it with no warranty or
           guarantee.
         </div>
@@ -110,3 +114,9 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped>
+.warn {
+  color: red;
+}
+</style>

@@ -454,10 +454,16 @@ export default function useFlows() {
   const flushAll = async () => {
     flowMap.clear();
     nuggetMap.clear();
+    nuggetSeqMap.clear();
+    nuggetAssetMap.clear();
+    nuggetAssetMetaMap.clear();
+    nuggetBlocksMap.clear();
     flowsLoaded.value = false;
     flowLoaded.value = false;
     pageFlowId.value = null;
     nuggetSeq.value = [];
+    flowConnector.value = null;
+    flowSource.value = null;
   };
 
   const freshenData = async () => {
