@@ -43,7 +43,6 @@
     "@babel/eslint-parser": "^7.13.14",
     "@babel/register": "^7.17.7",
     "@quasar/app-webpack": "^3.0.0",
-    "@quasar/quasar-app-extension-qmediaplayer": "^1.4.1",
     "@quasar/quasar-app-extension-testing": "^2.0.3",
     "@quasar/quasar-app-extension-testing-e2e-cypress": "^4.0.0-beta.9",
     "electron": "^18.1.0",

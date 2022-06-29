@@ -8,6 +8,5 @@
     "options": [
       "scripts"
     ]
-  },
-  "@quasar/qmediaplayer": {}
+  }
 }
