@@ -440,13 +440,11 @@ export default function useMultiCorder() {
   const recordDelete = () => {
     setRecorderState("streaming");
     recorder.value = null;
-    recMeta.value = {
-      title: "",
-      caption: "",
-      altText: "",
-      description: "",
-      tags: "",
-    };
+    recMeta.title = "";
+    recMeta.caption = "";
+    recMeta.altText = "";
+    recMeta.description = "";
+    recMeta.tags = "";
   };
 
   // Stop recording, cannot be restarted. New video required.
@@ -477,8 +475,11 @@ export default function useMultiCorder() {
     const url = URL.createObjectURL(blob);
     const fileName = blob.name;
     await storeNuggetMedia(nuggetId, fileName, url);
+    console.log(recMeta);
+    await storeNuggetMediaMeta(nuggetId, fileName, recMeta);
     setRecorderState("streaming");
     recorder.value = null;
+    return fileName;
   };
 
   /**

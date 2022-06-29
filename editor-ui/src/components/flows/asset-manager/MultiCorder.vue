@@ -80,7 +80,6 @@
                   <q-avatar>
                     <q-icon name="mdi-information"></q-icon>
                   </q-avatar>
-
                   <q-toolbar-title
                     ><span class="text-weight-bold">Recording</span>
                     Info</q-toolbar-title
@@ -91,7 +90,7 @@
                     round
                     dense
                     icon="close"
-                    @click="onToggleSnapMeta()"
+                    @click="onToggleRecMeta()"
                   ></q-btn>
                 </q-toolbar>
 
@@ -587,17 +586,18 @@ export default defineComponent({
 
     onRecordDelete() {
       console.log("MC - onRecordDelete");
+      this.showRecMeta = false;
       this.recordDelete();
     },
 
-    onRecordDownload() {
+    async onRecordDownload() {
       console.log("MC - onRecordDownload");
-      this.recordDownload();
+      await this.recordDownload();
     },
 
-    onRecordSave() {
+    async onRecordSave() {
       console.log("MC - onRecordSave");
-      this.recordSave(this.nuggetId);
+      await this.recordSave(this.nuggetId);
       this.onRecordDelete();
     },
 
