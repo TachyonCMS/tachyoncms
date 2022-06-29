@@ -23,12 +23,9 @@
 </template>
 
 <script>
-import { defineComponent, ref, computed } from "vue";
+import { defineComponent, ref, computed, onMounted } from "vue";
 
-const {
-  loadNuggetAssets,
-  nuggetAssestMap,
-} = require("../../../composables/useFlows.js");
+import useFlows from "../../../composables/useFlows";
 
 import FileManager from "./AMFiles";
 import MultiCorder from "./MultiCorder";
@@ -43,8 +40,12 @@ export default defineComponent({
   setup(props) {
     console.log(props);
     const tabView = ref("file-manager");
+    const { loadNuggetAssets, nuggetAssetMap } = useFlows();
     const nuggetAssets = computed(() => {
-      return nuggetAssetMap.get(nuggetId);
+      return nuggetAssetMap.get(props.nuggetId);
+    });
+    onMounted(() => {
+      loadNuggetAssets(props.nuggetId);
     });
     return { tabView, nuggetAssets };
   },
