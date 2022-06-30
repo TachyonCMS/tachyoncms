@@ -148,7 +148,7 @@ export default defineComponent({
     });
 
     onMounted(async () => {
-      flushAll();
+      //flushAll();
     });
 
     // Return the values we want to be available under `this.` after setup.

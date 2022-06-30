@@ -582,7 +582,7 @@
 
 <script>
 // Vue 3 composition and reactive components
-import { defineComponent, computed, ref } from "vue";
+import { defineComponent, computed, ref, onMounted } from "vue";
 
 import { useQuasar } from "quasar";
 
@@ -592,12 +592,7 @@ import { useRouter } from "vue-router";
 
 // A form to create a new flow
 import NewFlowForm from "../../components/flows/forms/NewFlowForm.vue";
-import ApiCredentialsForm from "../../components/flows/forms/ApiCredentialsForm.vue";
-// An inline form to edit the Flow meta data
-//import FlowMetaInlineForm from "../../components/flow/form/FlowMetaInlineForm.vue";
-// An "enter" nav button to show visitors who haven't signed in.
-// We want to remove this from the view when in the "/auth" path to avoid a loop.
-import EnterButton from "../../components/site/buttons/Link.vue";
+// import ApiCredentialsForm from "../../components/flows/forms/ApiCredentialsForm.vue";
 
 import useFlows from "../../composables/useFlows";
 
@@ -635,6 +630,7 @@ export default defineComponent({
       setFlowConnector,
       flowConnector,
       checkAuth,
+      flushAll,
     } = useFlows();
 
     const flowId = computed(() => {
@@ -649,6 +645,10 @@ export default defineComponent({
 
     const formExpanded = ref(false);
     const flowFormExpanded = ref(false);
+
+    onMounted(async () => {
+      flushAll();
+    });
 
     return {
       pageFlowId,
@@ -669,6 +669,7 @@ export default defineComponent({
       flowConnector,
       hasAmplifyS3,
       checkAuth,
+      flushAll,
     };
   },
   methods: {
@@ -717,6 +718,7 @@ export default defineComponent({
         this.loadSource(dirHandle).then(() => {
           this.$router.push("/flows");
         });
+        console.log(dirHandle);
         console.log("EXISTING FILESYSTEM ROOTDIR");
       } else {
         this.$q
@@ -845,11 +847,12 @@ export default defineComponent({
           persistent: false,
         })
         .onOk((data) => {
-          this.setFlowSource(null);
-          this.setFlowConnector(null);
-          this.pageFlowId = null;
-          this.nuggetMap = new Map();
-          this.flowMap = new Map();
+          //this.setFlowSource(null);
+          //this.setFlowConnector(null);
+          //this.pageFlowId = null;
+          //this.nuggetMap = new Map();
+          //this.flowMap = new Map();
+          this.flushAll();
           this.$router.push("/");
         })
         .onCancel(() => {

@@ -238,6 +238,11 @@ export default () => {
 
   // Add id
   const addId = (data) => {
+    const { customAlphabet } = require("nanoid");
+    const alphabet =
+      "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzu";
+    const nanoid = customAlphabet(alphabet, 12);
+
     data.id = nanoid();
     return data;
   };

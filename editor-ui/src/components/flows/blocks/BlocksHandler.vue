@@ -229,7 +229,12 @@ export default defineComponent({
 
     onAddBlock(def) {
       // Create an ID for the block.
-      const uid = nanoid(8);
+
+      const { customAlphabet } = require("nanoid");
+      const alphabet =
+        "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzu";
+      const nanoid = customAlphabet(alphabet, 8);
+      const uid = nanoid();
       // Define the default data based on the block type
       let dataHolder = null;
       console.log(def);

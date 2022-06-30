@@ -241,7 +241,7 @@ export default defineComponent({
 
     // If the flowSource changes, flush all current data and load from the new source
     watch(flowSource, (value) => {
-      flushAll();
+      //flushAll();
       loadFlows();
     });
 

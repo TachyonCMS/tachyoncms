@@ -79,6 +79,7 @@ export default defineComponent({
           this.$router.push("/flows");
         });
         console.log("EXISTING FILESYSTEM ROOTDIR");
+        console.log(dirHandle);
       } else {
         this.$q
           .dialog({

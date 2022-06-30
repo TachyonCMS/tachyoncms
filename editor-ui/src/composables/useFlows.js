@@ -130,7 +130,7 @@ export default function useFlows() {
 
   // Set the flowSource here and in driver
   const setFlowSource = (newSource) => {
-    console.log("Set flowSource");
+    console.log("Set flowSource: " + newSource);
     flowSource.value = newSource;
     flowConnectors[flowConnector.value].setSource(newSource);
   };
@@ -450,25 +450,44 @@ export default function useFlows() {
     return inPublication;
   };
 
-  // Get rid of all data from previous flowSource
-  const flushAll = async () => {
-    flowMap.clear();
+  const flushDriver = () => {
+    if (flowConnector.value) {
+      flowConnectors[flowConnector.value].flush().then(() => {
+        flowConnector.value = null;
+      });
+    }
+  };
+
+  const flushFlow = () => {
     nuggetMap.clear();
     nuggetSeqMap.clear();
     nuggetAssetMap.clear();
     nuggetAssetMetaMap.clear();
     nuggetBlocksMap.clear();
-    flowsLoaded.value = false;
+    nuggetSeq.value = [];
     flowLoaded.value = false;
     pageFlowId.value = null;
-    nuggetSeq.value = [];
-    flowConnector.value = null;
+    console.log("Flow flushed");
+  };
+
+  const flushFlows = () => {
+    flowMap.clear();
+    flowsLoaded.value = false;
+    console.log("Flows flushed");
+  };
+
+  // Get rid of all data from previous flowSource
+  const flushAll = async () => {
+    console.log("FLUSH!");
+    flushDriver();
+    flushFlow();
+    flushFlows();
     flowSource.value = null;
   };
 
   const freshenData = async () => {
-    await flushAll();
-    loadFlows();
+    // await flushAll();
+    // loadFlows();
   };
 
   const checkAuth = async () => {
@@ -580,6 +599,7 @@ export default function useFlows() {
   const storeNuggetMediaMeta = async (nuggetId, fileName, fileData) => {
     try {
       console.log("storeNuggetMediaMeta " + nuggetId);
+      console.log(fileData);
       // Use the defined connector
       flowConnectors[flowConnector.value]
         .storeNuggetMediaMeta(nuggetId, fileName + "-meta", fileData)

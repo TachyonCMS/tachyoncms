@@ -20,12 +20,31 @@
         >
           <q-expansion-item
             expand-icon-toggle
-            icon="mdi-briefcase-edit"
-            header-class="text-h6 collection-item-header"
-            :label="flow.name"
+            :label="flow.name + ' / ' + flowId"
             :to="'/flows/' + flowId + '/nuggets'"
             class="item-header"
           >
+            <template v-slot:header>
+              <q-item-section avatar>
+                <q-btn
+                  flat
+                  round
+                  icon="mdi-briefcase-edit"
+                  @click.prevent="dialogOpen = true"
+                />
+              </q-item-section>
+              <q-item-section>
+                <div class="row">
+                  <div>
+                    <span class="text-h6">{{ flow.name }}</span>
+                  </div>
+                  <q-space></q-space>
+                  <div class="subdued-header">
+                    {{ flow.id }}
+                  </div>
+                </div>
+              </q-item-section>
+            </template>
             <q-card class="item-body">
               <q-card-section class="collection-item-body">
                 <div class="row">
@@ -241,7 +260,7 @@ export default defineComponent({
 
     // If the flowSource changes, flush all current data and load from the new source
     watch(flowSource, (value) => {
-      flushAll();
+      // flushAll();
       loadFlows();
     });
 

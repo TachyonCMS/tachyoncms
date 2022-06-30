@@ -1,13 +1,14 @@
 import { ref, reactive, toRef } from "vue";
 
-import { nanoid } from "nanoid";
+// import { nanoid } from "nanoid";
+import { customAlphabet } from "nanoid";
 
 // Map of directory handles
 const dirHandleMap = reactive(new Map());
 // Map of file handles
-const fileHandleMap = new Map();
+const fileHandleMap = reactive(new Map());
 
-const objDirs = { nugget: "nuggets", flow: "flows" };
+const objDirs = { nugget: "nuggets", flow: "flows", tags: "tags" };
 
 export default () => {
   const setSource = async (dirHandle) => {
@@ -92,52 +93,24 @@ export default () => {
 
   const readJson = async (pathSegments) => {
     try {
-      const topDir = pathSegments[0];
-      const objectDir = pathSegments[1];
-      const filename = pathSegments[2];
-      const fullName = filename + ".json";
+      // The last segment is the filename minus the `.json` extension.
+      const fileName = pathSegments.pop();
+      console.log(pathSegments);
+      console.log(fileName);
 
-      // The actual file handle we need
-      let fileHandle;
+      // The remaining segments are directories.
+      const dirHandle = await getDirHandle(pathSegments);
 
-      // The unique name for the desired filehandle
-      const fileHandleName = objectDir + "-" + filename;
+      const fullName = fileName + ".json";
 
-      if (fileHandleMap.has(fileHandleName)) {
-        fileHandle = fileHandleMap.get(fileHandleName);
-      } else {
-        // The 2nd level directory, a Flow or Nugget ID
-        let objectDirHandle;
-
-        // If we already have a handle for the final object directory, use it.
-        if (dirHandleMap.has(objectDir)) {
-          objectDirHandle = dirHandleMap.get(objectDir);
-        } else {
-          // Else get the objectDir handle from the topDir handle.
-          // Do we already have a handle for the topDir? (flows|nuggets)
-          let topDirHandle;
-          if (dirHandleMap.has(topDir)) {
-            topDirHandle = dirHandleMap.get(topDir);
-          } else {
-            // Else fetch the topDir handle from the sourceDir handle.
-            // We don't have access above the sourceDir.
-            const sourceDirHandle = dirHandleMap.get("sourceDir");
-            topDirHandle = await sourceDirHandle.getDirectoryHandle(topDir, {
-              create: true,
-            });
-            dirHandleMap.set(topDir, topDirHandle);
-          }
-          objectDirHandle = await topDirHandle.getDirectoryHandle(objectDir);
-        }
-
-        // get the FILE handle from the objectDirHandle
-        fileHandle = await objectDirHandle.getFileHandle(fullName);
-      }
-
+      const fileHandle = await dirHandle.getFileHandle(fullName, {
+        create: true,
+      });
       const jsonFile = await fileHandle.getFile();
       const jsonData = await jsonFile.text();
       return JSON.parse(jsonData);
     } catch (e) {
+      console.log(pathSegments);
       console.error(e);
       return null;
     }
@@ -150,6 +123,8 @@ export default () => {
       // Set ID and initial timestamps
       addId(flowData);
       initTimestamps(flowData);
+
+      console.log(flowData);
 
       const result = await writeJson(["flows", flowData.id, "flow"], flowData);
       return { flow: result };
@@ -217,12 +192,18 @@ export default () => {
       // Read the current data
       const jsonFile = await fileHandle.getFile();
       const jsonData = await jsonFile.text();
-      const existingData = JSON.parse(jsonData);
 
-      // Merge partial data
-      const mergedData = await { ...existingData, ...partialData };
+      let finData;
 
-      const jsonString = JSON.stringify(mergedData, null, 2);
+      if (jsonData) {
+        const existingData = JSON.parse(jsonData);
+        // Merge partial data
+        finData = await { ...existingData, ...partialData };
+      } else {
+        finData = partialData;
+      }
+
+      const jsonString = JSON.stringify(finData, null, 2);
 
       // Write merged data back to fileHandle
       const writable = await fileHandle.createWritable();
@@ -231,7 +212,7 @@ export default () => {
       // Close the file and write the contents to disk.
       await writable.close();
 
-      return mergedData;
+      return finData;
     } catch (e) {
       console.error(e);
     }
@@ -664,8 +645,18 @@ export default () => {
   };
 
   // Add id
-  const addId = (data) => {
-    data.id = nanoid();
+  const addId = async (data) => {
+    const alphabet =
+      "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzu";
+    const nanoid = customAlphabet(alphabet, 20);
+
+    const uid = nanoid();
+
+    // Split that into 5 chunks of 4 char each, then join with hyphen
+    const tUid = uid.match(new RegExp(".{1," + 4 + "}", "g")).join("_");
+
+    data.id = tUid;
+    console.log(data);
     return data;
   };
 
@@ -828,6 +819,7 @@ export default () => {
 
       return existingData;
     } catch (e) {
+      console.log(fileHandle);
       console.error(e);
       return null;
     }
@@ -884,7 +876,13 @@ export default () => {
       // All segment names should be 100% resolved and can be used as-is.
       console.log(pathSegments);
 
-      const targetHandleName = pathSegments[pathSegments.length - 1];
+      let targetHandleName;
+
+      if (pathSegments.length > 0) {
+        targetHandleName = pathSegments[pathSegments.length - 1];
+      } else {
+        targetHandleName = pathSegments[0];
+      }
 
       console.log(targetHandleName);
 
@@ -1024,6 +1022,12 @@ export default () => {
     }
   };
 
+  const flush = async () => {
+    console.log("flush filesystemAccessDriver");
+    dirHandleMap.clear();
+    fileHandleMap.clear();
+  };
+
   // exposed
   return {
     loadFlows,
@@ -1046,5 +1050,6 @@ export default () => {
     storeNuggetMedia,
     storeNuggetMediaMeta,
     moveNugget,
+    flush,
   };
 };

@@ -36,10 +36,6 @@
 import { defineComponent, ref } from "vue";
 import { useQuasar } from "quasar";
 
-// UID generator (not a true UUID but just as unique)
-// They will get removed before submitting to
-import { nanoid } from "nanoid";
-
 export default defineComponent({
   name: "NewNuggetButton",
   props: {

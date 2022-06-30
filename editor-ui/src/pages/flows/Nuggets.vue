@@ -282,7 +282,7 @@
                   @click="toggleNuggetAssets(nuggetId)"
                   ><q-tooltip>Files</q-tooltip></q-btn
                 >
-
+                <!-- {{ nuggetMap }} {{ nuggetId }} -->
                 <q-btn icon="mdi-information-outline" flat padding="xs">
                   <q-menu anchor="bottom left" fit class="q-pa-md">
                     <q-list style="min-width: 100px" dense>

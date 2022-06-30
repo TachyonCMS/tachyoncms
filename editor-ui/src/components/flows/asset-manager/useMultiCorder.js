@@ -475,7 +475,6 @@ export default function useMultiCorder() {
     const url = URL.createObjectURL(blob);
     const fileName = blob.name;
     await storeNuggetMedia(nuggetId, fileName, url);
-    console.log(recMeta);
     await storeNuggetMediaMeta(nuggetId, fileName, recMeta);
     setRecorderState("streaming");
     recorder.value = null;

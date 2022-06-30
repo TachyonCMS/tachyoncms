@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { reactive, onMounted, watch, defineComponent } from "vue";
+import { reactive, onMounted, watch, defineComponent, ref } from "vue";
 import EditorJS from "@editorjs/editorjs";
 import Header from "@editorjs/header";
 import LinkTool from "@editorjs/link";
@@ -59,13 +59,10 @@ export default defineComponent({
 
     const divName = "editor-js-" + props.nix;
 
+    const dirtyBit = ref(false);
+
     function initEditor(props) {
       destroyEditor();
-      const data = {
-        time: 1552744582955,
-        blocks: props.blocks,
-        version: "2.24.3",
-      };
 
       console.log(props.blocks);
       const editor = new EditorJS({
@@ -112,7 +109,7 @@ export default defineComponent({
       }
     }
     onMounted((_) => initEditor(props));
-    return { props, state, divName };
+    return { props, state, divName, dirtyBit };
   },
   methods: {
     onSave() {
@@ -122,6 +119,7 @@ export default defineComponent({
         .save()
         .then((outputData) => {
           console.log("Article data: ", outputData);
+          const blocks = outputData.blocks.length > 0 ? outputData.blocks : [];
           this.$emit("save", outputData.blocks);
         })
         .catch((error) => {
