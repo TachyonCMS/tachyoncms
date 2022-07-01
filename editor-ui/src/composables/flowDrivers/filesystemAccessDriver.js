@@ -11,6 +11,7 @@ const fileHandleMap = reactive(new Map());
 const objDirs = { nugget: "nuggets", flow: "flows", tags: "tags" };
 
 export default () => {
+  // There can only ever be one `sourceDir` at a time.
   const setSource = async (dirHandle) => {
     dirHandleMap.set("sourceDir", dirHandle);
   };
@@ -18,17 +19,9 @@ export default () => {
   const loadFlows = async () => {
     try {
       console.log("Filesystem loadFlows");
-      let flowDirHandle;
-      // Get the flows directory handle
-      if (dirHandleMap.has("flows")) {
-        flowDirHandle = dirHandleMap.get("flows");
-      } else {
-        const sourceDirHandle = dirHandleMap.get("sourceDir");
-        flowDirHandle = await sourceDirHandle.getDirectoryHandle("flows", {
-          create: true,
-        });
-        dirHandleMap.set("flows", flowDirHandle);
-      }
+      const flowDirHandle = await getDirHandle(["flows"]);
+
+      console.log(flowDirHandle);
 
       const dirSegmentsArray = [];
       for await (const entry of flowDirHandle.entries()) {
@@ -870,19 +863,20 @@ export default () => {
     }
   };
 
+  /**
+   * We need to support non-unique directory names.
+   * The path is what makes it unique, so we must use the path as the index.
+   *
+   * @param {*} pathSegments
+   * @returns
+   */
   const getDirHandle = async (pathSegments) => {
     try {
       // All pathSegments are directories.
       // All segment names should be 100% resolved and can be used as-is.
       console.log(pathSegments);
 
-      let targetHandleName;
-
-      if (pathSegments.length > 0) {
-        targetHandleName = pathSegments[pathSegments.length - 1];
-      } else {
-        targetHandleName = pathSegments[0];
-      }
+      let targetHandleName = pathSegments.join("-");
 
       console.log(targetHandleName);
 
@@ -893,25 +887,40 @@ export default () => {
 
       console.log("dirHandle not found yet");
 
-      // The top level dirHandle MUST exist or allow failure
-      const topDirName = pathSegments.shift();
-      console.log(topDirName);
-      let dirHandle = dirHandleMap.get(topDirName);
-      console.log(dirHandle);
-      // Keep things simple, work our way from top to bottom, most should be found quickly in the map.
+      // Keep track of the current path segments to save the dirHandles as we see them.
+      let currHandleSegments = [];
+
+      let currDirHandle = null;
+
       for (const segment of pathSegments) {
-        if (dirHandleMap.has(segment)) {
-          dirHandle = dirHandleMap.get(segment);
+        currHandleSegments.push(segment);
+
+        const currHandleName = currHandleSegments.join("-");
+
+        console.log(currHandleName);
+
+        if (dirHandleMap.has(currHandleName)) {
+          console.log("found handle " + currHandleName);
+          currDirHandle = dirHandleMap.get(currHandleName);
         } else {
-          dirHandle = await dirHandle.getDirectoryHandle(segment, {
-            create: true,
-          });
-          dirHandleMap.set(segment, dirHandle);
+          // If this is the first segment
+          console.log("create handle " + currHandleName);
+          if (currDirHandle) {
+            currDirHandle = await currDirHandle.getDirectoryHandle(segment, {
+              create: true,
+            });
+          } else {
+            const topDirHandle = await dirHandleMap.get("sourceDir");
+            console.log(topDirHandle);
+            currDirHandle = await topDirHandle.getDirectoryHandle(segment, {
+              create: true,
+            });
+          }
+          dirHandleMap.set(currHandleName, currDirHandle);
         }
       }
 
-      console.log(dirHandle);
-      return dirHandle;
+      return currDirHandle;
     } catch (e) {
       console.error(e);
     }

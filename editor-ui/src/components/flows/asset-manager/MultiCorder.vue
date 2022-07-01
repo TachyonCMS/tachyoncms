@@ -421,27 +421,24 @@ export default defineComponent({
     const canvasId = "canvas_" + props.uniq;
     const imgId = "img_" + props.uniq;
 
-    const viewWidth = ref(0);
+    const vWidth = ref(0);
 
     const calcWidth = () => {
       let targetWidth;
 
+      let viewWidth = 0;
+
       // Get the available width as reported by Quasar
       // This isn't hardware width, but browser window width.
-      viewWidth.value = $q.screen.width;
+      viewWidth = $q.screen.width;
+      console.log("Quasar screen width: " + viewWidth);
 
       targetWidth =
-        props.width < viewWidth.value * 0.95
-          ? props.width
-          : viewWidth.value * 0.95;
-      console.log(targetWidth);
+        props.width < viewWidth * 0.95 ? props.width : viewWidth * 0.95;
+      console.log("Target Width: " + targetWidth);
 
       return targetWidth;
     };
-
-    const vWidth = computed(() => {
-      return calcWidth();
-    });
 
     const vHeight = computed(() => {
       return vWidth.value * 0.5625;
@@ -449,7 +446,7 @@ export default defineComponent({
 
     const onResize = (size) => {
       console.log(size);
-      // vWidth.value = calcWidth();
+      vWidth.value = calcWidth();
     };
 
     // Set view, logic can be enforced here

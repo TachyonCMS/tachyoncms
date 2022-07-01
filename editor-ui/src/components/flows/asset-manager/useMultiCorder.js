@@ -382,7 +382,8 @@ export default function useMultiCorder() {
   const saveNuggetSnap = async (nuggetId) => {
     const fileName = snapshotName.value + "." + snapshotExt.value;
     await storeNuggetMedia(nuggetId, fileName, snapshot.value);
-    await storeNuggetMediaMeta(nuggetId, fileName, snapMeta);
+    console.log(snapMeta);
+    await storeNuggetMediaMeta(nuggetId, fileName, { ...snapMeta });
     return fileName;
   };
 

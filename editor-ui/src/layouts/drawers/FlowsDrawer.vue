@@ -647,7 +647,7 @@ export default defineComponent({
     const flowFormExpanded = ref(false);
 
     onMounted(async () => {
-      flushAll();
+      // flushAll();
     });
 
     return {
