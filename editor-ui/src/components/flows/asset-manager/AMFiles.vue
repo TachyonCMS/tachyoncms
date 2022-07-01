@@ -1,14 +1,8 @@
 <template>
-  <div class="relative-position row">
+  <div class="relative-position row col-12 fileMan">
     <div class="row col-12">
       <q-space></q-space>
-      <q-file
-        filled
-        v-model="files"
-        label="Upload Files"
-        multiple
-        append
-      ></q-file>
+      <q-file v-model="files" label="Upload Files" multiple append></q-file>
       <q-btn
         icon="mdi-upload"
         @click="onUpload(nuggetId)"
@@ -88,3 +82,9 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped>
+.fileMan {
+  background-color: #e8e8e8;
+}
+</style>
