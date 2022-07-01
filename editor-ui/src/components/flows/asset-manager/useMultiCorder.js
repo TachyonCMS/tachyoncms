@@ -216,7 +216,7 @@ export default function useMultiCorder() {
   const loadCameras = () => {
     if (!camerasLoaded.value) {
       console.log("loadCameras");
-      console.log(cameras);
+      console.log(cameras.value);
       navigator.mediaDevices
         .enumerateDevices()
         .then((deviceInfos) => {
@@ -236,7 +236,6 @@ export default function useMultiCorder() {
         })
         .catch((error) => ("error", error));
     }
-    console.log(cameras.value);
   };
 
   // Handle switching the video source to the given one

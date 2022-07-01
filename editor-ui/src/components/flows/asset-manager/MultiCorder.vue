@@ -1,299 +1,289 @@
 <template>
-  <div class="flex flex-center text-center justify-center">
-    <q-resize-observer @resize="onResize" debounce="100"></q-resize-observer>
-    <div class="row col-12">
-      <div
-        class="block videobox row wrap justify-around items-start content-start"
-      >
-        <div>
-          <div class="relative-position nospc">
-            <video
-              v-show="['video'].includes(view)"
-              :ref="videoId"
-              :src="videoSource"
-              :autoplay="autoplay"
-              :playsInline="playsInline"
-              :width="vWidth"
-              :height="vHeight"
-              muted="recorderMuted"
-              @loadedmetadata="getVideoDimensions"
-            />
-            <div v-show="['video'].includes(view)" class="top-right text-body2">
-              {{ videoSourceName }}
-              <q-icon
-                name="mdi-close-circle"
-                @click="this.onCloseVideo()"
-              ></q-icon>
-            </div>
-            <div
-              v-show="showSnapMeta"
-              class="top-left full-width z-max"
-              style="opacity: 100"
-            >
-              <q-card flat>
-                <q-toolbar>
-                  <q-avatar>
-                    <q-icon name="mdi-information"></q-icon>
-                  </q-avatar>
+  <div class="flex full-width">
+    <div class="fit block relative-postion">
+      <q-resize-observer @resize="onResize" debounce="100"></q-resize-observer>
 
-                  <q-toolbar-title
-                    ><span class="text-weight-bold">Snapshot</span>
-                    Info</q-toolbar-title
-                  >
+      <div class="relative-position nospc">
+        <video
+          v-show="['video'].includes(view)"
+          :ref="videoId"
+          :src="videoSource"
+          :autoplay="autoplay"
+          :playsInline="playsInline"
+          :width="vWidth"
+          :height="vHeight"
+          muted="recorderMuted"
+          @loadedmetadata="getVideoDimensions"
+        />
+        <div v-show="['video'].includes(view)" class="top-right text-body2">
+          {{ videoSourceName }}
+          <q-icon name="mdi-close-circle" @click="this.onCloseVideo()"></q-icon>
+        </div>
+        <div
+          v-show="showSnapMeta"
+          class="top-left full-width z-max"
+          style="opacity: 100"
+        >
+          <q-card flat>
+            <q-toolbar>
+              <q-avatar>
+                <q-icon name="mdi-information"></q-icon>
+              </q-avatar>
 
-                  <q-btn
-                    flat
-                    round
-                    dense
-                    icon="close"
-                    @click="onToggleSnapMeta()"
-                  ></q-btn>
-                </q-toolbar>
+              <q-toolbar-title
+                ><span class="text-weight-bold">Snapshot</span>
+                Info</q-toolbar-title
+              >
 
-                <q-card-section>
-                  <q-input
-                    label="Title"
-                    v-model="snapMeta.title"
-                    :value="snapMeta.title"
-                  ></q-input>
-                  <q-input label="Caption" v-model="snapMeta.caption"></q-input>
-                  <q-input
-                    label="Alt text"
-                    v-model="snapMeta.altText"
-                  ></q-input>
-                  <q-input
-                    label="Description"
-                    v-model="snapMeta.description"
-                  ></q-input>
-                  <q-input label="Tags" v-model="snapMeta.tags"></q-input>
-                </q-card-section>
-              </q-card>
-            </div>
-
-            <div
-              v-show="showRecMeta"
-              class="top-left full-width z-max"
-              style="opacity: 100"
-            >
-              <q-card flat>
-                <q-toolbar>
-                  <q-avatar>
-                    <q-icon name="mdi-information"></q-icon>
-                  </q-avatar>
-                  <q-toolbar-title
-                    ><span class="text-weight-bold">Recording</span>
-                    Info</q-toolbar-title
-                  >
-
-                  <q-btn
-                    flat
-                    round
-                    dense
-                    icon="close"
-                    @click="onToggleRecMeta()"
-                  ></q-btn>
-                </q-toolbar>
-
-                <q-card-section>
-                  <q-input label="Title" v-model="recMeta.title"></q-input>
-                  <q-input label="Caption" v-model="recMeta.caption"></q-input>
-                  <q-input label="Alt text" v-model="recMeta.altText"></q-input>
-                  <q-input
-                    label="Description"
-                    v-model="recMeta.description"
-                  ></q-input>
-                  <q-input label="Tags" v-model="recMeta.tags"></q-input>
-                </q-card-section>
-              </q-card>
-            </div>
-          </div>
-
-          <div v-show="view == 'snapshot'">
-            <canvas :ref="canvasId" :width="vWidth" :height="vHeight">
-              <img
-                :ref="imgId"
-                :src="snapshotImgUrl"
-                :width="vWidth"
-                :height="vHeight"
-              />
-            </canvas>
-          </div>
-
-          <!-- SNAPSHOT CONTROLS -->
-
-          <div v-show="view == 'snapshot'" class="row col-12 video-controls">
-            <q-btn
-              round
-              icon="mdi-download"
-              class="video-control-btn"
-              @click="onSnapDownload()"
-            ></q-btn>
-
-            <q-space></q-space>
-
-            <q-btn
-              round
-              icon="mdi-note"
-              class="video-control-btn"
-              @click="onToggleSnapMeta()"
-            ></q-btn>
-
-            <q-btn
-              round
-              icon="mdi-content-save"
-              class="video-control-btn"
-              @click="onSnapSave()"
-            ></q-btn>
-
-            <q-space></q-space>
-
-            <q-btn
-              round
-              flat
-              icon="mdi-delete"
-              class="video-control-btn"
-              @click="onSnapDelete()"
-            ></q-btn>
-          </div>
-
-          <!-- VIDEO CONTROLS -->
-
-          <div v-show="view == 'video'" class="row col-12 video-controls">
-            <q-btn
-              round
-              icon="mdi-camera-iris"
-              v-show="recorderState != 'stopped'"
-              class="video-control-btn"
-              @click="onSnap()"
-            ></q-btn>
-            <q-btn
-              round
-              icon="mdi-play"
-              v-show="recorderState === 'stopped'"
-              @click="this.onResume()"
-              class="video-control-btn"
-            ></q-btn>
-
-            <q-btn
-              round
-              icon="mdi-download"
-              v-show="recorderState === 'stopped'"
-              @click="this.onRecordDownload()"
-              class="video-control-btn"
-            ></q-btn>
-
-            <q-space></q-space>
-
-            <q-btn
-              round
-              icon="mdi-record"
-              text-color="red"
-              v-show="['streaming'].includes(recorderState)"
-              @click="this.onRecord()"
-              class="video-control-btn"
-            ></q-btn>
-
-            <q-btn
-              round
-              icon="mdi-record"
-              text-color="red"
-              v-show="['paused'].includes(recorderState)"
-              @click="this.onRecordResume()"
-              class="video-control-btn"
-            ></q-btn>
-
-            <q-btn
-              round
-              icon="mdi-pause"
-              v-show="this.recorderState === 'recording'"
-              @click="this.onRecordPause()"
-              class="video-control-btn"
-            ></q-btn>
-
-            <q-btn
-              round
-              icon="mdi-stop"
-              v-show="['recording', 'paused'].includes(this.recorderState)"
-              @click="this.onRecordStop()"
-              class="video-control-btn"
-            ></q-btn>
-
-            <q-btn
-              round
-              icon="mdi-note"
-              @click="onToggleRecMeta()"
-              v-show="recorderState === 'stopped'"
-            ></q-btn>
-
-            <q-btn
-              round
-              icon="mdi-content-save"
-              v-show="recorderState === 'stopped'"
-              @click="this.onRecordSave()"
-              class="video-control-btn"
-            ></q-btn>
-
-            <q-space></q-space>
-
-            <div v-show="recorderState != 'stopped'">
               <q-btn
+                flat
                 round
-                icon="mdi-microphone"
-                v-show="micOn"
-                @click="micOn = false"
-                class="video-control-btn"
+                dense
+                icon="close"
+                @click="onToggleSnapMeta()"
               ></q-btn>
+            </q-toolbar>
+
+            <q-card-section>
+              <q-input
+                label="Title"
+                v-model="snapMeta.title"
+                :value="snapMeta.title"
+              ></q-input>
+              <q-input label="Caption" v-model="snapMeta.caption"></q-input>
+              <q-input label="Alt text" v-model="snapMeta.altText"></q-input>
+              <q-input
+                label="Description"
+                v-model="snapMeta.description"
+              ></q-input>
+              <q-input label="Tags" v-model="snapMeta.tags"></q-input>
+            </q-card-section>
+          </q-card>
+        </div>
+
+        <div
+          v-show="showRecMeta"
+          class="top-left full-width z-max"
+          style="opacity: 100"
+        >
+          <q-card flat>
+            <q-toolbar>
+              <q-avatar>
+                <q-icon name="mdi-information"></q-icon>
+              </q-avatar>
+              <q-toolbar-title
+                ><span class="text-weight-bold">Recording</span>
+                Info</q-toolbar-title
+              >
+
               <q-btn
+                flat
                 round
-                icon="mdi-microphone-off"
-                v-show="!micOn"
-                @click="this.micOn = true"
-                class="video-control-btn"
+                dense
+                icon="close"
+                @click="onToggleRecMeta()"
               ></q-btn>
-              <q-btn
-                round
-                icon="mdi-volume-high"
-                v-show="!muted"
-                @click="muted = true"
-                class="video-control-btn"
-              ></q-btn>
-              <q-btn
-                round
-                icon="mdi-volume-off"
-                v-show="muted"
-                @click="muted = false"
-                class="video-control-btn"
-              ></q-btn>
-            </div>
-            <q-btn
-              round
-              icon="mdi-delete"
-              v-show="recorderState === 'stopped'"
-              @click="this.onRecordDelete()"
-              class="video-control-btn"
-            ></q-btn>
-          </div>
-          <!--
+            </q-toolbar>
+
+            <q-card-section>
+              <q-input label="Title" v-model="recMeta.title"></q-input>
+              <q-input label="Caption" v-model="recMeta.caption"></q-input>
+              <q-input label="Alt text" v-model="recMeta.altText"></q-input>
+              <q-input
+                label="Description"
+                v-model="recMeta.description"
+              ></q-input>
+              <q-input label="Tags" v-model="recMeta.tags"></q-input>
+            </q-card-section>
+          </q-card>
+        </div>
+      </div>
+
+      <div v-show="view == 'snapshot'">
+        <canvas :ref="canvasId" :width="vWidth" :height="vHeight">
+          <img
+            :ref="imgId"
+            :src="snapshotImgUrl"
+            :width="vWidth"
+            :height="vHeight"
+          />
+        </canvas>
+      </div>
+
+      <!-- SNAPSHOT CONTROLS -->
+
+      <div v-show="view == 'snapshot'" class="row col-12 video-controls">
+        <q-btn
+          round
+          icon="mdi-download"
+          class="video-control-btn"
+          @click="onSnapDownload()"
+        ></q-btn>
+
+        <q-space></q-space>
+
+        <q-btn
+          round
+          icon="mdi-note"
+          class="video-control-btn"
+          @click="onToggleSnapMeta()"
+        ></q-btn>
+
+        <q-btn
+          round
+          icon="mdi-content-save"
+          class="video-control-btn"
+          @click="onSnapSave()"
+        ></q-btn>
+
+        <q-space></q-space>
+
+        <q-btn
+          round
+          flat
+          icon="mdi-delete"
+          class="video-control-btn"
+          @click="onSnapDelete()"
+        ></q-btn>
+      </div>
+
+      <!-- VIDEO CONTROLS -->
+
+      <div v-show="view == 'video'" class="row col-12 video-controls">
+        <q-btn
+          round
+          icon="mdi-camera-iris"
+          v-show="recorderState != 'stopped'"
+          class="video-control-btn"
+          @click="onSnap()"
+        ></q-btn>
+        <q-btn
+          round
+          icon="mdi-play"
+          v-show="recorderState === 'stopped'"
+          @click="this.onResume()"
+          class="video-control-btn"
+        ></q-btn>
+
+        <q-btn
+          round
+          icon="mdi-download"
+          v-show="recorderState === 'stopped'"
+          @click="this.onRecordDownload()"
+          class="video-control-btn"
+        ></q-btn>
+
+        <q-space></q-space>
+
+        <q-btn
+          round
+          icon="mdi-record"
+          text-color="red"
+          v-show="['streaming'].includes(recorderState)"
+          @click="this.onRecord()"
+          class="video-control-btn"
+        ></q-btn>
+
+        <q-btn
+          round
+          icon="mdi-record"
+          text-color="red"
+          v-show="['paused'].includes(recorderState)"
+          @click="this.onRecordResume()"
+          class="video-control-btn"
+        ></q-btn>
+
+        <q-btn
+          round
+          icon="mdi-pause"
+          v-show="this.recorderState === 'recording'"
+          @click="this.onRecordPause()"
+          class="video-control-btn"
+        ></q-btn>
+
+        <q-btn
+          round
+          icon="mdi-stop"
+          v-show="['recording', 'paused'].includes(this.recorderState)"
+          @click="this.onRecordStop()"
+          class="video-control-btn"
+        ></q-btn>
+
+        <q-btn
+          round
+          icon="mdi-note"
+          @click="onToggleRecMeta()"
+          v-show="recorderState === 'stopped'"
+        ></q-btn>
+
+        <q-btn
+          round
+          icon="mdi-content-save"
+          v-show="recorderState === 'stopped'"
+          @click="this.onRecordSave()"
+          class="video-control-btn"
+        ></q-btn>
+
+        <q-space></q-space>
+
+        <div v-show="recorderState != 'stopped'">
+          <q-btn
+            round
+            icon="mdi-microphone"
+            v-show="micOn"
+            @click="micOn = false"
+            class="video-control-btn"
+          ></q-btn>
+          <q-btn
+            round
+            icon="mdi-microphone-off"
+            v-show="!micOn"
+            @click="this.micOn = true"
+            class="video-control-btn"
+          ></q-btn>
+          <q-btn
+            round
+            icon="mdi-volume-high"
+            v-show="!muted"
+            @click="muted = true"
+            class="video-control-btn"
+          ></q-btn>
+          <q-btn
+            round
+            icon="mdi-volume-off"
+            v-show="muted"
+            @click="muted = false"
+            class="video-control-btn"
+          ></q-btn>
+        </div>
+        <q-btn
+          round
+          icon="mdi-delete"
+          v-show="recorderState === 'stopped'"
+          @click="this.onRecordDelete()"
+          class="video-control-btn"
+        ></q-btn>
+      </div>
+      <!--
           <div class="col-12">
             Calculated Width: {{ vWidth }} Calculated Height: {{ vHeight }}
           </div>
           -->
-        </div>
-      </div>
-    </div>
-    <div v-show="view == 'whiteboard'">
-      <white-board :width="vWidth" :height="vHeight"></white-board>
-    </div>
 
-    <div
-      v-show="view === 'selectSource'"
-      :style="'min-height: ' + vHeight + 'px'"
-      class="flex flex-center"
-    >
-      <video-source-selector
-        :videoSourceList="cameras"
-        @selectedSource="(event) => onChangeVideoSource(event)"
-      ></video-source-selector>
+      <div v-show="view == 'whiteboard'">
+        <white-board :width="vWidth" :height="vHeight"></white-board>
+      </div>
+
+      <div
+        v-show="view === 'selectSource'"
+        :style="'min-height: ' + vHeight + 'px'"
+        class="flex flex-center"
+      >
+        <video-source-selector
+          :videoSourceList="cameras"
+          @selectedSource="(event) => onChangeVideoSource(event)"
+        ></video-source-selector>
+      </div>
     </div>
   </div>
 </template>
@@ -445,7 +435,7 @@ export default defineComponent({
     });
 
     const onResize = (size) => {
-      console.log(size);
+      console.log("RESIZED: " + size);
       vWidth.value = calcWidth();
     };
 
