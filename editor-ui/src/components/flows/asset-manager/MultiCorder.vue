@@ -1,9 +1,9 @@
 <template>
   <div class="flex full-width nospc">
     <div class="fit videobox block relative-postion nospc">
-      <q-resize-observer @resize="onResize" debounce="50"></q-resize-observer>
+      <q-resize-observer @resize="onResize" debounce="200"></q-resize-observer>
 
-      <div class="relative-position nospc" :style="'height: ' + vHeight">
+      <div class="relative-position nospc">
         <video
           v-show="['video'].includes(view)"
           :ref="videoId"
@@ -114,7 +114,7 @@
 
       <div
         v-show="view == 'snapshot'"
-        class="row col-12 video-controls q-px-sm q-pb-sm"
+        class="row col-12 video-controls q-px-md q-pb-sm"
       >
         <q-btn
           round
@@ -154,7 +154,7 @@
 
       <div
         v-show="view == 'video'"
-        class="row col-12 video-controls q-px-sm q-pb-sm"
+        class="row col-12 video-controls q-px-md q-pb-sm"
       >
         <q-btn
           round
