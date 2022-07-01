@@ -1,5 +1,5 @@
 <template>
-  <div class="row fit">
+  <div class="row fit q-pa-md">
     <div class="col-2"></div>
     <div class="col-8 justify-center relative-position">
       <q-btn
@@ -129,3 +129,9 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped>
+.editor {
+  background-color: #e8e8e8;
+}
+</style>
