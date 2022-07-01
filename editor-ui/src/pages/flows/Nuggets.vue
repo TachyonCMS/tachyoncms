@@ -25,6 +25,7 @@
                           <q-list dense>
                             <q-item
                               clickable
+                              v-close-popup
                               @click="
                                 this.onCreateNugget(
                                   'editor',
@@ -40,6 +41,7 @@
                             </q-item>
                             <q-item
                               clickable
+                              v-close-popup
                               @click="
                                 this.onCreateNugget('editor', nuggetId, 'after')
                               "
@@ -65,6 +67,7 @@
                           <q-list dense>
                             <q-item
                               clickable
+                              v-close-popup
                               @click="
                                 this.onCreateNugget('media', nuggetId, 'before')
                               "
@@ -76,6 +79,7 @@
                             </q-item>
                             <q-item
                               clickable
+                              v-close-popup
                               @click="
                                 this.onCreateNugget('media', nuggetId, 'after')
                               "
