@@ -26,6 +26,7 @@
                             <q-item
                               clickable
                               v-close-popup
+                              v-ripple
                               @click="
                                 this.onCreateNugget(
                                   'editor',
@@ -42,6 +43,7 @@
                             <q-item
                               clickable
                               v-close-popup
+                              v-ripple
                               @click="
                                 this.onCreateNugget('editor', nuggetId, 'after')
                               "
@@ -68,6 +70,7 @@
                             <q-item
                               clickable
                               v-close-popup
+                              v-ripple
                               @click="
                                 this.onCreateNugget('media', nuggetId, 'before')
                               "
@@ -80,6 +83,7 @@
                             <q-item
                               clickable
                               v-close-popup
+                              v-ripple
                               @click="
                                 this.onCreateNugget('media', nuggetId, 'after')
                               "
@@ -99,18 +103,27 @@
                   ><q-tooltip>Tune</q-tooltip
                   ><q-menu
                     ><q-btn
+                      clickable
+                      v-close-popup
+                      v-ripple
                       icon="mdi-arrow-up"
                       padding="sm"
                       flat
                       @click="this.moveNugget('up', flowId, nuggetId)"
                     ></q-btn
                     ><q-btn
+                      clickable
+                      v-close-popup
+                      v-ripple
                       icon="mdi-delete"
                       padding="sm"
                       flat
                       @click="confirmDeleteNugget(flowId, nuggetId)"
                     ></q-btn
                     ><q-btn
+                      clickable
+                      v-close-popup
+                      v-ripple
                       icon="mdi-arrow-down"
                       padding="sm"
                       flat
