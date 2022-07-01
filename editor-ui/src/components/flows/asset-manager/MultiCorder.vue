@@ -1,9 +1,9 @@
 <template>
-  <div class="flex full-width">
-    <div class="fit block relative-postion">
-      <q-resize-observer @resize="onResize" debounce="100"></q-resize-observer>
+  <div class="flex full-width nospc">
+    <div class="fit videobox block relative-postion nospc">
+      <q-resize-observer @resize="onResize" debounce="50"></q-resize-observer>
 
-      <div class="relative-position nospc">
+      <div class="relative-position nospc" :style="'height: ' + vHeight">
         <video
           v-show="['video'].includes(view)"
           :ref="videoId"
@@ -112,7 +112,10 @@
 
       <!-- SNAPSHOT CONTROLS -->
 
-      <div v-show="view == 'snapshot'" class="row col-12 video-controls">
+      <div
+        v-show="view == 'snapshot'"
+        class="row col-12 video-controls q-px-sm q-pb-sm"
+      >
         <q-btn
           round
           icon="mdi-download"
@@ -149,7 +152,10 @@
 
       <!-- VIDEO CONTROLS -->
 
-      <div v-show="view == 'video'" class="row col-12 video-controls">
+      <div
+        v-show="view == 'video'"
+        class="row col-12 video-controls q-px-sm q-pb-sm"
+      >
         <q-btn
           round
           icon="mdi-camera-iris"
@@ -424,7 +430,7 @@ export default defineComponent({
       console.log("Quasar screen width: " + viewWidth);
 
       targetWidth =
-        props.width < viewWidth * 0.95 ? props.width : viewWidth * 0.95;
+        props.width < viewWidth * 0.96 ? props.width : viewWidth * 0.96;
       console.log("Target Width: " + targetWidth);
 
       return targetWidth;
