@@ -474,7 +474,7 @@ export default defineComponent({
     });
 
     const saveBlocks = (nuggetId, blocks) => {
-      updateNuggetProp(nuggetId, "blocks", blocks);
+      // updateNuggetProp(nuggetId, "blocks", blocks);
       updateNuggetData(nuggetId, "blocks", blocks);
     };
 
