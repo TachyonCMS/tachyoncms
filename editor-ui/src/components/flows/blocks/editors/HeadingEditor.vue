@@ -25,10 +25,7 @@
           :data-cy="dataCySlug + '-clear-btn'"
         ></q-btn>
         <q-btn
-          @click="
-            this.$emit('save', { newData: editorData });
-            this.dirtyBit = false;
-          "
+          @click="this.onSave()"
           class="option-btn"
           icon="save"
           size="sm"
@@ -53,7 +50,14 @@
 </template>
 
 <script>
-import { defineComponent, ref, watch, reactive, computed } from "vue";
+import {
+  defineComponent,
+  ref,
+  watch,
+  reactive,
+  computed,
+  onMounted,
+} from "vue";
 import { useQuasar } from "quasar";
 
 import Heading from "../renders/HeadingBlock";
@@ -79,20 +83,22 @@ export default defineComponent({
     // Set to true, if the data has changed
     const dirtyBit = ref(false);
 
+    const savedHeading = ref();
+
     // Undo any UNSAVED changes
     const clear = () => {
       console.log("Clearing");
-      editorData.heading = props.data.heading;
+      editorData.heading = savedHeading.value;
       dirtyBit.value = false;
     };
 
     // Watch for changes and update the dirtyBit accordingly
     watch(editorData, (value) => {
-      if (value && value.heading != props.data.heading) {
-        dirtyBit.value = true;
-      } else {
-        // Catches the user manually undoing the change
+      console.log(value);
+      if (value.heading === savedHeading.value) {
         dirtyBit.value = false;
+      } else {
+        dirtyBit.value = true;
       }
     });
 
@@ -101,13 +107,26 @@ export default defineComponent({
       return "H" + editorData.level + " Heading";
     });
 
+    onMounted(async () => {
+      savedHeading.value = editorData.heading;
+    });
+
     // Expose these to the rest of the script
     return {
       dirtyBit,
       label,
       clear,
       editorData,
+      savedHeading,
     };
+  },
+  methods: {
+    async onSave() {
+      const dataObj = { newData: this.editorData };
+      this.savedHeading = this.editorData.heading;
+      this.$emit("save", dataObj);
+      this.dirtyBit = false;
+    },
   },
 });
 </script>
