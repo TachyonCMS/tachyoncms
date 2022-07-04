@@ -75,7 +75,6 @@ export default defineComponent({
         tools: {
           header: Header,
           list: List,
-          link: LinkTool,
           raw: RawTool,
           checklist: {
             class: Checklist,
