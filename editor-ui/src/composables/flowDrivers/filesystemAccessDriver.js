@@ -658,6 +658,7 @@ export default () => {
   };
 
   const insertIntoSeq = async (seqInput) => {
+    console.log(seqInput);
     try {
       // Breakup the input
       const { objType, objId, dataElement, insertVal, relId, relType } = {
@@ -700,13 +701,25 @@ export default () => {
           // It is either the prev or next, relative to the new one.
 
           const relIx = currentSeq.nuggetSeq.indexOf(relId);
-          // If the relatedIx ix zero and it comes after the new one, the new one will now be first.
-          // So we shift it on with no hoopla
           console.log("Related IX: " + relIx);
+          // The related item is the first item
           if (relIx === 0) {
             console.log("IXFIRST");
             console.log(newSeq);
-            newSeq = [...newSeq, ...currentSeq.nuggetSeq];
+            switch (relType) {
+              case "before":
+                newSeq = [...newSeq, ...currentSeq.nuggetSeq];
+                break;
+
+              case "after":
+                let insertIx = 1;
+                newSeq = [
+                  ...currentSeq.nuggetSeq.slice(0, insertIx),
+                  ...newSeq,
+                  ...currentSeq.nuggetSeq.slice(insertIx),
+                ];
+                break;
+            }
           } else if (relIx === currentSeq.nuggetSeq.length) {
             console.log("IXFLAST");
             newSeq = [...newSeq, ...currentSeq.nuggetSeq];

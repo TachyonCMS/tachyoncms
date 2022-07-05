@@ -238,6 +238,7 @@ export default defineComponent({
 
     onAddBlock(def) {
       // Create an ID for the block.
+      console.log(def);
 
       const { customAlphabet } = require("nanoid");
       const alphabet =
