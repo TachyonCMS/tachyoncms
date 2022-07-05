@@ -31,7 +31,7 @@
     "core-js": "^3.6.5",
     "cypress": "9.7.0",
     "electron-store": "^8.0.1",
-    "jsoneditor": "^9.8.0",
+    "jsoneditor": "^9.9.0",
     "quasar": "^2.6.0",
     "vue": "^3.0.0",
     "vue-drawing-canvas": "^1.0.14",

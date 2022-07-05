@@ -5,7 +5,10 @@
       <!-- Template to repeat a card section for each block -->
       <template v-for="(block, bix) in editorBlocks" :key="block.id">
         <!-- EDITORS -->
-        <div v-show="isInEdit(block.id)" class="row col-12">
+        <div
+          v-show="isInEdit(block.id) || block.type === 'timeline'"
+          class="row col-12"
+        >
           <!-- Section to show for this block if it is in edit mode. -->
           <!-- Using v-show the component gets rendered, but hidden. -->
           <!-- Use v-if to render ONLY the block editor for this block type. -->

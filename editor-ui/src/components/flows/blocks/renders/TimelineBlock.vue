@@ -23,6 +23,8 @@ The data passed to this component must be sanitized to prevent XSS.
 <script>
 import { defineComponent, computed } from "vue";
 
+import { useQuasar } from "quasar";
+
 export default defineComponent({
   name: "TimelineBlock",
   components: {},

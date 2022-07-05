@@ -1,72 +1,63 @@
 <template>
-  <div className="svelte-jsoneditor-vue" ref="editor"></div>
+  <div class="fullwidth row col-12 relative-position">
+    <div class="fullwidth row col-12 jsoneditor" ref="container"></div>
+    <q-btn
+      icon="mdi-content-save"
+      @click="onSave()"
+      class="top-right tr"
+      padding="sm"
+      ><q-tooltip>Save JSON</q-tooltip></q-btn
+    >
+  </div>
 </template>
 
 <script>
-import { JSONEditor } from "svelte-jsoneditor";
+import { defineComponent, ref, computed, onMounted } from "vue";
 
-// properties as of version 0.3.60
-const propNames = [
-  "content",
-  "mode",
-  "mainMenuBar",
-  "navigationBar",
-  "statusBar",
-  "readOnly",
-  "indentation",
-  "tabSize",
-  "escapeControlCharacters",
-  "escapeUnicodeCharacters",
-  "validator",
-  "onError",
-  "onChange",
-  "onChangeMode",
-  "onClassName",
-  "onRenderValue",
-  "onRenderMenu",
-  "queryLanguages",
-  "queryLanguageId",
-  "onChangeQueryLanguage",
-  "onFocus",
-  "onBlur",
-];
+import JSONEditor from "jsoneditor";
+import "jsoneditor/dist/jsoneditor.css";
 
-function pickDefinedProps(object, propNames) {
-  const props = {};
-  for (const propName of propNames) {
-    if (object[propName] !== undefined) {
-      props[propName] = object[propName];
-    }
-  }
-  return props;
-}
+export default defineComponent({
+  name: "JsonEditor",
+  props: ["data", "dataCySlug"],
+  components: {},
+  setup(props) {
+    const container = ref(null);
+    const options = { mode: "code" };
 
-export default {
-  name: "VueJSONEditor",
-  props: propNames,
-  mounted() {
-    this.editor = new JSONEditor({
-      target: this.$refs["editor"],
-      props: pickDefinedProps(this, propNames),
+    const editor = ref(null);
+
+    onMounted(() => {
+      console.log(container);
+      editor.value = new JSONEditor(container.value, options);
+      editor.value.set(props.data);
     });
-    console.log("create editor", this.editor);
+
+    return {
+      container,
+      props,
+      editor,
+    };
   },
-  updated() {
-    const props = pickDefinedProps(this, propNames);
-    console.log("update props", props);
-    this.editor.updateProps(props);
+  methods: {
+    async onSave() {
+      const currData = this.editor.get();
+      console.log(currData);
+      this.$emit("save", { newData: currData });
+    },
   },
-  beforeUnmount() {
-    console.log("destroy editor");
-    this.editor.destroy();
-    this.editor = null;
-  },
-};
+});
 </script>
 
 <style scoped>
-.svelte-jsoneditor-vue {
+.jsoneditor {
+  width: 500px;
+  height: 500px;
   display: flex;
   flex: 1;
+}
+
+.tr {
+  opacity: 85%;
 }
 </style>
