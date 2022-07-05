@@ -17,7 +17,7 @@ export default defineComponent({
   components: {},
   props: ["data", "dataCySlug"],
   setup(props) {
-    console.log("HtmlDisplay");
+    console.log("RichtextBlock");
     console.log(props);
 
     return {};

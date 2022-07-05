@@ -103,12 +103,14 @@ import HtmlEditor from "./editors/RichtextEditor";
 import HeadingEditor from "./editors/HeadingEditor";
 import ImageEditor from "./editors/ImageEditor";
 import SeparatorEditor from "./editors/SeparatorEditor";
+import JsonEditor from "./editors/JsonEditor";
 
 // Renderers
 import HtmlDisplay from "./renders/RichtextBlock";
 import Heading from "./renders/HeadingBlock";
 import Image from "./renders/ImageBlock";
 import BasicSeparator from "./renders/SeparatorBlock";
+import Timeline from "./renders/TimelineBlock";
 
 export default defineComponent({
   name: "BlocksHandler",
@@ -127,11 +129,13 @@ export default defineComponent({
     HtmlEditor,
     HeadingEditor,
     ImageEditor,
+    JsonEditor,
     HtmlDisplay,
     Heading,
     Image,
     SeparatorEditor,
     BasicSeparator,
+    Timeline,
     //    Font
   },
   setup(props, { emit }) {
@@ -162,6 +166,7 @@ export default defineComponent({
       h4: "heading",
       h5: "heading",
       h6: "heading",
+      timeline: "timeline",
     };
 
     // Map a block type to a editor
@@ -174,6 +179,7 @@ export default defineComponent({
       h4: "heading-editor",
       h5: "heading-editor",
       h6: "heading-editor",
+      timeline: "json-editor",
     };
 
     // An array of blocks in edit mode
