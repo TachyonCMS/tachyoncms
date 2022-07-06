@@ -40,7 +40,8 @@
               @click="openEditor(block.id)"
             ></component>
             <new-block-button
-              btnLabel="Block"
+              dense
+              btnLabel=""
               :nextBlock="block.id"
               @addBlock="onAddBlock"
               class="top-left"
@@ -50,6 +51,7 @@
               padding="sm"
             ></new-block-button>
             <q-btn
+              dense
               class="top-right"
               icon="mdi-delete"
               @click="confirmDeleteBlock(block.id)"
@@ -66,7 +68,8 @@
       <!-- A button to add a new Block of a given type. -->
       <span class="col-4">
         <new-block-button
-          btnLabel="Block"
+          btnLabel=""
+          dense
           @addBlock="onAddBlock"
           class="col"
           :data-cy="'new-block-btn-n' + nix"

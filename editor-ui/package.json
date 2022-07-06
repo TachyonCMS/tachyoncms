@@ -36,6 +36,7 @@
     "vue": "^3.0.0",
     "vue-drawing-canvas": "^1.0.14",
     "vue-editor-js": "^2.0.2",
+    "vue-json-pretty": "^2.1.1",
     "vue-router": "^4.0.0",
     "write-file-atomic": "^4.0.1"
   },

@@ -111,8 +111,29 @@
               >
                 <q-item-section>Video</q-item-section>
               </q-item>
+
+              <!-- Timeline block -->
+              <q-item
+                v-close-popup
+                clickable
+                @click="addBlock('timeline')"
+                :data-cy="dataCySlug + '-timeline'"
+              >
+                <q-item-section>Timeline</q-item-section>
+              </q-item>
             </q-list>
           </q-menu>
+        </q-item>
+
+        <!-- Raw JSON block -->
+        <q-separator></q-separator>
+        <q-item
+          v-close-popup
+          clickable
+          @click="addBlock('rawJson')"
+          :data-cy="dataCySlug + '-raw-json'"
+        >
+          <q-item-section>Raw JSON</q-item-section>
         </q-item>
 
         <!-- In-Nugget Page Separators -->
