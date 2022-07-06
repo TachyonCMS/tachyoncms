@@ -5,10 +5,7 @@
       <!-- Template to repeat a card section for each block -->
       <template v-for="(block, bix) in editorBlocks" :key="block.id">
         <!-- EDITORS -->
-        <div
-          v-show="isInEdit(block.id) || block.type === 'timeline'"
-          class="row col-12"
-        >
+        <div v-show="isInEdit(block.id)" class="row col-12">
           <!-- Section to show for this block if it is in edit mode. -->
           <!-- Using v-show the component gets rendered, but hidden. -->
           <!-- Use v-if to render ONLY the block editor for this block type. -->
@@ -114,6 +111,7 @@ import Heading from "./renders/HeadingBlock";
 import Image from "./renders/ImageBlock";
 import BasicSeparator from "./renders/SeparatorBlock";
 import Timeline from "./renders/TimelineBlock";
+import JsonBlock from "./renders/JsonBlock";
 
 export default defineComponent({
   name: "BlocksHandler",
@@ -139,6 +137,7 @@ export default defineComponent({
     SeparatorEditor,
     BasicSeparator,
     Timeline,
+    JsonBlock,
     //    Font
   },
   setup(props, { emit }) {
@@ -170,6 +169,7 @@ export default defineComponent({
       h5: "heading",
       h6: "heading",
       timeline: "timeline",
+      rawJson: "jsonBlock",
     };
 
     // Map a block type to a editor
@@ -183,6 +183,7 @@ export default defineComponent({
       h5: "heading-editor",
       h6: "heading-editor",
       timeline: "json-editor",
+      rawJson: "json-editor",
     };
 
     // An array of blocks in edit mode

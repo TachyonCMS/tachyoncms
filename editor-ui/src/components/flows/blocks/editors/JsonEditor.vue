@@ -1,13 +1,14 @@
 <template>
   <div class="fullwidth row col-12 relative-position">
     <div class="fullwidth row col-12 jsoneditor" ref="container"></div>
-    <q-btn
-      icon="mdi-content-save"
-      @click="onSave()"
-      class="top-right tr"
-      padding="sm"
-      ><q-tooltip>Save JSON</q-tooltip></q-btn
-    >
+    <div class="top-right tr">
+      <q-btn icon="mdi-close" @click="this.$emit('close')" padding="sm"
+        ><q-tooltip>Close</q-tooltip></q-btn
+      >
+      <q-btn icon="mdi-content-save" @click="onSave()" padding="sm"
+        ><q-tooltip>Save JSON</q-tooltip></q-btn
+      >
+    </div>
   </div>
 </template>
 
@@ -58,6 +59,6 @@ export default defineComponent({
 }
 
 .tr {
-  opacity: 85%;
+  opacity: 95%;
 }
 </style>

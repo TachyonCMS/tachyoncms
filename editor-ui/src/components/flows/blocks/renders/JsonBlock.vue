@@ -3,8 +3,8 @@ The data passed to this component must be sanitized to prevent XSS.
 -->
 
 <template>
-  <div class="justify-center row col-12">
-    <div id="jsoneditor"></div>
+  <div class="row col-12">
+    <pre>{{ JSON.stringify(data, null, 2) }}</pre>
   </div>
 </template>
 
