@@ -13,7 +13,7 @@
           <!-- Display the appropriate editor for the nug.type-->
           <div class="nugget-content row col-12">
             <component
-              :is="editors[block.type]"
+              :is="getEditor(block.type)"
               :data="block.data"
               @save="(event) => saveBlock(block.id, event)"
               @close="closeEditor(block.id)"
@@ -35,7 +35,7 @@
           <!-- Display Rich Text / HTML content -->
           <div class="nugget-content row col-12">
             <component
-              :is="renderers[block.type]"
+              :is="getRenderer(block.type)"
               :data="block.data"
               @click="openEditor(block.id)"
             ></component>
@@ -109,11 +109,11 @@ import SeparatorEditor from "./editors/SeparatorEditor";
 import JsonEditor from "./editors/JsonEditor";
 
 // Renderers
-import HtmlDisplay from "./renders/RichtextBlock";
-import Heading from "./renders/HeadingBlock";
-import Image from "./renders/ImageBlock";
-import BasicSeparator from "./renders/SeparatorBlock";
-import Timeline from "./renders/TimelineBlock";
+import HtmlBlock from "./renders/RichtextBlock";
+import HeadingBlock from "./renders/HeadingBlock";
+import ImageBlock from "./renders/ImageBlock";
+import SeparatorBlock from "./renders/SeparatorBlock";
+import TimelineBlock from "./renders/TimelineBlock";
 import JsonBlock from "./renders/JsonBlock";
 
 export default defineComponent({
@@ -134,12 +134,12 @@ export default defineComponent({
     HeadingEditor,
     ImageEditor,
     JsonEditor,
-    HtmlDisplay,
-    Heading,
-    Image,
+    HtmlBlock,
+    HeadingBlock,
+    ImageBlock,
     SeparatorEditor,
-    BasicSeparator,
-    Timeline,
+    SeparatorBlock,
+    TimelineBlock,
     JsonBlock,
     //    Font
   },
@@ -163,16 +163,16 @@ export default defineComponent({
 
     // Map a block type to a renderer
     const renderers = {
-      richText: "html-display",
-      image: "image",
-      basicSeparator: "basic-separator",
-      h2: "heading",
-      h3: "heading",
-      h4: "heading",
-      h5: "heading",
-      h6: "heading",
-      timeline: "timeline",
-      rawJson: "jsonBlock",
+      richText: "html-block",
+      image: "image-block",
+      basicSeparator: "separator-block",
+      h2: "heading-block",
+      h3: "heading-block",
+      h4: "heading-block",
+      h5: "heading-block",
+      h6: "heading-block",
+      timeline: "timeline-block",
+      rawJson: "json-block",
     };
 
     // Map a block type to a editor
@@ -202,6 +202,17 @@ export default defineComponent({
       editorBlocks = [...props.blocks];
     }
 
+    const getEditor = (blockType) => {
+      return editors.hasOwnProperty(blockType) ? editors[blockType] : "rawJson";
+    };
+
+    const getRenderer = (blockType) => {
+      console.log();
+      return renderers.hasOwnProperty(blockType)
+        ? renderers[blockType]
+        : "rawJson";
+    };
+
     return {
       inEdit,
       isInEdit,
@@ -209,6 +220,8 @@ export default defineComponent({
       editors,
       ref,
       editorBlocks,
+      getEditor,
+      getRenderer,
     };
   },
   methods: {

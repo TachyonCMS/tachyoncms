@@ -1,31 +1,44 @@
 {
-  "name": "flow-sites",
+  "name": "flow-sites-server",
   "version": "0.0.1",
-  "description": "Serves blog-type, single-page sites under unique domains. ",
-  "productName": "TachyonCMS Flow Site Server",
+  "description": "Serves Tachyon CMS Flows and Nuggets as websites and pages. ",
+  "productName": "Flow Sites Server",
   "author": "Brian Winkers <bwinkers@gmail.com>",
   "private": true,
   "scripts": {
     "lint": "eslint --ext .js,.vue ./",
     "format": "prettier --write \"**/*.{js,vue,scss,html,md,json}\" --ignore-path .gitignore",
-    "test": "echo \"No test specified\" && exit 0"
+    "test": "echo \"No test specified\" && exit 0",
+    "publish": "rsync -av --progress ./ ../../multi-site-app/ --exclude yarn.lock --exclude .git --exclude node_modules --exclude dist --exclude .quasar --exclude .vscode"
   },
   "dependencies": {
-    "axios": "^0.21.1",
+    "@editorjs/checklist": "^1.3.0",
+    "@editorjs/code": "^2.7.0",
+    "@editorjs/editorjs": "^2.25.0",
+    "@editorjs/embed": "^2.5.2",
+    "@editorjs/header": "^2.6.2",
+    "@editorjs/link": "^2.4.1",
+    "@editorjs/list": "^1.7.0",
+    "@editorjs/quote": "^2.4.0",
+    "@editorjs/raw": "^2.3.1",
+    "@editorjs/simple-image": "^1.4.1",
+    "@editorjs/table": "^2.0.2",
     "@quasar/extras": "^1.0.0",
+    "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "quasar": "^2.6.0",
     "vue": "^3.0.0",
+    "vue-json-pretty": "^2.1.1",
     "vue-router": "^4.0.0"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.13.14",
+    "@quasar/app-webpack": "^3.0.0",
     "eslint": "^8.10.0",
+    "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-vue": "^8.5.0",
     "eslint-webpack-plugin": "^3.1.1",
-    "eslint-config-prettier": "^8.1.0",
-    "prettier": "^2.5.1",
-    "@quasar/app-webpack": "^3.0.0"
+    "prettier": "^2.5.1"
   },
   "browserslist": [
     "last 10 Chrome versions",

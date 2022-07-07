@@ -1,20 +1,24 @@
 <template>
-  <q-layout view="hHh lpR fFf">
+  <q-layout view="lHh Lpr lFf">
+    <q-header elevated>
+      <q-toolbar>
+        <q-toolbar-title>{{ title }}</q-toolbar-title>
+        <div class="nameBug">
+          <a href="https://www.TachyonCMS.org/#/">TachyonCMS</a>
+        </div>
+      </q-toolbar>
+    </q-header>
+
     <q-page-container>
-      <router-view />
+      <router-view @newPageTitle="(event) => onNewTitle(event)" />
     </q-page-container>
 
-    <q-footer elevated class="bg-grey-8 text-white">
+    <q-footer class="bg-grey-2 foot">
       <q-toolbar>
-        <div class="col-12 text-body2 text-weight-thin subdued-link">
-          <div class="text-center subdued-link">
-            Izzup.com is sponsored by
-            <a href="https://opensourcebike.com">Open Source Bike</a>.
-          </div>
-          <div class="text-center">
-            Content is created using
-            <a target="_blank" href="https://TachyonCMS.org">TachyonCMS</a>.
-          </div>
+        <div class="col-12 text-body2 subdued-link text-center">
+          Powered by
+          <a target="_blank" href="https://www.tachyoncms.org/#/">TachyonCMS</a
+          >, the free CMS.
         </div>
       </q-toolbar>
     </q-footer>
@@ -24,11 +28,48 @@
 <script>
 import { defineComponent, ref } from "vue";
 
+import { useQuasar, useMeta } from "quasar";
 export default defineComponent({
   name: "MainLayout",
 
+  components: {},
+
   setup() {
-    return {};
+    const leftDrawerOpen = ref(false);
+
+    const title = ref("great things are loading...");
+
+    // NOTICE the parameter here is a function
+    // Under the hood, it is converted to a Vue computed prop for reactivity
+    useMeta(() => {
+      return {
+        // whenever "title" from above changes, your meta will automatically update
+        title: title.value,
+      };
+    });
+
+    return {
+      leftDrawerOpen,
+      toggleLeftDrawer() {
+        leftDrawerOpen.value = !leftDrawerOpen.value;
+      },
+      title,
+    };
+  },
+  methods: {
+    onNewTitle(title) {
+      console.log("SETTING Title: " + title);
+      this.title = title;
+    },
   },
 });
 </script>
+
+<style scoped>
+.foot {
+  color: darkgray;
+}
+.nameBug {
+  opacity: 40%;
+}
+</style>

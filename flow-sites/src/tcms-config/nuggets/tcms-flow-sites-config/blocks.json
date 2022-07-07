@@ -1,0 +1,33 @@
+{
+  "blocks": [
+    {
+      "id": "FgHzcH0V",
+      "type": "tcmsFlowSiteConfig",
+      "data": {
+        "defaultHost": "www.izzup.com",
+        "hostSites": {
+          "www.bikemechanic.info": "bikemechanic",
+          "www.ezvegetarian.com": "ezvegetarian",
+          "www.financeaproperty.com": "financeaproperty",
+          "www.netrealestateguide.com": "netrealestateguide",
+          "www.opensourcebike.com": "opensourcebike",
+          "www.tachyoncms.com": "tachyoncms-com",
+          "www.etownmall.com": "etownmall",
+          "www.izzup.com": "izzup",
+          "localhost": "dev"
+        },
+        "siteFlows": {
+          "bikemechanic": "gGc3_MzRV_FQOU_QTzu_U3Ze",
+          "ezvegetarian": "V2p6_4aNr_U5y2_EiAj_sn4p",
+          "financeaproperty": "8k1C_ZaJw_3eck_o5yr_rXT6",
+          "netrealestateguide": "2KLG_ePJ0_ySkN_HmAu_mHX0",
+          "opensourcebike": "DCZ2_7T9c_HAr6_TLa4_zzc9",
+          "tachyoncms-com": "wWap_bxAI_Gg6N_DJoF_g8Ib",
+          "etownmall": "SUok_qLLO_5H4g_kAFK_cKPx",
+          "dev": "z2LP_8che_ypUi_uNID_JEs3",
+          "izzup": "Llu2_iPdV_GfZs_wvux_Q1w0"
+        }
+      }
+    }
+  ]
+}

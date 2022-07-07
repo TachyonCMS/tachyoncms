@@ -112,7 +112,7 @@ export default defineComponent({
       type: Boolean,
     },
     openFlowChecked: {
-      default: false,
+      default: true,
       type: Boolean,
     },
     dataCySlug: {

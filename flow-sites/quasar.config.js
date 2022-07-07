@@ -31,7 +31,7 @@ module.exports = configure(function (ctx) {
     // https://github.com/quasarframework/quasar/tree/dev/extras
     extras: [
       // 'ionicons-v4',
-      // 'mdi-v5',
+      "mdi-v5",
       // 'fontawesome-v6',
       // 'eva-icons',
       // 'themify',
@@ -144,9 +144,9 @@ module.exports = configure(function (ctx) {
       },
 
       manifest: {
-        name: `TachyonCMS Flow Site Server`,
-        short_name: `TachyonCMS Flow Site Server`,
-        description: `Serves blog-type, single-page sites under unique domains. `,
+        name: `Flow Sites Server`,
+        short_name: `Flow Sites Server`,
+        description: `Serves Tachyon CMS Flows and Nuggets as websites and pages. `,
         display: "standalone",
         orientation: "portrait",
         background_color: "#ffffff",
@@ -209,7 +209,7 @@ module.exports = configure(function (ctx) {
       builder: {
         // https://www.electron.build/configuration/configuration
 
-        appId: "flow-sites",
+        appId: "flow-sites-server",
       },
 
       // "chain" is a webpack-chain object https://github.com/neutrinojs/webpack-chain
