@@ -9,7 +9,7 @@
     "lint": "eslint --ext .js,.vue ./",
     "format": "prettier --write \"**/*.{js,vue,scss,html,md,json}\" --ignore-path .gitignore",
     "test": "echo \"No test specified\" && exit 0",
-    "publish": "rsync -av --progress ./ ../../multi-site-app/ --exclude yarn.lock --exclude .git --exclude node_modules --exclude dist --exclude .quasar --exclude .vscode"
+    "publish": "rsync -av --progress ./ ../../multi-site-app/app --exclude yarn.lock --exclude .git --exclude node_modules --exclude dist --exclude .quasar --exclude .vscode"
   },
   "dependencies": {
     "@editorjs/checklist": "^1.3.0",

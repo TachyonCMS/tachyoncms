@@ -9,7 +9,6 @@
           <!-- Section to show for this block if it is in edit mode. -->
           <!-- Using v-show the component gets rendered, but hidden. -->
           <!-- Use v-if to render ONLY the block editor for this block type. -->
-
           <!-- Display the appropriate editor for the nug.type-->
           <div class="nugget-content row col-12">
             <component
@@ -203,14 +202,16 @@ export default defineComponent({
     }
 
     const getEditor = (blockType) => {
-      return editors.hasOwnProperty(blockType) ? editors[blockType] : "rawJson";
+      return editors.hasOwnProperty(blockType)
+        ? editors[blockType]
+        : "json-editor";
     };
 
     const getRenderer = (blockType) => {
       console.log();
       return renderers.hasOwnProperty(blockType)
         ? renderers[blockType]
-        : "rawJson";
+        : "json-block";
     };
 
     return {
