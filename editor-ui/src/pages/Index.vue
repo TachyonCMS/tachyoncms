@@ -21,8 +21,10 @@
       </q-card-actions>
       <q-card-section class="font-weight-bolder">
         <p class="text-bolder q-pa-md warn">
-          Note: This only works with recent version of the Chrome desktop
-          browser.
+          Note: This only works with
+          <a href="https://caniuse.com/native-filesystem-api"
+            >recent version of the Chrome desktop browser</a
+          >.
         </p>
         <div class="text-subtitle2 q-pa-md">
           This software is in BETA, you are free to use it with no warranty or
@@ -34,6 +36,11 @@
         </div>
       </q-card-section>
     </q-card>
+    <q-footer class="text-center justify-center foot"
+      ><a href="https://github.com/TachyonCMS/tachyoncms"
+        >This software is freely distributed as open source on GitHub.</a
+      ></q-footer
+    >
   </q-page>
 </template>
 
@@ -117,6 +124,15 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.foot a {
+  color: white;
+  text-decoration: none; /* no underline */
+}
+
+.foot a:visited {
+  color: white;
+}
+
 .warn {
   color: red;
 }
