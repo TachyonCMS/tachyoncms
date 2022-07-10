@@ -177,8 +177,21 @@ const routes = [
 
   {
     path: "/audit-ally",
-    component: () => import("layouts/MainLayout.vue"),
-    children: [{ path: "", component: () => import("pages/FlowPage.vue") }],
+    component: () => import("src/layouts/AuditAllyLayout.vue"),
+    children: [
+      { path: "", component: () => import("pages/audit-ally/Index.vue") },
+    ],
+  },
+
+  {
+    path: "/audit-ally/:securityConcern",
+    component: () => import("src/layouts/AuditAllyLayout.vue"),
+    children: [
+      {
+        path: "",
+        component: () => import("pages/audit-ally/SecurityConcern.vue"),
+      },
+    ],
   },
 
   // Always leave this as last one,
