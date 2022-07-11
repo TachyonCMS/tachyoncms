@@ -1,6 +1,5 @@
 <template>
   <q-page class="relative-position">
-    {{ nuggetId }}
     <q-tabs v-model="tabView" inline-label>
       <q-tab name="auditEvent" icon="mdi-plus" label="Audit Event"></q-tab>
       <q-tab
@@ -19,12 +18,21 @@
         ></q-input>
       </q-card-section>
       <q-card-actions class="text-center justify-center">
-        <q-btn icon="mdi-content-save" @click="onCreateNugget">
-          {{ nuggetId ? "Save" : "Create" + " Event" }}</q-btn
-        >
+        <template v-if="nuggetId">
+          <q-btn icon="mdi-content-save" @click="onUpdateNugget">
+            Save Event</q-btn
+          >
+          <q-btn icon="mdi-close" @click="onCloseNugget"> Close Event </q-btn>
+        </template>
+        <template v-else>
+          <q-btn icon="mdi-content-save" @click="onCreateNugget">
+            Create Event</q-btn
+          >
+        </template>
       </q-card-actions>
       <q-card-section
         class="text-center justify-center ev-header q-ma-md text-h6"
+        v-if="nuggetId"
       >
         Evidence of the Event
         <asset-manager :nuggetId="nuggetId"></asset-manager>

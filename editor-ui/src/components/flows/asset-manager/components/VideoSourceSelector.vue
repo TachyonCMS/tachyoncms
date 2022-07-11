@@ -23,7 +23,25 @@
         </q-list>
       </div>
     </div>
-    <div class="flex fit" v-if="videoTypes[0] == 'screen'">screen</div>
+    <div class="flex fit" v-if="videoTypes[0] == 'screen'">
+      <div
+        class="fit row col-12 text-center justify-center items-center"
+        height="500px"
+      >
+        <q-btn
+          clickable
+          v-close-popup
+          @click="
+            this.$emit('selectedSource', {
+              text: 'Screen Capture',
+              value: 'screen',
+            })
+          "
+          class="btn"
+          >Select Screen</q-btn
+        >
+      </div>
+    </div>
     <div class="flex fit" v-if="videoTypes.length > 1">
       <div class="fit row col-12 text-center justify-center items-center">
         <h6>Multimedia Source</h6>
@@ -119,5 +137,8 @@ export default defineComponent({
 <style scoped>
 h6 {
   margin: 0 0 1em 0;
+}
+.btn {
+  background-color: white;
 }
 </style>

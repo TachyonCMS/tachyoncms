@@ -1,10 +1,15 @@
 <template>
-  <div class="fit nospc">
-    <div class="fit block relative-postion nospc ofh">
+  <div class="fit nospc justify-center text-center">
+    <div
+      class="fit block relative-postion nospc ofh justify-center text-center"
+    >
       <q-resize-observer @resize="onResize" debounce="200"></q-resize-observer>
 
-      <div class="relative-position nospc videobox">
+      <div
+        class="row relative-position nospc videobox justify-center text-center"
+      >
         <video
+          class="justify-center text-center"
           v-show="['video'].includes(view)"
           :ref="videoId"
           :src="videoSource"
@@ -24,7 +29,7 @@
           class="top-left full-width z-max"
           style="opacity: 100"
         >
-          <q-card flat>
+          <q-card flat class="row">
             <q-toolbar>
               <q-avatar>
                 <q-icon name="mdi-information"></q-icon>
@@ -99,7 +104,10 @@
         </div>
       </div>
 
-      <div v-show="view == 'snapshot'">
+      <div
+        v-show="view == 'snapshot'"
+        class="row nospc videobox justify-center text-center"
+      >
         <canvas :ref="canvasId" :width="vWidth" :height="vHeight">
           <img
             :ref="imgId"
@@ -616,7 +624,7 @@ export default defineComponent({
 
 <style scoped>
 .videobox {
-  background-color: #e8e8e8;
+  background-color: black;
 }
 .video-controls {
   background-color: #e8e8e8;

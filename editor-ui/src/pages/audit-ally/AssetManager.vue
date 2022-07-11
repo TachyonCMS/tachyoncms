@@ -17,7 +17,7 @@
       <q-tab name="camera" icon="camera" label="Camera"></q-tab>
       <q-tab name="screen" icon="monitor" label="Screen"></q-tab>
     </q-tabs>
-    {{ nuggetId }}
+
     <div class="row col-12 text-center fit justify-center">
       <file-manager
         :nuggetId="nuggetId"
