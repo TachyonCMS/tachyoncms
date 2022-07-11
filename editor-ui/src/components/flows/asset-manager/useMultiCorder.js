@@ -363,7 +363,7 @@ export default function useMultiCorder() {
 
     canvasCtx.drawImage(videoElem.value, 0, 0, vWidth, vHeight);
     const data = await canvasElem.value.toDataURL("image/" + snapshotExt.value);
-    console.log(data, vWidth, vHeight);
+    //   console.log(data, vWidth, vHeight);
     snapshot.value = data;
   };
 

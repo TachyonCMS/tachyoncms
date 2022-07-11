@@ -224,6 +224,48 @@ export default defineComponent({
 
       this.nuggetId = result.nugget.id;
     },
+    async onUpdateNugget() {
+      console.log("Updating Security Event");
+
+      const now = new Date();
+
+      const result = await this.createNugget(
+        this.flowId,
+        {
+          type: "media",
+          name: now.toString(),
+          title: this.title,
+          description: this.description,
+        },
+        0,
+        "before",
+        "timeseries"
+      );
+      console.log(result);
+
+      this.nuggetId = result.nugget.id;
+    },
+    async onCloseNugget() {
+      console.log("Closing Security Event");
+
+      const now = new Date();
+
+      const result = await this.createNugget(
+        this.flowId,
+        {
+          type: "media",
+          name: now.toString(),
+          title: this.title,
+          description: this.description,
+        },
+        0,
+        "before",
+        "timeseries"
+      );
+      console.log(result);
+
+      this.nuggetId = result.nugget.id;
+    },
   },
 });
 </script>
