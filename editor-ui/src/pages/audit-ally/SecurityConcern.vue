@@ -4,7 +4,7 @@
     <q-tabs v-model="tabView" inline-label>
       <q-tab name="auditEvent" icon="mdi-plus" label="Audit Event"></q-tab>
       <q-tab
-        name="eventLogs"
+        name="eventLog"
         icon="mdi-file-multiple"
         label="Event Logs"
       ></q-tab>
@@ -24,32 +24,28 @@
         >
       </q-card-actions>
       <q-card-section
-        class="text-center justify-center ev-header q-ma-md text-h6 disabled"
+        class="text-center justify-center ev-header q-ma-md text-h6"
       >
         Evidence of the Event
-      </q-card-section>
-      <q-card-section v-if="nuggetId">
-        <asset-manager
-          :nuggetId="nuggetId"
-          v-show="nuggetAssetStates.has(nuggetId)"
-        ></asset-manager>
+        <asset-manager :nuggetId="nuggetId"></asset-manager>
       </q-card-section>
     </q-card>
-    <!-- Show a spinner over the div if the flow hasn't finished loading. -->
-    <template v-if="flowLoaded">
+
+    <template v-if="tabView == 'eventLog'">
       <!-- Reactive list of Nuggets from within the Flow object. -->
-      <template v-if="nuggetSeq && nuggetSeq.length > 0"> </template>
-      <template v-else>
-        <!-- Display info on creating the first nugget-->
+      <template v-if="nuggetSeq && nuggetSeq.length > 0">
+        <q-list v-for="(nuggetId, nix) in nuggetSeq" :key="nuggetId">
+          {{ nuggetId }} {{ nix }}
+        </q-list>
       </template>
-    </template>
-    <template v-else>
-      <!-- Show spinner-->
-      <q-spinner-bars
-        class="absolute-center"
-        color="primary"
-        size="2em"
-      ></q-spinner-bars>
+      <template v-else>
+        <!-- Show spinner-->
+        <q-spinner-bars
+          class="absolute-center"
+          color="primary"
+          size="2em"
+        ></q-spinner-bars>
+      </template>
     </template>
   </q-page>
 </template>
@@ -69,19 +65,13 @@ import { useQuasar, date } from "quasar";
 import { useRoute, useRouter } from "vue-router";
 
 import useFlows from "../../composables/useFlows";
-
-import DateDisplay from "../../components/site/widgets/DateDisplay";
-import BlocksHandler from "../../components/flows/blocks/BlocksHandler";
-
-import AssetManager from "../../components/flows/asset-manager/AssetManager";
+import AssetManager from "./AssetManager";
 
 export default defineComponent({
   name: "PageFlow",
   emits: ["appNotification", "setDrawer"],
   components: {
-    // DateDisplay,
-    // BlocksHandler,
-    // AssetManager,
+    AssetManager,
   },
   setup() {
     const route = useRoute();

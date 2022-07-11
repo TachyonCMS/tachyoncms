@@ -1,9 +1,9 @@
 <template>
-  <div class="flex full-width nospc">
-    <div class="fit videobox block relative-postion nospc">
+  <div class="fit nospc">
+    <div class="fit block relative-postion nospc ofh">
       <q-resize-observer @resize="onResize" debounce="200"></q-resize-observer>
 
-      <div class="relative-position nospc">
+      <div class="relative-position nospc videobox">
         <video
           v-show="['video'].includes(view)"
           :ref="videoId"
@@ -288,6 +288,7 @@
         <video-source-selector
           :videoSourceList="cameras"
           @selectedSource="(event) => onChangeVideoSource(event)"
+          :videoTypes="videoTypes"
         ></video-source-selector>
       </div>
     </div>
@@ -429,15 +430,14 @@ export default defineComponent({
       viewWidth = $q.screen.width;
       console.log("Quasar screen width: " + viewWidth);
 
-      targetWidth =
-        props.width < viewWidth * 0.96 ? props.width : viewWidth * 0.96;
+      targetWidth = props.width < viewWidth ? props.width : viewWidth;
       console.log("Target Width: " + targetWidth);
 
       return targetWidth;
     };
 
     const vHeight = computed(() => {
-      return vWidth.value * 0.5625;
+      return vWidth.value * 0.562;
     });
 
     const onResize = (size) => {
@@ -628,5 +628,9 @@ export default defineComponent({
 .nospc {
   padding: 0;
   margin: 0;
+}
+
+.ofh {
+  overflow: hidden;
 }
 </style>
