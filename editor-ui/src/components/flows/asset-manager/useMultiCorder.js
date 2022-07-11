@@ -70,6 +70,9 @@ export default function useMultiCorder() {
   // Recording paused
   const paused = ref(false);
 
+  // The screen ratio
+  const screenRatio = ref(0.562);
+
   // Speaker Muted
   const muted = ref(true);
   // The HTML <video> element for THIS multicorder
@@ -271,7 +274,6 @@ export default function useMultiCorder() {
     //   constraints.video.height = this.resolution.height;
     //   constraints.video.width = this.resolution.width;
     // }
-
     navigator.mediaDevices
       .getUserMedia(constraints)
       .then((stream) => loadSrcStream(stream, videoElem))
@@ -313,6 +315,10 @@ export default function useMultiCorder() {
     console.log("Video Native Width: " + stream_width + "px");
     console.log("Video Native Height: " + stream_height + "px");
 
+    const deviceRatio = stream_height / stream_width;
+
+    screenRatio.value = deviceRatio;
+
     cameraRes.value = camRes;
     console.log(cameraRes.value);
 
@@ -341,9 +347,20 @@ export default function useMultiCorder() {
   // Take a snapshot of the video element content
   const videoSnapshot = async (vWidth, vHeight) => {
     snapshotName.value = getMediaName("snap"); // Download and Save use the same name
-
+    console.log(vWidth);
+    console.log(vHeight);
+    console.log(videoElem);
+    const vRatio = videoElem.value.videoHeight / videoElem.value.videoWidth;
+    console.log(videoElem.value.videoWidth);
+    console.log("Native Height: " + videoElem.value.videoHeight);
+    console.log(videoElem.value.width);
+    console.log("Current Height: " + videoElem.value.height);
+    console.log("TARGET WIDTH: " + vHeight * vRatio);
     const canvasCtx = canvasElem.value.getContext("2d");
     console.log(canvasCtx);
+    const rRatio = videoElem.value.height / videoElem.value.videoHeight;
+    console.log("RRatio" + rRatio);
+
     canvasCtx.drawImage(videoElem.value, 0, 0, vWidth, vHeight);
     const data = await canvasElem.value.toDataURL("image/" + snapshotExt.value);
     console.log(data, vWidth, vHeight);
@@ -563,5 +580,7 @@ export default function useMultiCorder() {
     recMeta,
     // Delete a snapshot
     deleteSnap,
+    // Screen ratio
+    screenRatio,
   };
 }

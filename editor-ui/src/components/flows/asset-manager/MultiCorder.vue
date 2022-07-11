@@ -160,10 +160,7 @@
 
       <!-- VIDEO CONTROLS -->
 
-      <div
-        v-show="view == 'video'"
-        class="row col-12 video-controls q-px-md q-pb-sm"
-      >
+      <div v-show="view == 'video'" class="row col-12 video-controls q-pa-xs">
         <q-btn
           round
           icon="mdi-camera-iris"
@@ -412,6 +409,7 @@ export default defineComponent({
       snapMeta,
       recMeta,
       deleteSnap,
+      screenRatio,
     } = useMultiCorder();
 
     const view = ref("selectSource");
@@ -445,7 +443,7 @@ export default defineComponent({
     };
 
     const vHeight = computed(() => {
-      return vWidth.value * 0.562;
+      return vWidth.value * screenRatio.value;
     });
 
     const onResize = (size) => {
