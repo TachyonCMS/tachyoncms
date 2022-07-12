@@ -276,7 +276,7 @@ export default function useMultiCorder() {
     // }
     navigator.mediaDevices
       .getUserMedia(constraints)
-      .then((stream) => loadSrcStream(stream, videoElem))
+      .then((stream) => loadCamStream(stream, videoElem))
       .catch((e) => console.error(e));
   };
 
@@ -285,14 +285,14 @@ export default function useMultiCorder() {
     try {
       navigator.mediaDevices
         .getDisplayMedia()
-        .then((stream) => loadSrcStream(stream, videoElem));
+        .then((stream) => loadScreenStream(stream, videoElem));
     } catch (e) {
       console.error(e);
     }
   };
 
   // Load a src stream into the HTML5 video element
-  const loadSrcStream = (stream, videoElem) => {
+  const loadCamStream = (stream, videoElem) => {
     if ("srcObject" in videoElem) {
       // new browsers api
       videoElem.srcObject = stream;
@@ -320,7 +320,45 @@ export default function useMultiCorder() {
     screenRatio.value = deviceRatio;
 
     cameraRes.value = camRes;
-    console.log(cameraRes.value);
+    console.log(deviceRatio);
+
+    // Emit video start/live event
+    videoElem.onloadedmetadata = () => {
+      //("video-live", stream);
+      console.log("video streaming to " + videoElem);
+    };
+  };
+
+  // Load a src stream into the HTML5 video element
+  const loadScreenStream = (stream, videoElem) => {
+    if ("srcObject" in videoElem) {
+      // new browsers api
+      videoElem.srcObject = stream;
+    } else {
+      // old broswers
+      source.value = window.HTMLMediaElement.srcObject(stream);
+    }
+
+    let stream_settings = stream.getVideoTracks()[0].getSettings();
+    console.log(stream_settings);
+    // actual width & height of the camera video
+    let stream_width = stream_settings.width;
+    let stream_height = stream_settings.height;
+
+    const camRes = {
+      height: stream_height,
+      width: stream_width,
+    };
+
+    console.log("Video Native Width: " + stream_width + "px");
+    console.log("Video Native Height: " + stream_height + "px");
+
+    const deviceRatio = stream_height / stream_width;
+
+    screenRatio.value = deviceRatio;
+
+    cameraRes.value = camRes;
+    console.log(deviceRatio);
 
     // Emit video start/live event
     videoElem.onloadedmetadata = () => {
