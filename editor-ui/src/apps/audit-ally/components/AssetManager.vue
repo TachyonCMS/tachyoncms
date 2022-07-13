@@ -1,5 +1,5 @@
 <template>
-  <div class="row col-12">
+  <div class="flex fit row col-12">
     <q-tabs
       v-model="tabView"
       inline-label
@@ -19,11 +19,13 @@
     </q-tabs>
 
     <div class="row col-12 text-center fit justify-center">
+      here
       <file-manager
         :nuggetId="nuggetId"
         v-if="tabView == 'file-manager'"
       ></file-manager>
-      <multi-corder
+ 
+    <multi-corder
         v-if="tabView == 'camera'"
         :nuggetId="nuggetId"
         width="2048"
@@ -34,7 +36,7 @@
         :nuggetId="nuggetId"
         width="2048"
         :videoTypes="['screen']"
-      ></multi-corder>
+      ></multi-corder> 
     </div>
   </div>
 </template>

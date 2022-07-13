@@ -3,7 +3,7 @@
     <div class="fit videobox block relative-postion nospc">
       <q-resize-observer @resize="onResize" debounce="200"></q-resize-observer>
 
-      <div class="relative-position nospc">
+      <div class="relative-position nospc ofh">
         <video
           v-show="['video'].includes(view)"
           :ref="videoId"
@@ -98,7 +98,7 @@
         </div>
       </div>
 
-      <div v-show="view == 'snapshot'">
+      <div v-show="view == 'snapshot'" class="ofh">
         <canvas :ref="canvasId" :width="vWidth" :height="vHeight">
           <img
             :ref="imgId"
@@ -638,5 +638,9 @@ export default defineComponent({
 
 .selec {
   background-color: lightgray;
+}
+
+.ofh {
+
 }
 </style>

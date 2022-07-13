@@ -8,16 +8,18 @@
         label="Event Logs"
       ></q-tab>
     </q-tabs>
-    <q-card flat v-if="tabView == 'auditEvent'">
-      <q-card-section>
+    <div v-if="tabView == 'auditEvent'">
+      <q-card flat>
+        <q-card-section>
+      <div>
         <q-input label="Title" v-model="title"></q-input>
         <q-input
           type="textarea"
           label="Description"
           v-model="description"
         ></q-input>
-      </q-card-section>
-      <q-card-actions class="text-center justify-center">
+      </div>
+      <div class="text-center justify-center">
         <template v-if="nuggetId">
           <q-btn icon="mdi-content-save" @click="onUpdateNugget">
             Save Event</q-btn
@@ -29,15 +31,27 @@
             Create Event</q-btn
           >
         </template>
-      </q-card-actions>
-      <q-card-section
-        class="text-center justify-center ev-header q-ma-md text-h6 fit"
+
+      </div>
+      </q-card-section>
+      <q-card-section>
+      <div
+        class="text-center justify-center ev-header  fit"
         v-if="nuggetId"
       >
         Evidence of the Event
-        <asset-manager :nuggetId="nuggetId"></asset-manager>
-      </q-card-section>
-    </q-card>
+        </div>
+        
+        <div
+        class="text-center justify-center"
+        v-if="nuggetId"
+      >
+        <asset-manager :nuggetId="nuggetId"></asset-manager> 
+        </div>
+
+        </q-card-section>
+      </q-card>
+    </div>
 
     <template v-if="tabView == 'eventLog'">
       <!-- Reactive list of Nuggets from within the Flow object. -->
