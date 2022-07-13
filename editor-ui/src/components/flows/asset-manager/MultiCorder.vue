@@ -11,7 +11,6 @@
           :autoplay="autoplay"
           :playsInline="playsInline"
           :width="vWidth"
-          :height="vHeight"
           muted="recorderMuted"
           @loadedmetadata="getVideoDimensions"
         />
@@ -105,7 +104,7 @@
             :ref="imgId"
             :src="snapshotImgUrl"
             :width="vWidth"
-            :height="vHeight"
+        
           />
         </canvas>
       </div>

@@ -86,25 +86,13 @@ export default () => {
 
   const readJson = async (pathSegments) => {
     try {
-      // The last segment is the filename minus the `.json` extension.
-      const fileName = pathSegments.pop();
-      console.log(pathSegments);
-      console.log(fileName);
-
-      // The remaining segments are directories.
-      const dirHandle = await getDirHandle(pathSegments);
-
-      const fullName = fileName + ".json";
-
-      const fileHandle = await dirHandle.getFileHandle(fullName, {
-        create: true,
-      });
+      const fileHandle = await getFileHandle(pathSegments);
       const jsonFile = await fileHandle.getFile();
       const jsonData = await jsonFile.text();
       return JSON.parse(jsonData);
     } catch (e) {
-      console.log(pathSegments);
-      console.error(e);
+      //console.log(pathSegments);
+      //console.error(e);
       return null;
     }
   };
@@ -227,71 +215,31 @@ export default () => {
     return dirFiles;
   };
 
-  const getFileHandle = async (pathSegments) => {
+  const getFileHandle = async (inPathSegments) => {
     try {
+      const pathSegments = [...inPathSegments];
       // The last segment is the file name, without the `.json` suffix.
       // The other segments are directories
+      let targetHandleName = pathSegments.join("-");
+
       const fileName = pathSegments.pop();
       const fullFileName = fileName + ".json";
-      // The file handle is stored with the parent directory appended to disambiguate.
-      let parentDir = pathSegments[pathSegments.length - 1];
-      const fileHandleName = parentDir + "-" + fileName;
 
       // The fileHandle we will read and write
       let fileHandle;
 
       // Do we already have the fileHandle?
-      if (fileHandleMap.has(fileHandleName)) {
-        fileHandle = fileHandleMap.get(fileHandleName);
+      if (fileHandleMap.has(targetHandleName)) {
+        fileHandle = fileHandleMap.get(targetHandleName);
       } else {
-        // We need to get the fileHandle from the parent directory.
-        // The parentDirectory may not have been loaded yet.
-        // Recurse through the remaining pathSegments until we find a loaded one.
-        // Eventually we'll get to the last segment which will be in the sourceDir.
-
-        pathSegments.unshift("sourceDir");
-        // Process the remaining pathSegments in reverse
-        pathSegments.reverse();
-        // Track the segments we process so we can
-        const processedSegments = [];
-
-        // Go up and down segments updating this until its final correct state.
-        let parentDirHandle;
-        let parentFound = false;
-
-        while (!parentFound) {
-          const segment = pathSegments.shift();
-
-          // Directory names will be unique and match the dirHandleMap key exactly.
-
-          if (dirHandleMap.has(segment)) {
-            // We can get to the fileHandle from here, no need to process the remaining segments.
-            parentFound = true;
-
-            parentDirHandle = dirHandleMap.get(segment);
-
-            // We now need to recurse the processed segments to get back to the file parentDir.
-            while (processedSegments.length > 0) {
-              let nextLevel = processedSegments.shift();
-              parentDirHandle = await parentDirHandle.getDirectoryHandle(
-                nextLevel
-              );
-
-              // Save the handle
-              dirHandleMap.set(nextLevel, parentDirHandle);
-            }
-          } else {
-            processedSegments.push(segment);
-          }
-        }
-
+        const parentDirHandle = await getDirHandle(pathSegments);
         // A file handle to read/write data
         fileHandle = await parentDirHandle.getFileHandle(fullFileName, {
           create: true,
         });
-
-        return fileHandle;
+        fileHandleMap.set(targetHandleName, fileHandle);
       }
+      return fileHandle;
     } catch (e) {
       console.error(e);
     }
@@ -411,13 +359,14 @@ export default () => {
     flowId,
     nuggetObj,
     relId = null,
-    relType = null
+    relType = null,
+    nameType = "tcms"
   ) => {
     try {
       console.log("Creating Nugget for Flow " + flowId);
 
       // Set ID and initial timestamps
-      addId(nuggetObj);
+      addId(nuggetObj, nameType);
       initTimestamps(nuggetObj);
 
       const nugget = await writeJson(
@@ -553,11 +502,24 @@ export default () => {
     return newSeq;
   };
 
+  const ensureDirJson = async (pathSegments = [], fileData) => {
+    console.log(pathSegments);
+    console.log(fileData);
+    // const fileHandle = await getFileHandle(pathSegments);
+    const currData = await readJson(pathSegments);
+    if (!currData) {
+      console.log(currData);
+      console.log(pathSegments);
+      await writeJson(pathSegments, fileData);
+    }
+  };
+
   const writeJson = async (pathSegments = [], fileData) => {
     try {
       // The last segment is the filename minus the `.json` extension.
       const fileName = pathSegments.pop();
       console.log(pathSegments);
+      console.log(fileData);
       console.log(fileName);
 
       // The remaining segments are directories.
@@ -638,15 +600,26 @@ export default () => {
   };
 
   // Add id
-  const addId = async (data) => {
-    const alphabet =
-      "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzu";
-    const nanoid = customAlphabet(alphabet, 20);
+  const addId = async (data, nameType = "tcms") => {
+    let tUid = null;
 
-    const uid = nanoid();
+    switch (nameType) {
+      case "tcms":
+        const alphabet =
+          "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzu";
+        const nanoid = customAlphabet(alphabet, 20);
 
-    // Split that into 5 chunks of 4 char each, then join with hyphen
-    const tUid = uid.match(new RegExp(".{1," + 4 + "}", "g")).join("_");
+        const uid = nanoid();
+
+        // Split that into 5 chunks of 4 char each, then join with hyphen
+        tUid = uid.match(new RegExp(".{1," + 4 + "}", "g")).join("_");
+        break;
+
+      case "timeseries":
+        const now = new Date();
+        tUid = now.toISOString().replaceAll(":", "-").replaceAll(".", "");
+        break;
+    }
 
     data.id = tUid;
     console.log(data);
@@ -1098,6 +1071,6 @@ export default () => {
     storeNuggetMediaMeta,
     moveNugget,
     flush,
-    ensureFlowsExist
+    ensureFlowsExist,
   };
 };
