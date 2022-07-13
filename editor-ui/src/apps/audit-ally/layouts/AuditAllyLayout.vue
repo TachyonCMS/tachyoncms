@@ -42,6 +42,9 @@
                 menuItem.label.toLowerCase().replaceAll(' ', '_')
               "
             >
+             <q-item-section avatar>
+          <q-icon :color="menuItem.color" :name="menuItem.icon"></q-icon>
+        </q-item-section>
               <q-item-section>
                 {{ menuItem.label }}
               </q-item-section>
@@ -112,74 +115,110 @@ export default defineComponent({
       {
         label: "Enterprise Assets",
         separator: true,
+        icon: "mdi-city",
+        color: "red-3"
       },
       {
         label: "Software Assets",
         separator: true,
+                icon: "mdi-code-braces",
+        color: "red-3"
       },
       {
         label: "Data Protection",
         separator: true,
+        icon: "mdi-database",
+        color: "red-3"
       },
       {
         label: "Secure Configuration",
         separator: true,
+        icon: "mdi-cog",
+        color: "red-3"
       },
       {
         label: "Account Management",
         separator: true,
+        icon: "mdi-account",
+        color: "red-3"
       },
       {
         label: "Access Control",
         separator: true,
+        icon: "mdi-human",
+        color: "red-3"
       },
       {
         label: "Vulnerability Management",
         separator: true,
+        icon: "mdi-skull",
+        color: "red-3"
       },
       {
         label: "Audit Logging",
         separator: true,
+        icon: "mdi-math-log",
+        color: "red-3"
       },
       {
         label: "Email and Web Browser",
         separator: true,
+        icon: "mdi-email",
+        color: "red-3"
       },
       {
         label: "Malware Protections",
         separator: true,
+        icon: "mdi-shield-bug",
+        color: "red-3"
       },
       {
         label: "Data Recovery",
         separator: true,
+        icon: "mdi-backup-restore",
+        color: "red-3"
       },
       {
         label: "Infrastructure Management",
         separator: true,
+        icon: "mdi-lan",
+        color: "red-3"
       },
       {
         label: "Network Monitoring ",
         separator: true,
+        icon: "mdi-security-network",
+        color: "red-3"
       },
       {
         label: "Security Training",
         separator: true,
+        icon: "mdi-account-lock",
+        color: "red-3"
       },
       {
         label: "Service Providers",
         separator: true,
+        icon: "mdi-account-group",
+        color: "red-3"
       },
       {
         label: "Software Security",
         separator: true,
+        icon: "mdi-lock",
+        color: "red-3"
       },
       {
         label: "Incident Response Management",
         separator: true,
+        icon: "mdi-alarm-light",
+        color: "red-3"
       },
       {
         label: "Penetration Testing",
         separator: true,
+        icon: "mdi-fire",
+        color: "red-3"
       },
     ];
 
