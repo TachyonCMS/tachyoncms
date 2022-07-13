@@ -157,7 +157,10 @@ export default function useFlows() {
 
   // Get a single Flow for display in the App page
   const loadFlow = async (flowId, withNuggets = false, withBlocks = true) => {
+    console.log(flowSource);
     try {
+      flowLoaded.value = false;
+
       if (flowConnector.value && flowSource.value) {
         // Use the defined connector
         return flowConnectors[flowConnector.value]
@@ -236,11 +239,12 @@ export default function useFlows() {
     flowId,
     nuggetData,
     relId = null,
-    relType = null
+    relType = null,
+    nameType = "tcms"
   ) => {
     try {
-      flowConnectors[flowConnector.value]
-        .createNugget(flowId, nuggetData, relId, relType)
+      return flowConnectors[flowConnector.value]
+        .createNugget(flowId, nuggetData, relId, relType, nameType)
         .then((nuggetResult) => {
           console.log(nuggetResult);
 
@@ -640,6 +644,22 @@ export default function useFlows() {
     }
   };
 
+  const ensureFlowsExist = async (requiredFlows) => {
+    try {
+      console.log("ensureFlowsExist");
+      console.log(requiredFlows);
+      // Use the defined connector
+      await flowConnectors[flowConnector.value].ensureFlowsExist(requiredFlows);
+    } catch (e) {
+      console.error("Error Storing Media");
+      console.error(e);
+    }
+  };
+
+  const destroy = async () => {
+    await flushAll();
+  };
+
   return {
     loadNuggetAssets,
     loadFlows,
@@ -679,5 +699,7 @@ export default function useFlows() {
     storeNuggetMedia,
     storeNuggetMediaMeta,
     moveNugget,
+    ensureFlowsExist,
+    destroy,
   };
 }

@@ -1,10 +1,15 @@
 <template>
-  <div class="flex full-width nospc">
-    <div class="fit videobox block relative-postion nospc">
+  <div class="fit nospc justify-center text-center">
+    <div
+      class="fit block relative-postion nospc ofh justify-center text-center"
+    >
       <q-resize-observer @resize="onResize" debounce="200"></q-resize-observer>
 
-      <div class="relative-position nospc">
+      <div
+        class="row relative-position nospc videobox justify-center text-center"
+      >
         <video
+          class="justify-center text-center"
           v-show="['video'].includes(view)"
           :ref="videoId"
           :src="videoSource"
@@ -24,7 +29,7 @@
           class="top-left full-width z-max"
           style="opacity: 100"
         >
-          <q-card flat>
+          <q-card flat class="row">
             <q-toolbar>
               <q-avatar>
                 <q-icon name="mdi-information"></q-icon>
@@ -99,7 +104,10 @@
         </div>
       </div>
 
-      <div v-show="view == 'snapshot'">
+      <div
+        v-show="view == 'snapshot'"
+        class="row nospc videobox justify-center text-center"
+      >
         <canvas :ref="canvasId" :width="vWidth" :height="vHeight">
           <img
             :ref="imgId"
@@ -152,10 +160,7 @@
 
       <!-- VIDEO CONTROLS -->
 
-      <div
-        v-show="view == 'video'"
-        class="row col-12 video-controls q-px-md q-pb-sm"
-      >
+      <div v-show="view == 'video'" class="row col-12 video-controls q-pa-xs">
         <q-btn
           round
           icon="mdi-camera-iris"
@@ -288,6 +293,7 @@
         <video-source-selector
           :videoSourceList="cameras"
           @selectedSource="(event) => onChangeVideoSource(event)"
+          :videoTypes="videoTypes"
         ></video-source-selector>
       </div>
     </div>
@@ -403,6 +409,7 @@ export default defineComponent({
       snapMeta,
       recMeta,
       deleteSnap,
+      screenRatio,
     } = useMultiCorder();
 
     const view = ref("selectSource");
@@ -429,15 +436,14 @@ export default defineComponent({
       viewWidth = $q.screen.width;
       console.log("Quasar screen width: " + viewWidth);
 
-      targetWidth =
-        props.width < viewWidth * 0.96 ? props.width : viewWidth * 0.96;
+      targetWidth = props.width < viewWidth ? props.width : viewWidth;
       console.log("Target Width: " + targetWidth);
 
       return targetWidth;
     };
 
     const vHeight = computed(() => {
-      return vWidth.value * 0.5625;
+      return vWidth.value * screenRatio.value;
     });
 
     const onResize = (size) => {
@@ -616,7 +622,7 @@ export default defineComponent({
 
 <style scoped>
 .videobox {
-  background-color: #e8e8e8;
+  background-color: black;
 }
 .video-controls {
   background-color: #e8e8e8;
@@ -628,5 +634,9 @@ export default defineComponent({
 .nospc {
   padding: 0;
   margin: 0;
+}
+
+.ofh {
+  overflow: hidden;
 }
 </style>

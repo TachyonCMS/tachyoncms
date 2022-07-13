@@ -136,4 +136,12 @@ export default defineComponent({
 .warn {
   color: red;
 }
+.warn a {
+  color: red;
+  text-decoration: none; /* no underline */
+}
+
+.warn a:visited {
+  color: red;
+}
 </style>
