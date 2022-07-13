@@ -31,7 +31,7 @@
         </template>
       </q-card-actions>
       <q-card-section
-        class="text-center justify-center ev-header q-ma-md text-h6"
+        class="text-center justify-center ev-header q-ma-md text-h6 fit"
         v-if="nuggetId"
       >
         Evidence of the Event

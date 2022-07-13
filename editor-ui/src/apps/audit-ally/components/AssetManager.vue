@@ -26,13 +26,13 @@
       <multi-corder
         v-if="tabView == 'camera'"
         :nuggetId="nuggetId"
-        width="3440"
+        width="900"
         :videoTypes="['camera']"
       ></multi-corder>
       <multi-corder
         v-if="tabView == 'screen'"
         :nuggetId="nuggetId"
-        width="3440"
+        width="900"
         :videoTypes="['screen']"
       ></multi-corder>
     </div>

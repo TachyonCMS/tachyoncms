@@ -287,7 +287,7 @@
         <video-source-selector
           :videoSourceList="cameras"
           @selectedSource="(event) => onChangeVideoSource(event)"
-          videoTypes="['camera','screen']"
+          :videoTypes="videoTypes"
         ></video-source-selector>
       </div>
     </div>

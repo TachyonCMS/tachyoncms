@@ -14,7 +14,7 @@
       <q-tab name="screen" icon="monitor" label="Screen"></q-tab>
       -->
       <q-tab name="file-manager" icon="mdi-file-multiple" label="Files"></q-tab>
-      <q-tab name="multi-corder" icon="camera" label="Multicorder"></q-tab>
+      <q-tab name="multi-corder" icon="camera" label="Multimedia"></q-tab>
     </q-tabs>
     <div class="row col-12 text-center fit justify-center">
       <component :is="tabView" :nuggetId="nuggetId" width="3440"></component>
