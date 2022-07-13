@@ -1,5 +1,5 @@
 <template>
-  <div class="flex fit">
+  <div class="flex fit selec">
     <div
       class="flex fit"
       v-if="videoTypes.length <= 1 && videoTypes[0] == 'camera'"
@@ -37,7 +37,7 @@
               value: 'screen',
             })
           "
-          class="btn"
+          class="btn" size="xl" no-caps
           >Select Screen</q-btn
         >
       </div>
@@ -140,5 +140,8 @@ h6 {
 }
 .btn {
   background-color: white;
+}
+.selec {
+  background-color: lightgray
 }
 </style>

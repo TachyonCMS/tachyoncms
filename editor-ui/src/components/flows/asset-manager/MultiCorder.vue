@@ -282,7 +282,7 @@
       <div
         v-show="view === 'selectSource'"
         :style="'min-height: ' + vHeight + 'px'"
-        class="flex flex-center"
+        class="flex flex-center selec"
       >
         <video-source-selector
           :videoSourceList="cameras"
@@ -622,7 +622,7 @@ export default defineComponent({
 
 <style scoped>
 .videobox {
-  background-color: #e8e8e8;
+  background-color: black;
 }
 .video-controls {
   background-color: #e8e8e8;
@@ -634,5 +634,9 @@ export default defineComponent({
 .nospc {
   padding: 0;
   margin: 0;
+}
+
+.selec {
+  background-color: lightgray;
 }
 </style>
