@@ -605,10 +605,10 @@ export default defineComponent({
     },
 
     getVideoDimensions(e) {
-      console.log(e.target.videoHeight);
-      console.log(e.target.videoWidth);
-      console.log(this.vHeight);
-      console.log(this.vWidth);
+      console.log('Element Height ' + e.target.videoHeight);
+      console.log('Element Width ' + e.target.videoWidth);
+      console.log('vHeight '+ this.vHeight);
+      console.log('vWidth '+ this.vWidth);
     },
   },
 });

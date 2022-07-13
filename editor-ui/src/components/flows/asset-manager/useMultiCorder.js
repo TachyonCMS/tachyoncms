@@ -283,7 +283,11 @@ export default function useMultiCorder() {
     try {
       navigator.mediaDevices
         .getDisplayMedia()
-        .then((stream) => loadSrcStream(stream, videoElem));
+        .then((stream) => {
+          loadSrcStream(stream, videoElem)
+          console.log(stream)
+          console.log(videoElem)
+        });
     } catch (e) {
       console.error(e);
     }
