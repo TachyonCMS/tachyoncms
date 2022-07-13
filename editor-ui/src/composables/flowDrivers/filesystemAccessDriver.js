@@ -1050,6 +1050,31 @@ export default () => {
     fileHandleMap.clear();
   };
 
+  const ensureFlowsExist = async (requiredFlows) => {
+    console.log("ensureFlowsExist");
+    console.log(requiredFlows);
+
+    for await (const flowName of requiredFlows) {
+      console.log(flowName);
+
+      const namedId = "tcms-" + flowName.toLowerCase().replaceAll(" ", "_");
+
+      const flowData = {
+        name: flowName,
+        id: namedId,
+      };
+
+      initTimestamps(flowData);
+
+      console.log(flowData);
+
+      const result = await ensureDirJson(
+        ["flows", flowData.id, "flow"],
+        flowData
+      );
+    }
+  };
+
   // exposed
   return {
     loadFlows,
@@ -1073,5 +1098,6 @@ export default () => {
     storeNuggetMediaMeta,
     moveNugget,
     flush,
+    ensureFlowsExist
   };
 };

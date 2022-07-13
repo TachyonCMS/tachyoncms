@@ -640,6 +640,18 @@ export default function useFlows() {
     }
   };
 
+  const ensureFlowsExist = async (requiredFlows) => {
+    try {
+      console.log("ensureFlowsExist");
+      console.log(requiredFlows);
+      // Use the defined connector
+      await flowConnectors[flowConnector.value].ensureFlowsExist(requiredFlows);
+    } catch (e) {
+      console.error("Error Storing Media");
+      console.error(e);
+    }
+  };
+
   return {
     loadNuggetAssets,
     loadFlows,
@@ -679,5 +691,6 @@ export default function useFlows() {
     storeNuggetMedia,
     storeNuggetMediaMeta,
     moveNugget,
+    ensureFlowsExist
   };
 }

@@ -177,19 +177,19 @@ const routes = [
 
   {
     path: "/audit-ally",
-    component: () => import("src/layouts/AuditAllyLayout.vue"),
+    component: () => import("src/apps/audit-ally/layouts/AuditAllyLayout.vue"),
     children: [
-      { path: "", component: () => import("pages/audit-ally/Index.vue") },
+      { path: "", component: () => import("src/apps/audit-ally/components/Index.vue") },
     ],
   },
 
   {
     path: "/audit-ally/:securityConcern",
-    component: () => import("src/layouts/AuditAllyLayout.vue"),
+    component: () => import("src/apps/audit-ally/layouts/AuditAllyLayout.vue"),
     children: [
       {
         path: "",
-        component: () => import("pages/audit-ally/SecurityConcern.vue"),
+        component: () => import("src/apps/audit-ally/components/SecurityConcern.vue"),
       },
     ],
   },
