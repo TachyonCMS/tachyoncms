@@ -436,8 +436,10 @@ export default defineComponent({
       return targetWidth;
     };
 
+    const vRatio = ref(0.5625)
+
     const vHeight = computed(() => {
-      return vWidth.value * 0.5625;
+      return vWidth.value * vRatio.value;
     });
 
     const onResize = (size) => {
@@ -506,6 +508,7 @@ export default defineComponent({
       snapMeta,
       recMeta,
       deleteSnap,
+      vRatio
     };
   },
   methods: {
@@ -607,6 +610,9 @@ export default defineComponent({
     getVideoDimensions(e) {
       console.log('Element Height ' + e.target.videoHeight);
       console.log('Element Width ' + e.target.videoWidth);
+      const newRatio = e.target.videoHeight / e.target.videoWidth;
+      this.vRatio = newRatio;
+      console.log('newRatio ' + newRatio)
       console.log('vHeight '+ this.vHeight);
       console.log('vWidth '+ this.vWidth);
     },
