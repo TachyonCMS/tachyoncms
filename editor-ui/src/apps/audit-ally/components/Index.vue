@@ -39,7 +39,16 @@
         </q-card-section>
       </q-card>
     </div>
-    <div v-else>Choose a security concern</div>
+    <div v-else>
+      <q-page class="q-pa-xl">
+        <div class="text-h2 q-pa-md">It's Easy..</div>
+        <div class="text-h4 q-pa-md">1. Select a Security Concern</div>
+        <div class="text-h4 q-pa-md">2. Create an Audit Event</div>
+        <div class="text-h4 q-pa-md">3. Add Evidence</div>
+        <div class="text-h4 q-pa-md">4. Sleep Easy</div>
+        </q-page>
+
+    </div>
   </q-page>
 </template>
 

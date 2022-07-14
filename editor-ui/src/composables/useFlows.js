@@ -295,6 +295,22 @@ export default function useFlows() {
     }
   };
 
+    // Update multiple properties of a nugget.
+  const updateNugget = async (nuggetId, mergeVals) => {
+    try {
+      // Use the defined connector
+      flowConnectors[flowConnector.value]
+        .updateNugget(nuggetId, mergeVals)
+        .then((nuggetResult) => {
+          console.log(nuggetResult);
+          nuggetMap.set(nuggetId, nuggetResult.nugget);
+        });
+    } catch (e) {
+      console.error("Error Updating Nugget");
+      console.error(e);
+    }
+  };
+
   // Update a single property of a nugget.
   // This is the predominate update mechanism when using inline editing.
   const updateNuggetProp = async (nuggetId, propName, propValue) => {
@@ -311,6 +327,7 @@ export default function useFlows() {
       console.error(e);
     }
   };
+  
 
   // Update a single property of a nugget.
   // This is the predominate mechanism when the property has a lot of data.
@@ -673,6 +690,7 @@ export default function useFlows() {
     pageFlowId,
     createNugget,
     nuggetMap,
+    updateNugget,
     updateNuggetProp,
     updateNuggetData,
     deleteNugget,

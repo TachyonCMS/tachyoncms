@@ -41,6 +41,7 @@
                 '/audit-ally/' +
                 menuItem.label.toLowerCase().replaceAll(' ', '_')
               "
+              @click="leftDrawerOpen = !leftDrawerOpen"
             >
              <q-item-section avatar>
           <q-icon :color="menuItem.color" :name="menuItem.icon"></q-icon>

@@ -397,6 +397,24 @@ export default () => {
     }
   };
 
+  const updateNugget = async (nuggetId, mergeVals) => {
+    try {
+      console.log("Updating Nugget");
+      console.log(mergeVals);
+
+      const nugget = await mergeUpdate(
+        ["nuggets", nuggetId, "nugget"],
+        mergeVals
+      );
+
+      console.log(nugget);
+      return { nugget: nugget };
+    } catch (e) {
+      console.log("Error Updating Nugget");
+      console.error(e);
+    }
+  };
+
   const updateNuggetProp = async (nuggetId, propName, propValue) => {
     try {
       console.log("Updating Nugget");
@@ -1056,6 +1074,7 @@ export default () => {
     updateFlowProp,
     getFlowById,
     createNugget,
+    updateNugget,
     updateNuggetProp,
     updateNuggetData,
     deleteNugget,

@@ -19,7 +19,6 @@
     </q-tabs>
 
     <div class="row col-12 text-center fit justify-center">
-      here
       <file-manager
         :nuggetId="nuggetId"
         v-if="tabView == 'file-manager'"

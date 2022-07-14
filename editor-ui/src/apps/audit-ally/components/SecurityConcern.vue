@@ -19,12 +19,15 @@
           v-model="description"
         ></q-input>
       </div>
-      <div class="text-center justify-center">
+      <div class="row text-center justify-center">
         <template v-if="nuggetId">
+          <q-space></q-space>
           <q-btn icon="mdi-content-save" @click="onUpdateNugget">
             Save Event</q-btn
           >
+          <q-space></q-space>
           <q-btn icon="mdi-close" @click="onCloseNugget"> Close Event </q-btn>
+          <q-space></q-space>
         </template>
         <template v-else>
           <q-btn icon="mdi-content-save" @click="onCreateNugget">
@@ -36,14 +39,14 @@
       </q-card-section>
       <q-card-section>
       <div
-        class="text-center justify-center ev-header  fit"
+        class="text-center justify-center ev-header text-h4 fit q-pa-sm"
         v-if="nuggetId"
       >
         Evidence of the Event
         </div>
         
         <div
-        class="text-center justify-center"
+        class="text-center justify-center  q-py-lg"
         v-if="nuggetId"
       >
         <asset-manager :nuggetId="nuggetId"></asset-manager> 
@@ -56,9 +59,7 @@
     <template v-if="tabView == 'eventLog'">
       <!-- Reactive list of Nuggets from within the Flow object. -->
       <template v-if="nuggetSeq && nuggetSeq.length > 0">
-        <q-list v-for="(nuggetId, nix) in nuggetSeq" :key="nuggetId">
-          {{ nuggetId }} {{ nix }}
-        </q-list>
+       <event-log :eventSeq="nuggetSeq"></event-log>
       </template>
       <template v-else>
         <!-- Show spinner-->
@@ -88,12 +89,14 @@ import { useRoute, useRouter } from "vue-router";
 
 import useFlows from "../../../composables/useFlows";
 import AssetManager from "./AssetManager";
+import EventLog from "./EventLog";
 
 export default defineComponent({
   name: "PageFlow",
   emits: ["appNotification", "setDrawer"],
   components: {
     AssetManager,
+    EventLog
   },
   setup() {
     const route = useRoute();
@@ -117,6 +120,7 @@ export default defineComponent({
       flowMap,
       flowLoaded,
       nuggetMap,
+      updateNugget,
       updateNuggetData,
       deleteNugget,
       createNugget,
@@ -194,6 +198,7 @@ export default defineComponent({
       title,
       description,
       createNugget,
+      updateNugget,
       nuggetSeq,
       nuggetAssetStates,
     };
@@ -241,44 +246,22 @@ export default defineComponent({
     async onUpdateNugget() {
       console.log("Updating Security Event");
 
-      const now = new Date();
 
-      const result = await this.createNugget(
-        this.flowId,
-        {
-          type: "media",
-          name: now.toString(),
-          title: this.title,
-          description: this.description,
-        },
-        0,
-        "before",
-        "timeseries"
-      );
-      console.log(result);
+      const data = {
+        title: this.title,
+        description: this.description
+      }
 
-      this.nuggetId = result.nugget.id;
+      const result = await this.updateNugget(
+                              this.nugget,
+                              data
+                            );
     },
     async onCloseNugget() {
       console.log("Closing Security Event");
-
-      const now = new Date();
-
-      const result = await this.createNugget(
-        this.flowId,
-        {
-          type: "media",
-          name: now.toString(),
-          title: this.title,
-          description: this.description,
-        },
-        0,
-        "before",
-        "timeseries"
-      );
-      console.log(result);
-
-      this.nuggetId = result.nugget.id;
+      this.title = null;
+      this.description = null;
+      this.nuggetId = null;
     },
   },
 });
