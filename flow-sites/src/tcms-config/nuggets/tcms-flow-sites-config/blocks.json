@@ -2,9 +2,9 @@
     "blocks": [
         {
             "id": "FgHzcH0V",
-            "type": "tcmsFlowSiteConfig",
+            "type": "tcmsFlowSitesConfig",
             "data": {
-                "defaultHost": "",
+                "defaultHost": "", 
                 "hostSites": {
                     "localhost": "dev"
                 },

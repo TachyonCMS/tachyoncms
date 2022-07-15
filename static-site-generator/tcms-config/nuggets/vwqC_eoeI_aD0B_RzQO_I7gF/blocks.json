@@ -1,0 +1,38 @@
+{
+  "blocks": [
+    {
+      "id": "FgHzcH0V",
+      "type": "tcmsStaticSiteConfig",
+      "data": {
+        "routes": {
+          "blog": {
+            "urlPath": "/blog/:blogId",
+            "flowsPath": "src/tcms/blogs",
+            "layout": "Main",
+            "page": "pages/Blog"
+          },
+          "catalog": {
+            "urlPath": "/catalog/:catalogId",
+            "flowsPath": "src/tcms/catalogs",
+            "layout": "Store",
+            "page": "pages/Catalog"
+          },
+          "product": {
+            "urlPath": "/product/:productId",
+            "flowsPath": "src/tcms/products",
+            "layout": "Store",
+            "page": "pages/Product"
+          },
+          "wip": {
+            "urlPath": "/wip/:wipId",
+            "flowsPath": "src/tcms/wip",
+            "incUnpubFlow": true,
+            "incUnpubNugget": true,
+            "layout": "Main",
+            "page": "pages/Blog"
+          }
+        }
+      }
+    }
+  ]
+}
