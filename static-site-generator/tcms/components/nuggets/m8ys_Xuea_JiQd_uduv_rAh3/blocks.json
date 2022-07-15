@@ -6,37 +6,31 @@
       "data": {
         "menuItems": [
           {
-            "name": "advantages",
             "icon": "mdi-cart",
             "label": "Advantages",
             "link": "/advantages"
           },
           {
-            "name": "docs",
             "icon": "mdi-documents",
             "label": "Documentation",
             "link": "/docs"
           },
           {
-            "name": "about",
             "icon": "mdi-information-variant",
             "label": "About Us",
             "link": "/about"
           },
           {
-            "name": "contact",
             "icon": "mdi-card-accoount-mail",
             "label": "Contact Us",
             "link": "/contact"
           },
           {
-            "name": "shop",
             "icon": "mdi-cart",
             "label": "Shop",
             "link": "/shop"
           },
           {
-            "name": "blogs",
             "icon": "mdi-blog",
             "label": "Blogs",
             "link": "/blogs"
