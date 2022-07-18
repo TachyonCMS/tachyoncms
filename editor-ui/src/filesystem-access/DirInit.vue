@@ -2,25 +2,24 @@
   <div class="row col-6">
     <q-space></q-space>
 
-      <select-btn
-        :size="size"
-        :class="styleClass"
-        :padding="padding"
-        label="Create New"
-        @dirHandle="(dirHandle) => this.initHandle(dirHandle)"
-      ></select-btn>
+    <select-btn
+      :size="size"
+      :class="styleClass"
+      :padding="padding"
+      label="Create New"
+      @dirHandle="(dirHandle) => this.initHandle(dirHandle)"
+    ></select-btn>
 
     <q-space></q-space>
 
-      <select-btn
-        :size="size"
-        :class="styleClass"
-        :padding="padding"
-        label="Open Existing"
-        @dirHandle="(dirHandle) => this.openHandle(dirHandle)"
-      ></select-btn>
-      <q-space></q-space>
-
+    <select-btn
+      :size="size"
+      :class="styleClass"
+      :padding="padding"
+      label="Open Existing"
+      @dirHandle="(dirHandle) => this.openHandle(dirHandle)"
+    ></select-btn>
+    <q-space></q-space>
   </div>
 </template>
 
@@ -32,42 +31,40 @@ import useFlows from "../composables/useFlows";
 import SelectBtn from "./SelectBtn.vue";
 
 const initFuncs = {
-  flows: ["flows", "nugget", "tags"]
+  flows: ["flows", "nugget", "tags"],
 };
 
 export default defineComponent({
-  emits: ['dirReady'],
+  emits: ["dirReady"],
   props: {
     size: {
       type: String,
-      default: "xl"
+      default: "xl",
     },
     styleClass: {
       type: String,
-      default: "cta text-weight-bolder"
+      default: "cta text-weight-bolder",
     },
     padding: {
       type: String,
-      default: "xl"
+      default: "xl",
     },
     label: {
       type: String,
-      default: "Select Directory"
+      default: "Select Directory",
     },
     initType: {
       type: String,
-      default: "flows" // flows|audit-ally|secret-stash
+      default: "flows", // flows|audit-ally|secret-stash
     },
     encrypt: {
       type: String,
-      default: "no" // yes|no|opt
-    }
+      default: "no", // yes|no|opt
+    },
   },
 
-  emits: ["dirHandleObj"],
-
   components: {
-    SelectBtn
+    SelectBtn,
   },
 
   setup() {
@@ -80,7 +77,7 @@ export default defineComponent({
       setFlowSource,
       setFlowConnector,
       initSource,
-      dirHasFile
+      dirHasFile,
     };
   },
 
@@ -98,7 +95,7 @@ export default defineComponent({
           if (isEmpty) {
             this.setFlowSource(dirHandle);
             this.initSource(dirHandle);
-            this.$emit('dirReady');
+            this.$emit("dirReady");
           } else {
             this.$q
               .dialog({
@@ -106,11 +103,9 @@ export default defineComponent({
                 message:
                   "Files were found in the directory, you must start in a empty directory.",
                 cancel: false,
-                persistent: true
+                persistent: true,
               })
-              .onOk((data) => {
-
-              })
+              .onOk((data) => {});
           }
       }
     },
@@ -119,35 +114,58 @@ export default defineComponent({
         case "flows":
           this.setFlowConnector("filesystem");
           const result = await this.dirHasFile(dirHandle, "tachyon-cms.json");
-          console.log(result)
+          console.log(result);
           if (result) {
+            /*
+            const encrypted = await this.dirHasFile(
+              dirHandle,
+              "encryption.json"
+            );
+            if (encrypted) {
+            
+              this.$q
+                .dialog({
+                  title: "Existing Files Found!",
+                  message:
+                    "Files were found in the directory, you must start in a empty directory.",
+                  prompt: {
+                    model: "",
+                    type: "text", // optional
+                  },
+                  cancel: false,
+                  persistent: true,
+                })
+                .onOk((password) => {
+                  const check = await this.decryptDir(password)
+
+                });
+              
+            }
+            */
             await this.setFlowSource(dirHandle);
-            this.$emit('dirReady');
+            this.$emit("dirReady");
           } else {
             this.$q
               .dialog({
                 title: "Configuration Missing",
                 message:
-                  "A configuration file was not found, please choose a directory with existing data.",
+                  "A configuration file was not found, please choose a directory with data.",
                 cancel: false,
-                persistent: true
+                persistent: true,
               })
-              .onOk((data) => {
-
-              })
-              .onCancel(() => {
-                // console.log('>>>> Cancel')
-                this.setFlowConnector(null);
-                this.setFlowSource(null);
-              })
-              .onDismiss(() => {
-                // console.log('I am triggered on both OK and Cancel')
-              });
+              .onOk((data) => {});
           }
           break;
       }
     },
-  }
+    async decryptDir(password) {
+      if ((password = "xyz")) {
+        return "wedfewdwedwedcw";
+      }
+
+      return false;
+    },
+  },
 });
 </script>
 
