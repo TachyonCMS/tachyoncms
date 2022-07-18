@@ -677,6 +677,22 @@ export default function useFlows() {
     await flushAll();
   };
 
+  const dirHasFile = async (dirHandle, filename) => {
+    try {
+      console.log("Checking dirHasFile " + filename);
+      // Use the defined connector
+      return flowConnectors[flowConnector.value]
+        .dirHasFile(dirHandle, filename)
+        .then((result) => {
+          console.log(result)
+          return result;
+        });
+    } catch (e) {
+      console.error("Error Checking file existence");
+      console.error(e);
+    }
+  }
+
   return {
     loadNuggetAssets,
     loadFlows,
@@ -719,5 +735,6 @@ export default function useFlows() {
     moveNugget,
     ensureFlowsExist,
     destroy,
+    dirHasFile
   };
 }

@@ -591,11 +591,39 @@ export default () => {
       });
       dirHandleMap.set("tags", tagsDirHandle);
 
+      // Write TachyonCMS Management Meta data file
+      writeMgmtFiles(sourceDirHandle)
+
+
       return;
     } catch (e) {
       console.error(e);
     }
   };
+
+  const writeMgmtFiles = async (dirHandle) => {
+
+    const jsonData = { name: "TachyonCMS", version: "1.0.0", appType: "cms" };
+    addId(jsonData)
+    initTimestamps(jsonData)
+
+    const readmeData = "# TachyonCMS \nThis directory is managed by TachyonCMS. \nVisit [TachyonCMS](https://www.tachyoncms.org) and open this directory. \n\nMODIFY THESE FILES AT YOUR OWN RISK."
+
+    const jsonFileName = "tachyon-cms.json"
+    const readmeFileName = "README.md"
+    
+    // Get file handle
+    const jsonHandle = await dirHandle.getFileHandle(jsonFileName, {
+      create: true,
+    });
+    const readmeHandle = await dirHandle.getFileHandle(readmeFileName, {
+      create: true,
+    });
+
+    const jsonResult = await writeJsonHandle(jsonHandle, jsonData);
+    const readmeResult = await writeToFileHandle(readmeHandle, readmeData);
+
+  }
 
   // Add createdAt and modifiedAt timestamps
   const initTimestamps = (data) => {
@@ -1066,6 +1094,17 @@ export default () => {
     }
   };
 
+  const dirHasFile = async (dirHandle, filename) => {
+    try {
+      const fileHandle = await dirHandle.getFileHandle(filename);
+      console.log(fileHandle)
+      return true;
+    } catch (e) {
+      console.log('file not found')
+      return false;
+    }
+  }
+
   // exposed
   return {
     loadFlows,
@@ -1091,5 +1130,6 @@ export default () => {
     moveNugget,
     flush,
     ensureFlowsExist,
+    dirHasFile
   };
 };

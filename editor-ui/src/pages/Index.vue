@@ -11,6 +11,11 @@
         </p>
       </q-card-section>
       <q-card-actions class="justify-center text-center">
+        <dir-init initType="flows" encrypt="true" @dirReady="this.$router.push('/flows')">
+
+
+        </dir-init>
+        <!--
         <q-btn
           size="xl"
           class="cta text-weight-bolder"
@@ -18,6 +23,7 @@
           @click="onFilesystem()"
           >Select Directory</q-btn
         >
+        -->
       </q-card-actions>
       <q-card-section class="font-weight-bolder">
         <p class="text-bolder q-pa-md warn">
@@ -50,11 +56,12 @@ import { defineComponent } from "vue";
 //import NoFlowSourceSetPage from "../pages/flows/NoFlowSourceSetPage";
 
 import useFlows from "../composables/useFlows";
+import DirInit from "../filesystem-access/DirInit.vue";
 
 export default defineComponent({
   name: "PageIndex",
   components: {
-    // NoFlowSourceSetPage,
+    DirInit,
   },
 
   setup() {
