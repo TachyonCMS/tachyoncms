@@ -30,6 +30,7 @@
     "axios": "^0.27.2",
     "core-js": "^3.6.5",
     "cypress": "9.7.0",
+    "easy-web-crypto": "^1.2.10",
     "electron-store": "^8.0.1",
     "jsoneditor": "^9.9.0",
     "quasar": "^2.6.0",

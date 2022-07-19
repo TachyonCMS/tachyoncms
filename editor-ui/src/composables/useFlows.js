@@ -50,6 +50,12 @@ const flowsLoaded = ref(false);
 // Is the current flow loaded?
 const flowLoaded = ref(false);
 
+// The setting from the sourceDir/tcms-encryption.json
+const sourceEncryption = ref('optional');
+
+// A map of encryption settings for individual flows in source.
+const flowEncryptionMap = ref(new Map());
+
 // MAIN EXPORT FUNCTION
 export default function useFlows() {
   // Useful for list item label or button text

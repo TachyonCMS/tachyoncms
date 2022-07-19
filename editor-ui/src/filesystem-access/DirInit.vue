@@ -119,7 +119,7 @@ export default defineComponent({
             /*
             const encrypted = await this.dirHasFile(
               dirHandle,
-              "encryption.json"
+              "tcms-encryption.json"
             );
             if (encrypted) {
             

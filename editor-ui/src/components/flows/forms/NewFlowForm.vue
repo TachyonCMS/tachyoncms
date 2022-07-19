@@ -35,13 +35,25 @@
             hint="Free form data field."
             :data-cy="dataCySlug + '-new-flow-form-notes-fld'"
           ></q-input>
+        </div>
+        <div class="q-pb-xsm">
           <q-checkbox
             v-model="openFlow"
             label="Open flow"
             hint="Open the new flow after creating it."
-            class="float-right"
             :data-cy="dataCySlug + '-new-flow-form-openFlow-checkbox'"
           ></q-checkbox>
+          <q-checkbox
+            v-model="encryptFlow"
+            label="Encrypt flow"
+            hint="Encrypt the flow, password required."
+            :data-cy="dataCySlug + '-new-flow-form-encryptFlow-checkbox'"
+          ></q-checkbox>
+          <q-input
+            label="Encryption Password"
+            v-model="password"
+            v-show="this.encryptFlow"
+          ></q-input>
         </div>
       </q-card-section>
       <q-card-section v-if="!condensed">
@@ -98,7 +110,9 @@
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, computed } from "vue";
+
+const WebCrypto = require('easy-web-crypto')
 
 import useFlows from "../../../composables/useFlows";
 const { createFlow } = useFlows();
@@ -112,6 +126,10 @@ export default defineComponent({
       type: Boolean,
     },
     openFlowChecked: {
+      default: true,
+      type: Boolean,
+    },
+    encryptFlowChecked: {
       default: true,
       type: Boolean,
     },
@@ -132,6 +150,11 @@ export default defineComponent({
     const unPubAtDate = ref("");
     const unPubAtTime = ref("");
     const openFlow = ref(props.openFlowChecked);
+    const encryptFlow = ref(props.encryptFlowChecked);
+    const password = ref(null);
+    const paswordHash = async () => {
+      return await WebCrypto.hash(password.value);
+    }
 
     return {
       name,
@@ -143,13 +166,14 @@ export default defineComponent({
       unPubAtTime,
       openFlow,
       createFlow,
+      encryptFlow,
     };
   },
   methods: {
     async onSubmit() {
-      const { name, title, notes } = this;
+      const { name, title, notes, encryptFlow, password } = this;
       if (!name) return;
-      const flow = { name, title, notes };
+      const flow = { name, title, notes, encrypted: encryptFlow, password };
       console.log(flow);
       const newFlow = await this.createFlow(flow);
       console.log(newFlow);
@@ -168,6 +192,7 @@ export default defineComponent({
         (this.pubAtTime = ""),
         (this.unPubAtDate = ""),
         (this.unPubAtTime = "");
+      this.encryptFlow = "";
       this.openFlow = this.openFlowChecked;
     },
   },

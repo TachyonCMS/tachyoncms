@@ -106,6 +106,11 @@ export default () => {
       initTimestamps(flowData);
 
       console.log(flowData);
+      if(flowData.encrypted && flowData.password) {
+
+        //flowData
+
+      }
 
       const result = await writeJson(["flows", flowData.id, "flow"], flowData);
       return { flow: result };
