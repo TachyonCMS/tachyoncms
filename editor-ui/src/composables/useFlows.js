@@ -8,6 +8,8 @@ import electronLocal from "./flowDrivers/electronLocalDriver";
 import storageApi from "./flowDrivers/storageApiDriver";
 import filesystemAccess from "./flowDrivers/filesystemAccessDriver";
 
+import useEncryption from "./useEncryption";
+
 // GLOBAL
 // A map of Flows w/ ID as index.
 const flowMap = reactive(new Map());

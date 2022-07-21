@@ -33,7 +33,7 @@ export default () => {
         }
       }
 
-      // Check them all directories in parallel for a `flows.json`
+      // Check all directories in parallel for a `flows.json`
       const flows = await getJsonMulti(dirSegmentsArray);
 
       return { flows: flows };
@@ -103,26 +103,37 @@ export default () => {
     try {
       console.log("Creating Flow");
 
+      // Get passphrase out of object first
+      let passphrase = null;
+      if(flowData.passphrase) {
+        passphrase = flowData.passphrase
+        flowData.delete('passphrase')
+      }
+
+      // We leave "encrypted" set as  signal to the flow that it is encrypted
+
       // Set ID and initial timestamps
       addId(flowData);
       initTimestamps(flowData);
 
       console.log(flowData);
-      if (flowData.encrypted && flowData.passphrase) {
+      if (flowData.encrypted && passphrase) {
         const encMasterKey = await WebCrypto.genEncryptedMasterKey(
-          flowData.passphrase
+          passphrase
         );
         console.log(encMasterKey);
 
         // decrypt the (stored) AES key to be able to encrypt/decrypt data
         let key = await WebCrypto.decryptMasterKey(
-          flowData.passphrase,
+          passphrase,
           encMasterKey
         );
+
+        flowData
         console.log(key);
       }
 
-      // const result = await writeJson(["flows", flowData.id, "flow"], flowData);
+      const result = await writeJson(["flows", flowData.id, "flow"], flowData);
       return { flow: result };
     } catch (e) {
       console.error("Error Creating Flow");
@@ -616,7 +627,7 @@ export default () => {
   };
 
   const writeMgmtFiles = async (dirHandle) => {
-    const jsonData = { name: "TachyonCMS", version: "1.0.0", appType: "cms" };
+    const jsonData = { name: "TachyonCMS", version: "1.0.0", appType: "cms", "encryption": "opt" };
     addId(jsonData);
     initTimestamps(jsonData);
 
