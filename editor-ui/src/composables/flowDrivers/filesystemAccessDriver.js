@@ -1,5 +1,7 @@
 import { ref, reactive, toRef } from "vue";
 
+const WebCrypto = require("easy-web-crypto");
+
 // import { nanoid } from "nanoid";
 import { customAlphabet } from "nanoid";
 
@@ -106,13 +108,21 @@ export default () => {
       initTimestamps(flowData);
 
       console.log(flowData);
-      if(flowData.encrypted && flowData.password) {
+      if (flowData.encrypted && flowData.passphrase) {
+        const encMasterKey = await WebCrypto.genEncryptedMasterKey(
+          flowData.passphrase
+        );
+        console.log(encMasterKey);
 
-        //flowData
-
+        // decrypt the (stored) AES key to be able to encrypt/decrypt data
+        let key = await WebCrypto.decryptMasterKey(
+          flowData.passphrase,
+          encMasterKey
+        );
+        console.log(key);
       }
 
-      const result = await writeJson(["flows", flowData.id, "flow"], flowData);
+      // const result = await writeJson(["flows", flowData.id, "flow"], flowData);
       return { flow: result };
     } catch (e) {
       console.error("Error Creating Flow");
@@ -240,7 +250,7 @@ export default () => {
         const parentDirHandle = await getDirHandle(pathSegments);
         // A file handle to read/write data
         fileHandle = await parentDirHandle.getFileHandle(fullFileName, {
-          create: true,
+          create: true
         });
         fileHandleMap.set(targetHandleName, fileHandle);
       }
@@ -268,7 +278,7 @@ export default () => {
           const nuggetSeqHandle = await getFileHandle([
             "flows",
             flowId,
-            "nuggetSeq",
+            "nuggetSeq"
           ]);
           console.log(nuggetSeqHandle);
 
@@ -386,7 +396,7 @@ export default () => {
         dataElement: "nuggetSeq",
         insertVal: nuggetObj.id,
         relId: relId,
-        relType: relType,
+        relType: relType
       };
 
       console.log(seqObj);
@@ -450,7 +460,7 @@ export default () => {
       const partialData = { [propName]: propValue };
 
       const result = await writeJson(["nuggets", nuggetId, "blocks"], {
-        blocks: propValue,
+        blocks: propValue
       });
 
       console.log(result);
@@ -518,7 +528,7 @@ export default () => {
       return value !== ixVal;
     });
     const writeResult = await writeJsonHandle(fileHandle, {
-      nuggetSeq: newSeq,
+      nuggetSeq: newSeq
     });
 
     // Return the new sequence
@@ -553,7 +563,7 @@ export default () => {
       const jsonString = JSON.stringify(fileData, null, 2);
 
       const writeHandle = await dirHandle.getFileHandle(fullName, {
-        create: true,
+        create: true
       });
 
       console.log(writeHandle);
@@ -579,26 +589,25 @@ export default () => {
 
       // Create required directories
       const flowDirHandle = await sourceDirHandle.getDirectoryHandle("flows", {
-        create: true,
+        create: true
       });
       dirHandleMap.set("flows", flowDirHandle);
 
       const nuggetDirHandle = await sourceDirHandle.getDirectoryHandle(
         "nuggets",
         {
-          create: true,
+          create: true
         }
       );
       dirHandleMap.set("nuggets", nuggetDirHandle);
 
       const tagsDirHandle = await sourceDirHandle.getDirectoryHandle("tags", {
-        create: true,
+        create: true
       });
       dirHandleMap.set("tags", tagsDirHandle);
 
       // Write TachyonCMS Management Meta data file
-      writeMgmtFiles(sourceDirHandle)
-
+      writeMgmtFiles(sourceDirHandle);
 
       return;
     } catch (e) {
@@ -607,28 +616,27 @@ export default () => {
   };
 
   const writeMgmtFiles = async (dirHandle) => {
-
     const jsonData = { name: "TachyonCMS", version: "1.0.0", appType: "cms" };
-    addId(jsonData)
-    initTimestamps(jsonData)
+    addId(jsonData);
+    initTimestamps(jsonData);
 
-    const readmeData = "# TachyonCMS \nThis directory is managed by TachyonCMS. \nVisit [TachyonCMS](https://www.tachyoncms.org) and open this directory. \n\nMODIFY THESE FILES AT YOUR OWN RISK."
+    const readmeData =
+      "# TachyonCMS \nThis directory is managed by TachyonCMS. \nVisit [TachyonCMS](https://www.tachyoncms.org) and open this directory. \n\nMODIFY THESE FILES AT YOUR OWN RISK.";
 
-    const jsonFileName = "tachyon-cms.json"
-    const readmeFileName = "README.md"
-    
+    const jsonFileName = "tachyon-cms.json";
+    const readmeFileName = "README.md";
+
     // Get file handle
     const jsonHandle = await dirHandle.getFileHandle(jsonFileName, {
-      create: true,
+      create: true
     });
     const readmeHandle = await dirHandle.getFileHandle(readmeFileName, {
-      create: true,
+      create: true
     });
 
     const jsonResult = await writeJsonHandle(jsonHandle, jsonData);
     const readmeResult = await writeToFileHandle(readmeHandle, readmeData);
-
-  }
+  };
 
   // Add createdAt and modifiedAt timestamps
   const initTimestamps = (data) => {
@@ -686,7 +694,7 @@ export default () => {
     try {
       // Breakup the input
       const { objType, objId, dataElement, insertVal, relId, relType } = {
-        ...seqInput,
+        ...seqInput
       };
       console.log(objType, objId, dataElement, insertVal, relId, relType);
       // Make the new sequence value into an array
@@ -740,7 +748,7 @@ export default () => {
                 newSeq = [
                   ...currentSeq.nuggetSeq.slice(0, insertIx),
                   ...newSeq,
-                  ...currentSeq.nuggetSeq.slice(insertIx),
+                  ...currentSeq.nuggetSeq.slice(insertIx)
                 ];
                 break;
             }
@@ -765,7 +773,7 @@ export default () => {
             newSeq = [
               ...currentSeq.nuggetSeq.slice(0, insertIx),
               ...newSeq,
-              ...currentSeq.nuggetSeq.slice(insertIx),
+              ...currentSeq.nuggetSeq.slice(insertIx)
             ];
           }
         }
@@ -775,7 +783,7 @@ export default () => {
       console.log(newSeq);
       // Write the new sequence out to same path
       const writeResult = await writeJsonHandle(fileHandle, {
-        nuggetSeq: newSeq,
+        nuggetSeq: newSeq
       });
 
       // Return the new sequence
@@ -821,13 +829,13 @@ export default () => {
         newSeq = [
           ...filtered.slice(0, newIx),
           ...newSeq,
-          ...filtered.slice(newIx),
+          ...filtered.slice(newIx)
         ];
 
         console.log(newSeq);
         // Write the new sequence out to same path
         const writeResult = await writeJsonHandle(fileHandle, {
-          nuggetSeq: newSeq,
+          nuggetSeq: newSeq
         });
 
         // Return the new sequence
@@ -944,13 +952,13 @@ export default () => {
           console.log("create handle " + currHandleName);
           if (currDirHandle) {
             currDirHandle = await currDirHandle.getDirectoryHandle(segment, {
-              create: true,
+              create: true
             });
           } else {
             const topDirHandle = await dirHandleMap.get("sourceDir");
             console.log(topDirHandle);
             currDirHandle = await topDirHandle.getDirectoryHandle(segment, {
-              create: true,
+              create: true
             });
           }
           dirHandleMap.set(currHandleName, currDirHandle);
@@ -970,7 +978,7 @@ export default () => {
       const dirHandle = await getDirHandle([
         "nuggets",
         nuggetId,
-        "assets-" + nuggetId,
+        "assets-" + nuggetId
       ]);
       console.log(dirHandle);
       await dirHandle.removeEntry(assetName);
@@ -987,14 +995,14 @@ export default () => {
       const dirHandle = await getDirHandle([
         "nuggets",
         nuggetId,
-        "assets-" + nuggetId,
+        "assets-" + nuggetId
       ]);
 
       await Promise.all(
         files.map(async (file) => {
           const reader = new FileReader();
           const writeFileHandle = await dirHandle.getFileHandle(file.name, {
-            create: true,
+            create: true
           });
           console.log(writeFileHandle);
 
@@ -1023,13 +1031,13 @@ export default () => {
       const dirHandle = await getDirHandle([
         "nuggets",
         nuggetId,
-        "assets-" + nuggetId,
+        "assets-" + nuggetId
       ]);
       console.log(dirHandle);
       console.log(fileData);
 
       const writeFileHandle = await dirHandle.getFileHandle(fileName, {
-        create: true,
+        create: true
       });
 
       const base64 = await fetch(fileData);
@@ -1056,7 +1064,7 @@ export default () => {
         nuggetId,
         "assets-" + nuggetId,
         "meta",
-        fileName,
+        fileName
       ];
 
       await writeJson(pathSegments, fileData);
@@ -1085,7 +1093,7 @@ export default () => {
 
       const flowData = {
         name: flowName,
-        id: namedId,
+        id: namedId
       };
 
       initTimestamps(flowData);
@@ -1102,13 +1110,13 @@ export default () => {
   const dirHasFile = async (dirHandle, filename) => {
     try {
       const fileHandle = await dirHandle.getFileHandle(filename);
-      console.log(fileHandle)
+      console.log(fileHandle);
       return true;
     } catch (e) {
-      console.log('file not found')
+      console.log("file not found");
       return false;
     }
-  }
+  };
 
   // exposed
   return {

@@ -46,12 +46,12 @@
           <q-checkbox
             v-model="encryptFlow"
             label="Encrypt flow"
-            hint="Encrypt the flow, password required."
+            hint="Encrypt the flow, passphrase required."
             :data-cy="dataCySlug + '-new-flow-form-encryptFlow-checkbox'"
           ></q-checkbox>
           <q-input
-            label="Encryption Password"
-            v-model="password"
+            label="Encryption Passphrase"
+            v-model="passphrase"
             v-show="this.encryptFlow"
           ></q-input>
         </div>
@@ -151,9 +151,9 @@ export default defineComponent({
     const unPubAtTime = ref("");
     const openFlow = ref(props.openFlowChecked);
     const encryptFlow = ref(props.encryptFlowChecked);
-    const password = ref(null);
-    const paswordHash = async () => {
-      return await WebCrypto.hash(password.value);
+    const passphrase = ref(null);
+    const passHash = async () => {
+      return await WebCrypto.hash(passphrase.value);
     }
 
     return {
@@ -167,13 +167,15 @@ export default defineComponent({
       openFlow,
       createFlow,
       encryptFlow,
+      passphrase,
+      passHash
     };
   },
   methods: {
     async onSubmit() {
-      const { name, title, notes, encryptFlow, password } = this;
+      const { name, title, notes, encryptFlow, passphrase } = this;
       if (!name) return;
-      const flow = { name, title, notes, encrypted: encryptFlow, password };
+      const flow = { name, title, notes, encrypted: encryptFlow, passphrase };
       console.log(flow);
       const newFlow = await this.createFlow(flow);
       console.log(newFlow);
