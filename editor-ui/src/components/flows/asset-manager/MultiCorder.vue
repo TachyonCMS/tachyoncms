@@ -100,12 +100,7 @@
 
       <div v-show="view == 'snapshot'" class="ofh">
         <canvas :ref="canvasId" :width="vWidth" :height="vHeight">
-          <img
-            :ref="imgId"
-            :src="snapshotImgUrl"
-            :width="vWidth"
-        
-          />
+          <img :ref="imgId" :src="snapshotImgUrl" :width="vWidth" />
         </canvas>
       </div>
 
@@ -436,7 +431,7 @@ export default defineComponent({
       return targetWidth;
     };
 
-    const vRatio = ref(0.5625)
+    const vRatio = ref(0.5625);
 
     const vHeight = computed(() => {
       return vWidth.value * vRatio.value;
@@ -508,7 +503,7 @@ export default defineComponent({
       snapMeta,
       recMeta,
       deleteSnap,
-      vRatio
+      vRatio,
     };
   },
   methods: {
@@ -608,13 +603,13 @@ export default defineComponent({
     },
 
     getVideoDimensions(e) {
-      console.log('Element Height ' + e.target.videoHeight);
-      console.log('Element Width ' + e.target.videoWidth);
+      console.log("Element Height " + e.target.videoHeight);
+      console.log("Element Width " + e.target.videoWidth);
       const newRatio = e.target.videoHeight / e.target.videoWidth;
       this.vRatio = newRatio;
-      console.log('newRatio ' + newRatio)
-      console.log('vHeight '+ this.vHeight);
-      console.log('vWidth '+ this.vWidth);
+      console.log("newRatio " + newRatio);
+      console.log("vHeight " + this.vHeight);
+      console.log("vWidth " + this.vWidth);
     },
   },
 });
@@ -641,6 +636,5 @@ export default defineComponent({
 }
 
 .ofh {
-
 }
 </style>

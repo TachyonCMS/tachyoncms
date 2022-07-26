@@ -1,9 +1,9 @@
 import { ref, reactive, toRef } from "vue";
 
-const WebCrypto = require("easy-web-crypto");
-
 // import { nanoid } from "nanoid";
 import { customAlphabet } from "nanoid";
+
+import useEncryption from "../useEncryption"
 
 // Map of directory handles
 const dirHandleMap = reactive(new Map());
@@ -118,19 +118,7 @@ export default () => {
 
       console.log(flowData);
       if (flowData.encrypted && passphrase) {
-        const encMasterKey = await WebCrypto.genEncryptedMasterKey(
-          passphrase
-        );
-        console.log(encMasterKey);
-
-        // decrypt the (stored) AES key to be able to encrypt/decrypt data
-        let key = await WebCrypto.decryptMasterKey(
-          passphrase,
-          encMasterKey
-        );
-
-        flowData
-        console.log(key);
+        
       }
 
       const result = await writeJson(["flows", flowData.id, "flow"], flowData);
