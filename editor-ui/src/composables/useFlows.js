@@ -52,11 +52,15 @@ const flowsLoaded = ref(false);
 // Is the current flow loaded?
 const flowLoaded = ref(false);
 
-// The setting from the sourceDir/tcms-encryption.json
-const sourceEncryption = ref('optional');
+// The passphrase remembered by the user
+const brainKey = ref(null);
 
-// A map of encryption settings for individual flows in source.
-const flowEncryptionMap = ref(new Map());
+// The keyFile contents, decrypted with the brainKey 
+const masterKey = ref(null);
+
+// Does an existing encryption  key file exist?
+const keyExists = ref(null);
+
 
 // MAIN EXPORT FUNCTION
 export default function useFlows() {
@@ -155,6 +159,11 @@ export default function useFlows() {
             });
           }
           flowsLoaded.value = true;
+        });
+        flowConnectors[flowConnector.value].checkEncryption().then((encStatus) => {
+          if (encStatus) {
+            keyExists.value = true;
+          }
         });
       }
     } catch (e) {
@@ -743,6 +752,9 @@ export default function useFlows() {
     moveNugget,
     ensureFlowsExist,
     destroy,
-    dirHasFile
+    dirHasFile,
+    brainKey,
+    masterKey,
+    keyExists
   };
 }

@@ -1117,6 +1117,10 @@ export default () => {
     }
   };
 
+  const checkEncrytption = async (dirHandle) => {
+    return dirHasFile(dirHandle, 'tcms-encryption.json')
+  }
+
   // exposed
   return {
     loadFlows,
@@ -1142,6 +1146,7 @@ export default () => {
     moveNugget,
     flush,
     ensureFlowsExist,
-    dirHasFile
+    dirHasFile,
+    checkEncrytption
   };
 };

@@ -21,7 +21,43 @@
         </q-toolbar-title>
 
         <q-space></q-space>
+
+        <q-btn
+          icon="mdi-lock-open-alert"
+          v-if="!this.keyExists"
+          @click="this.showPassphrase = true"
+          ><q-tooltip>No encryption</q-tooltip></q-btn
+        >
+
+        <q-btn icon="mdi-lock-open-check" v-if="keyExists && masterKey"
+          ><q-tooltip>Encrypted</q-tooltip></q-btn
+        >
+
+        <q-btn icon="mdi-lock-open-minus" v-if="keyExists && !masterKey"
+          ><q-tooltip>Decrypted</q-tooltip></q-btn
+        >
       </q-toolbar>
+
+      <template v-if="showPassphrase">
+        <div class="row">
+          <div class="col">&nbsp;</div>
+          <div class="col-10 pp">
+            <q-card flat>
+              <q-card-section>
+              <div v-if="!keyExists"> Enter a secure passphrase: <div class="row col-12 alert text-weight-bold">If you lose this passphrase you will lose access to your data FOREVER.</div></div>
+              <div v-if="keyExists"> Enter the passphrase: </div>
+              
+              <div class="col-3">  <q-input color="white" v-model="this.brainKey"></q-input></div>
+              <div class="col-3 q-pt-sm text-center justify-center">  <q-btn>Create Key</q-btn></div>
+    
+              </q-card-section>
+            </q-card>
+          </div>
+          <div class="col">&nbsp;
+            </div>
+        </div>
+      </template>
+
       <template v-if="pageFlowData && flowId && pageFlowData.id === flowId">
         <q-card square class="page-title glossy">
           <q-card-section
@@ -125,7 +161,7 @@ export default defineComponent({
 
     const currentDrawer = "flows-drawer";
 
-    const { updateFlowProp, flowMap, flushAll } = useFlows();
+    const { updateFlowProp, flowMap, keyExists, brainKey } = useFlows();
 
     // $q is the standard convention for calling Quasar.
     // We use it display notification toast to the user.
@@ -147,6 +183,9 @@ export default defineComponent({
       return flowMap.get(flowId.value);
     });
 
+    // Show the pasphrase box
+    const showPassphrase = ref(null);
+
     onMounted(async () => {
       //flushAll();
     });
@@ -162,6 +201,9 @@ export default defineComponent({
       pageFlowData,
       flowId,
       currentDrawer,
+      keyExists,
+      showPassphrase,
+      brainKey,
     };
   },
 
@@ -196,4 +238,11 @@ export default defineComponent({
 });
 </script>
 
-<style></style>
+<style scoped>
+.pp {
+  color: black;
+}
+.alert {
+  color: red;
+}
+</style>
