@@ -54,7 +54,7 @@
               <div v-if="keyExists"> Enter the passphrase: </div>
               
               <div class="col-3">  <q-input color="white" v-model="this.brainKey"></q-input></div>
-              <div class="col-3 q-pt-sm text-center justify-center">  <q-btn @click="">Create Key</q-btn></div>
+              <div class="col-3 q-pt-sm text-center justify-center">  <q-btn @click="createKey()">Create Key</q-btn></div>
     
               </q-card-section>
             </q-card>
@@ -240,6 +240,9 @@ export default defineComponent({
       };
       this.$q.notify(notification);
     },
+    createKey() {
+      
+    }
   },
 });
 </script>

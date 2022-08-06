@@ -48,11 +48,12 @@
             label="Encrypt flow"
             hint="Encrypt the flow, passphrase required."
             :data-cy="dataCySlug + '-new-flow-form-encryptFlow-checkbox'"
+            v-show="keyExists"
           ></q-checkbox>
           <q-input
             label="Encryption Passphrase"
             v-model="passphrase"
-            v-show="this.encryptFlow"
+            v-show="keyExists && this.encryptFlow"
           ></q-input>
         </div>
       </q-card-section>
@@ -115,7 +116,7 @@ import { defineComponent, ref, computed } from "vue";
 const WebCrypto = require('easy-web-crypto')
 
 import useFlows from "../../../composables/useFlows";
-const { createFlow } = useFlows();
+const { createFlow, keyExists } = useFlows();
 
 export default defineComponent({
   name: "NewFlowForm",
@@ -168,7 +169,8 @@ export default defineComponent({
       createFlow,
       encryptFlow,
       passphrase,
-      passHash
+      passHash,
+      keyExists
     };
   },
   methods: {
