@@ -24,8 +24,14 @@
 
         <q-btn
           icon="mdi-lock-open-alert"
-          v-if="!this.keyExists"
+          v-if="!this.keyExists && !this.showPassphrase"
           @click="this.showPassphrase = true"
+          ><q-tooltip>No encryption</q-tooltip></q-btn
+        >
+        <q-btn
+          icon="mdi-lock-open-alert"
+          v-if="!this.keyExists && this.showPassphrase"
+          @click="this.showPassphrase = false"
           ><q-tooltip>No encryption</q-tooltip></q-btn
         >
 
@@ -39,16 +45,16 @@
       </q-toolbar>
 
       <template v-if="showPassphrase">
-        <div class="row">
+        <div class="row q-mb-md">
           <div class="col">&nbsp;</div>
           <div class="col-10 pp">
             <q-card flat>
-              <q-card-section>
+              <q-card-section  class="text-weight-medium text-body1">
               <div v-if="!keyExists"> Enter a secure passphrase: <div class="row col-12 alert text-weight-bold">If you lose this passphrase you will lose access to your data FOREVER.</div></div>
               <div v-if="keyExists"> Enter the passphrase: </div>
               
               <div class="col-3">  <q-input color="white" v-model="this.brainKey"></q-input></div>
-              <div class="col-3 q-pt-sm text-center justify-center">  <q-btn>Create Key</q-btn></div>
+              <div class="col-3 q-pt-sm text-center justify-center">  <q-btn @click="">Create Key</q-btn></div>
     
               </q-card-section>
             </q-card>
