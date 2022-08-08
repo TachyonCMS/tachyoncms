@@ -854,7 +854,7 @@ export default () => {
       // Read the current data
       const jsonFile = await fileHandle.getFile();
       const jsonData = await jsonFile.text();
-      console.log(jsonData);
+      //console.log(jsonData);
 
       const existingData = JSON.parse(jsonData);
 
@@ -1116,33 +1116,36 @@ export default () => {
       console.log(fileHandle);
       return true;
     } catch (e) {
-      console.log("file not found: " + filename );
+      console.log("file not found: " + filename);
       return false;
     }
   };
 
-  const checkEncryption = async (dirHandle) => {
-    return dirHasFile(dirHandle, "tcms-encryption.json");
+  const keyFilename ='tcms-encryption-key.json'
+  const encConfigFilename ='tcms-encryption-settings.json'
+
+  const checkEncryption = async () => {
+    const dirHandle = dirHandleMap.get("sourceDir");
+    return dirHasFile(dirHandle, keyFilename);
   };
 
   const writeMasterKey = async (encKey) => {
-    const sourceDir = dirHandleMap.get('sourceDir');
-    const fileHandle = await sourceDir.getFileHandle("tcms-encryption.json", {
+    const sourceDir = dirHandleMap.get("sourceDir");
+    console.log(sourceDir);
+    const fileHandle = await sourceDir.getFileHandle(keyFilename, {
       create: true
     });
     writeToFileHandle(fileHandle, JSON.stringify(encKey));
   };
 
   const readMasterKey = async () => {
-    try {
-      return flowConnectors[flowConnector.value].readMasterKey().then((key) => {
-        console.log(key);
-        masterKey.value = key;
-      });
-    } catch (e) {
-      console.error("Error Reading Master Key");
-      console.error(e);
-    }
+    const sourceDir = dirHandleMap.get("sourceDir");
+
+    const fileHandle = await sourceDir.getFileHandle(keyFilename);
+
+    const data = readJsonHandle(fileHandle);
+
+    return data;
   };
 
   // exposed
@@ -1172,6 +1175,7 @@ export default () => {
     ensureFlowsExist,
     dirHasFile,
     checkEncryption,
-    writeMasterKey
+    writeMasterKey,
+    readMasterKey
   };
 };

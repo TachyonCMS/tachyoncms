@@ -19,7 +19,7 @@ export default function useEncryption() {
     return key;
   }
 
-  const updateMasterKey = async (passphrase, newPhrase, encMasterKey) => {
+  const updateMasterKey = async (passphrase, newPassphrase, encMasterKey) => {
    
     const updatedEncMasterKey = await WebCrypto.updatePassphraseKey(passphrase,
       newPassphrase, encMasterKey)

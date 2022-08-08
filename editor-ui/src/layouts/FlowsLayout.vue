@@ -22,26 +22,44 @@
 
         <q-space></q-space>
         <div v-if="flowSource">
+          <!-- Initial button -->
           <q-btn
             icon="mdi-lock-open-alert"
-            v-if="!this.keyExists && !this.showPassphrase"
-            @click="this.showPassphrase = true"
-            ><q-tooltip>No encryption</q-tooltip></q-btn
-          >
-          <q-btn
-            icon="mdi-lock-open-alert"
-            v-if="!this.keyExists && this.showPassphrase"
-            @click="this.showPassphrase = false"
+            v-if="!this.keyExists"
+            @click="this.showPassphrase = !this.showPassphrase"
+            class="btn-alert"
             ><q-tooltip>No encryption</q-tooltip></q-btn
           >
 
-          <q-btn icon="mdi-lock-open-check" v-if="keyExists && masterKey"
-            ><q-tooltip>Encrypted</q-tooltip></q-btn
+          <!-- Encryption file exists but has notbeen unlocked -->
+          <q-btn
+            icon="mdi-lock"
+            v-if="keyExists && !masterKey"
+            class="btn-alert"
+            @click="this.showPassphrase = !this.showPassphrase"
+            ><q-tooltip>Click to decrypt</q-tooltip></q-btn
           >
 
-          <q-btn icon="mdi-lock-open-minus" v-if="keyExists && !masterKey"
-            ><q-tooltip>Decrypted</q-tooltip></q-btn
+          <!-- Encryption file exists and has been unlocked -->
+          <q-btn-dropdown
+            icon="mdi-lock-open"
+            class="btn-ok"
+            v-if="keyExists && masterKey"
           >
+            <q-list>
+              <q-item clickable v-close-popup @click="onLock()">
+                <q-item-section>
+                  <q-item-label>Lock</q-item-label>
+                </q-item-section>
+              </q-item>
+
+              <q-item clickable v-close-popup @click="onPassphraseChange()">
+                <q-item-section>
+                  <q-item-label>Change Password</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
         </div>
       </q-toolbar>
 
@@ -52,19 +70,75 @@
             <q-card flat>
               <q-card-section class="text-weight-medium text-body1">
                 <div v-if="!keyExists">
-                  Enter a secure passphrase:
+                  Enter a secure passphrase
                   <div class="row col-12 alert text-weight-bold">
                     If you lose this passphrase you will lose access to your
                     data FOREVER.
                   </div>
                 </div>
-                <div v-if="keyExists">Enter the passphrase:</div>
+                <div v-if="keyExists">Enter the current passphrase:</div>
 
                 <div class="col-3">
-                  <q-input color="white" v-model="this.brainKey"></q-input>
+                  <span v-if="keyError" class="error text-h6">{{
+                    keyError
+                  }}</span>
+
+                  <q-input
+                    filled
+                    color="white"
+                    v-model="passphrase"
+                    label="Passphrase"
+                    class="q-py-md"
+                  ></q-input>
+                  <q-input
+                    filled
+                    color="white"
+                    v-model="passphrase2"
+                    label="Repeat passphrase"
+                    class="q-pb-sm"
+                    v-if="!keyExists"
+                  ></q-input>
+
+                  <div v-if="keyExists && showNewPassphrase" class="q-pt-sm">
+                    Enter the NEW passphrase:
+                  </div>
+
+                  <q-input
+                    filled
+                    color="white"
+                    v-model="newPassphrase"
+                    label="New Passphrase"
+                    class="q-py-md"
+                    v-if="showNewPassphrase"
+                  ></q-input>
+                  <q-input
+                    filled
+                    color="white"
+                    v-model="newPassphrase2"
+                    label="Repeat new passphrase"
+                    class="q-pb-sm"
+                    v-if="showNewPassphrase"
+                  ></q-input>
                 </div>
                 <div class="col-3 q-pt-sm text-center justify-center">
-                  <q-btn @click="createKey()">Create Key</q-btn>
+                  <q-btn
+                    icon="mdi-key-plus"
+                    @click="createKey()"
+                    v-if="!keyExists"
+                    ><span class="q-pl-sm">Create Key</span></q-btn
+                  >
+                  <q-btn
+                    icon="mdi-key"
+                    @click="decryptKey()"
+                    v-if="keyExists && !showNewPassphrase"
+                    ><span class="q-pl-sm">Unlock</span></q-btn
+                  >
+                  <q-btn
+                    icon="mdi-key"
+                    @click="updateKey()"
+                    v-if="keyExists && showNewPassphrase"
+                    ><span class="q-pl-sm">Change passphrase</span></q-btn
+                  >
                 </div>
               </q-card-section>
             </q-card>
@@ -180,9 +254,13 @@ export default defineComponent({
       updateFlowProp,
       flowMap,
       keyExists,
-      brainKey,
+      passphrase,
       createMasterKey,
+      unlockMasterKey,
       flowSource,
+      masterKey,
+      newPassphrase,
+      changeMasterKey,
     } = useFlows();
 
     // $q is the standard convention for calling Quasar.
@@ -208,6 +286,15 @@ export default defineComponent({
     // Show the pasphrase box
     const showPassphrase = ref(null);
 
+    // Show the pasphrase box
+    const showNewPassphrase = ref(null);
+
+    const keyError = ref(false);
+    const newKeyError = ref(false);
+
+    const passphrase2 = ref(null);
+    const newPassphrase2 = ref(null);
+
     onMounted(async () => {
       //flushAll();
     });
@@ -225,9 +312,18 @@ export default defineComponent({
       currentDrawer,
       keyExists,
       showPassphrase,
-      brainKey,
+      showNewPassphrase,
+      passphrase,
+      newPassphrase,
       createMasterKey,
+      unlockMasterKey,
+      changeMasterKey,
       flowSource,
+      masterKey,
+      keyError,
+      newKeyError,
+      passphrase2,
+      newPassphrase2,
     };
   },
 
@@ -258,10 +354,69 @@ export default defineComponent({
       };
       this.$q.notify(notification);
     },
+    onLock() {
+      this.resetAll();
+    },
+    onPassphraseChange() {
+      this.showPassphrase = true;
+      this.showNewPassphrase = true;
+    },
     async createKey() {
-      console.log(this.brainKey);
-      const masterKey = await this.createMasterKey(this.brainKey);
-      console.log(masterKey);
+      console.log(this.passphrase);
+      if (this.passphrase && this.passphrase.length >= 9) {
+        if (this.passphrase == this.passphrase2) {
+          const masterKey = await this.createMasterKey(this.passphrase);
+          console.log(masterKey);
+          this.masterKey = masterKey;
+          this.resetPassphrases();
+        } else {
+          this.keyError = "The passphrases do not match.";
+        }
+      } else {
+        this.keyError = "The passphrase must be nine characters or more.";
+      }
+    },
+    async decryptKey() {
+      console.log(this.passphrase);
+      this.keyError = false;
+      const masterKey = await this.unlockMasterKey(this.passphrase);
+      if (masterKey) {
+        console.log(masterKey);
+        this.masterKey = masterKey;
+        this.resetPassphrases();
+      } else {
+        this.keyError = "Incorrect passphrase";
+      }
+    },
+    async updateKey() {
+      console.log(this.passphrase);
+      this.keyError = false;
+      if (this.newPassphrase && this.newPassphrase.length >= 9) {
+        if (this.newPassphrase == this.newPassphrase2) {
+          const masterKey = await this.changeMasterKey();
+          if (masterKey) {
+            console.log(masterKey);
+            this.masterKey = masterKey;
+            this.resetPassphrases();
+          }
+        } else {
+          this.keyError = "The NEW passphrases do not match.";
+        }
+      } else {
+        this.keyError = "The NEW passphrase must be nine characters or more.";
+      }
+    },
+    resetAll() {
+      this.masterKey = null;
+      this.resetPassphrases();
+    },
+    resetPassphrases() {
+      this.passphrase = null;
+      this.passphrase2 = null;
+      this.newPassphrase = null;
+      this.newPassphrase2 = null;
+      this.showPassphrase = false;
+      this.showNewPassphrase = false;
     },
   },
 });
@@ -273,5 +428,16 @@ export default defineComponent({
 }
 .alert {
   color: red;
+}
+.error {
+  color: red;
+}
+.btn-alert {
+  color: white;
+  background-color: red;
+}
+.btn-ok {
+  color: white;
+  background-color: limegreen;
 }
 </style>

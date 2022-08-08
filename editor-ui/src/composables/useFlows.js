@@ -53,22 +53,26 @@ const flowsLoaded = ref(false);
 const flowLoaded = ref(false);
 
 // The passphrase remembered by the user
-const brainKey = ref(null);
+const passphrase = ref(null);
 
-// The keyFile contents, decrypted with the brainKey 
+// The new passphrase provided when changing the password
+const newPassphrase = ref(null);
+
+// The keyFile contents, decrypted with the passphrase
 const masterKey = ref(null);
 
 // Does an existing encryption  key file exist?
 const keyExists = ref(null);
 
-const { newMasterKey,
+const {
+  newMasterKey,
   decryptMasterKey,
   updateMasterKey,
   encryptData,
   decryptData,
   encryptBuffer,
-  decryptBuffer } = useEncryption();
-
+  decryptBuffer
+} = useEncryption();
 
 // MAIN EXPORT FUNCTION
 export default function useFlows() {
@@ -168,11 +172,13 @@ export default function useFlows() {
           }
           flowsLoaded.value = true;
         });
-        flowConnectors[flowConnector.value].checkEncryption().then((encStatus) => {
-          if (encStatus) {
-            keyExists.value = true;
-          }
-        });
+        flowConnectors[flowConnector.value]
+          .checkEncryption()
+          .then((encStatus) => {
+            if (encStatus) {
+              keyExists.value = true;
+            }
+          });
       }
     } catch (e) {
       console.error("Error Loading Flows");
@@ -320,7 +326,7 @@ export default function useFlows() {
     }
   };
 
-    // Update multiple properties of a nugget.
+  // Update multiple properties of a nugget.
   const updateNugget = async (nuggetId, mergeVals) => {
     try {
       // Use the defined connector
@@ -352,7 +358,6 @@ export default function useFlows() {
       console.error(e);
     }
   };
-  
 
   // Update a single property of a nugget.
   // This is the predominate mechanism when the property has a lot of data.
@@ -709,23 +714,32 @@ export default function useFlows() {
       return flowConnectors[flowConnector.value]
         .dirHasFile(dirHandle, filename)
         .then((result) => {
-          console.log(result)
+          console.log(result);
           return result;
         });
     } catch (e) {
       console.error("Error Checking file existence");
       console.error(e);
     }
-  }
+  };
 
-  const createMasterKey = async (brainKey) => {
-    
-    const masterKey = await newMasterKey(brainKey);
-    
+  const createMasterKey = async (passphrase) => {
+    const masterKey = await newMasterKey(passphrase);
+
     writeMasterKey(masterKey);
 
-    return await decryptMasterKey(brainKey, masterKey)   
-  }
+    return await decryptMasterKey(passphrase, masterKey);
+  };
+
+  const unlockMasterKey = async (passphrase) => {
+    try {
+      const masterKey = await readMasterKey();
+
+      return await decryptMasterKey(passphrase, masterKey);
+    } catch (e) {
+      return false;
+    }
+  };
 
   const writeMasterKey = async (key) => {
     try {
@@ -734,26 +748,48 @@ export default function useFlows() {
         .then((writeResult) => {
           console.log(writeResult);
           masterKey.value = key;
+          keyExists.value = true;
         });
     } catch (e) {
       console.error("Error Writing Master Key");
       console.error(e);
     }
-  }
+  };
 
   const readMasterKey = async () => {
     try {
-      return flowConnectors[flowConnector.value]
-        .readMasterKey()
-        .then((key) => {
-          console.log(key);
-          masterKey.value = key;
-        });
+      return flowConnectors[flowConnector.value].readMasterKey().then((key) => {
+        console.log(key);
+        return key;
+      });
     } catch (e) {
       console.error("Error Reading Master Key");
       console.error(e);
     }
-  }
+  };
+
+  const changeMasterKey = async () => {
+    try {
+      const encMasterKey = await readMasterKey();
+
+      console.log(encMasterKey)
+
+      if (encMasterKey) {
+        const newEncMasterKey = await updateMasterKey(
+          passphrase.value,
+          newPassphrase.value,
+          encMasterKey
+        );
+
+        await writeMasterKey(newEncMasterKey.encryptedKey);
+
+        return await decryptMasterKey(newPassphrase.value, newEncMasterKey.encryptedKey);
+      }
+    } catch (e) {
+      console.error("Error Updating Master Key");
+      console.error(e);
+    }
+  };
 
   return {
     loadNuggetAssets,
@@ -798,11 +834,14 @@ export default function useFlows() {
     ensureFlowsExist,
     destroy,
     dirHasFile,
-    brainKey,
+    passphrase,
+    newPassphrase,
     masterKey,
     keyExists,
     createMasterKey,
+    unlockMasterKey,
     writeMasterKey,
-    readMasterKey
+    readMasterKey,
+    changeMasterKey
   };
 }
