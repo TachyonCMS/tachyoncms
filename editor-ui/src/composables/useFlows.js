@@ -61,6 +61,14 @@ const masterKey = ref(null);
 // Does an existing encryption  key file exist?
 const keyExists = ref(null);
 
+const { newMasterKey,
+  decryptMasterKey,
+  updateMasterKey,
+  encryptData,
+  decryptData,
+  encryptBuffer,
+  decryptBuffer } = useEncryption();
+
 
 // MAIN EXPORT FUNCTION
 export default function useFlows() {
@@ -710,6 +718,43 @@ export default function useFlows() {
     }
   }
 
+  const createMasterKey = async (brainKey) => {
+    
+    const masterKey = await newMasterKey(brainKey);
+    
+    writeMasterKey(masterKey);
+
+    return await decryptMasterKey(brainKey, masterKey)   
+  }
+
+  const writeMasterKey = async (key) => {
+    try {
+      return flowConnectors[flowConnector.value]
+        .writeMasterKey(key)
+        .then((writeResult) => {
+          console.log(writeResult);
+          masterKey.value = key;
+        });
+    } catch (e) {
+      console.error("Error Writing Master Key");
+      console.error(e);
+    }
+  }
+
+  const readMasterKey = async () => {
+    try {
+      return flowConnectors[flowConnector.value]
+        .readMasterKey()
+        .then((key) => {
+          console.log(key);
+          masterKey.value = key;
+        });
+    } catch (e) {
+      console.error("Error Reading Master Key");
+      console.error(e);
+    }
+  }
+
   return {
     loadNuggetAssets,
     loadFlows,
@@ -755,6 +800,9 @@ export default function useFlows() {
     dirHasFile,
     brainKey,
     masterKey,
-    keyExists
+    keyExists,
+    createMasterKey,
+    writeMasterKey,
+    readMasterKey
   };
 }

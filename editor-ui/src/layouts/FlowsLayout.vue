@@ -21,27 +21,28 @@
         </q-toolbar-title>
 
         <q-space></q-space>
+        <div v-if="flowSource">
+          <q-btn
+            icon="mdi-lock-open-alert"
+            v-if="!this.keyExists && !this.showPassphrase"
+            @click="this.showPassphrase = true"
+            ><q-tooltip>No encryption</q-tooltip></q-btn
+          >
+          <q-btn
+            icon="mdi-lock-open-alert"
+            v-if="!this.keyExists && this.showPassphrase"
+            @click="this.showPassphrase = false"
+            ><q-tooltip>No encryption</q-tooltip></q-btn
+          >
 
-        <q-btn
-          icon="mdi-lock-open-alert"
-          v-if="!this.keyExists && !this.showPassphrase"
-          @click="this.showPassphrase = true"
-          ><q-tooltip>No encryption</q-tooltip></q-btn
-        >
-        <q-btn
-          icon="mdi-lock-open-alert"
-          v-if="!this.keyExists && this.showPassphrase"
-          @click="this.showPassphrase = false"
-          ><q-tooltip>No encryption</q-tooltip></q-btn
-        >
+          <q-btn icon="mdi-lock-open-check" v-if="keyExists && masterKey"
+            ><q-tooltip>Encrypted</q-tooltip></q-btn
+          >
 
-        <q-btn icon="mdi-lock-open-check" v-if="keyExists && masterKey"
-          ><q-tooltip>Encrypted</q-tooltip></q-btn
-        >
-
-        <q-btn icon="mdi-lock-open-minus" v-if="keyExists && !masterKey"
-          ><q-tooltip>Decrypted</q-tooltip></q-btn
-        >
+          <q-btn icon="mdi-lock-open-minus" v-if="keyExists && !masterKey"
+            ><q-tooltip>Decrypted</q-tooltip></q-btn
+          >
+        </div>
       </q-toolbar>
 
       <template v-if="showPassphrase">
@@ -49,18 +50,26 @@
           <div class="col">&nbsp;</div>
           <div class="col-10 pp">
             <q-card flat>
-              <q-card-section  class="text-weight-medium text-body1">
-              <div v-if="!keyExists"> Enter a secure passphrase: <div class="row col-12 alert text-weight-bold">If you lose this passphrase you will lose access to your data FOREVER.</div></div>
-              <div v-if="keyExists"> Enter the passphrase: </div>
-              
-              <div class="col-3">  <q-input color="white" v-model="this.brainKey"></q-input></div>
-              <div class="col-3 q-pt-sm text-center justify-center">  <q-btn @click="createKey()">Create Key</q-btn></div>
-    
+              <q-card-section class="text-weight-medium text-body1">
+                <div v-if="!keyExists">
+                  Enter a secure passphrase:
+                  <div class="row col-12 alert text-weight-bold">
+                    If you lose this passphrase you will lose access to your
+                    data FOREVER.
+                  </div>
+                </div>
+                <div v-if="keyExists">Enter the passphrase:</div>
+
+                <div class="col-3">
+                  <q-input color="white" v-model="this.brainKey"></q-input>
+                </div>
+                <div class="col-3 q-pt-sm text-center justify-center">
+                  <q-btn @click="createKey()">Create Key</q-btn>
+                </div>
               </q-card-section>
             </q-card>
           </div>
-          <div class="col">&nbsp;
-            </div>
+          <div class="col">&nbsp;</div>
         </div>
       </template>
 
@@ -167,7 +176,14 @@ export default defineComponent({
 
     const currentDrawer = "flows-drawer";
 
-    const { updateFlowProp, flowMap, keyExists, brainKey } = useFlows();
+    const {
+      updateFlowProp,
+      flowMap,
+      keyExists,
+      brainKey,
+      createMasterKey,
+      flowSource,
+    } = useFlows();
 
     // $q is the standard convention for calling Quasar.
     // We use it display notification toast to the user.
@@ -210,6 +226,8 @@ export default defineComponent({
       keyExists,
       showPassphrase,
       brainKey,
+      createMasterKey,
+      flowSource,
     };
   },
 
@@ -240,9 +258,11 @@ export default defineComponent({
       };
       this.$q.notify(notification);
     },
-    createKey() {
-      
-    }
+    async createKey() {
+      console.log(this.brainKey);
+      const masterKey = await this.createMasterKey(this.brainKey);
+      console.log(masterKey);
+    },
   },
 });
 </script>

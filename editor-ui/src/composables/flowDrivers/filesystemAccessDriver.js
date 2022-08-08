@@ -3,7 +3,7 @@ import { ref, reactive, toRef } from "vue";
 // import { nanoid } from "nanoid";
 import { customAlphabet } from "nanoid";
 
-import useEncryption from "../useEncryption"
+import useEncryption from "../useEncryption";
 
 // Map of directory handles
 const dirHandleMap = reactive(new Map());
@@ -105,9 +105,9 @@ export default () => {
 
       // Get passphrase out of object first
       let passphrase = null;
-      if(flowData.passphrase) {
-        passphrase = flowData.passphrase
-        flowData.delete('passphrase')
+      if (flowData.passphrase) {
+        passphrase = flowData.passphrase;
+        flowData.delete("passphrase");
       }
 
       // We leave "encrypted" set as  signal to the flow that it is encrypted
@@ -118,7 +118,6 @@ export default () => {
 
       console.log(flowData);
       if (flowData.encrypted && passphrase) {
-        
       }
 
       const result = await writeJson(["flows", flowData.id, "flow"], flowData);
@@ -615,7 +614,12 @@ export default () => {
   };
 
   const writeMgmtFiles = async (dirHandle) => {
-    const jsonData = { name: "TachyonCMS", version: "1.0.0", appType: "cms", "encryption": "opt" };
+    const jsonData = {
+      name: "TachyonCMS",
+      version: "1.0.0",
+      appType: "cms",
+      encryption: "opt"
+    };
     addId(jsonData);
     initTimestamps(jsonData);
 
@@ -1112,14 +1116,34 @@ export default () => {
       console.log(fileHandle);
       return true;
     } catch (e) {
-      console.log("file not found");
+      console.log("file not found: " + filename );
       return false;
     }
   };
 
-  const checkEncrytption = async (dirHandle) => {
-    return dirHasFile(dirHandle, 'tcms-encryption.json')
-  }
+  const checkEncryption = async (dirHandle) => {
+    return dirHasFile(dirHandle, "tcms-encryption.json");
+  };
+
+  const writeMasterKey = async (encKey) => {
+    const sourceDir = dirHandleMap.get('sourceDir');
+    const fileHandle = await sourceDir.getFileHandle("tcms-encryption.json", {
+      create: true
+    });
+    writeToFileHandle(fileHandle, JSON.stringify(encKey));
+  };
+
+  const readMasterKey = async () => {
+    try {
+      return flowConnectors[flowConnector.value].readMasterKey().then((key) => {
+        console.log(key);
+        masterKey.value = key;
+      });
+    } catch (e) {
+      console.error("Error Reading Master Key");
+      console.error(e);
+    }
+  };
 
   // exposed
   return {
@@ -1147,6 +1171,7 @@ export default () => {
     flush,
     ensureFlowsExist,
     dirHasFile,
-    checkEncrytption
+    checkEncryption,
+    writeMasterKey
   };
 };
