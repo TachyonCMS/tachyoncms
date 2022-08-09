@@ -19,5 +19,8 @@
       ],
       "url": "https://on.cypress.io/cypress.schema.json"
     }
-  ]
+  ],
+  "[html]": {
+    "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+  }
 }

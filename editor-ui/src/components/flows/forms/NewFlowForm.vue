@@ -175,9 +175,9 @@ export default defineComponent({
   },
   methods: {
     async onSubmit() {
-      const { name, title, notes, encryptFlow, passphrase } = this;
+      const { name, title, notes, encryptFlow } = this;
       if (!name) return;
-      const flow = { name, title, notes, encrypted: encryptFlow, passphrase };
+      const flow = { name, title, notes, encrypted: encryptFlow };
       console.log(flow);
       const newFlow = await this.createFlow(flow);
       console.log(newFlow);
