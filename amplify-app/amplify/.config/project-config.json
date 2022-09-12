@@ -1,0 +1,17 @@
+{
+  "projectName": "tachyoncmsapp",
+  "version": "3.1",
+  "frontend": "javascript",
+  "javascript": {
+    "framework": "vue",
+    "config": {
+      "SourceDir": "src",
+      "DistributionDir": "dist/spa",
+      "BuildCommand": "quasar build",
+      "StartCommand": "quasar dev"
+    }
+  },
+  "providers": [
+    "awscloudformation"
+  ]
+}

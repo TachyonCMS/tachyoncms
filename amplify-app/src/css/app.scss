@@ -1,0 +1,19 @@
+// app global css in SCSS form
+\:root {
+  --q-cta: #{$cta};
+}
+// CTA
+.text-cta {
+  color: var(--q-cta) !important;
+}
+.bg-cta {
+  background: var(--q-cta) !important;
+}
+
+// BODY - IGHT / DARK
+.body--light {
+  background: #FFF
+}
+.body--dark {
+  background: #000
+}
