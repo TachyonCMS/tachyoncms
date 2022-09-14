@@ -44,12 +44,23 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
-      <MainDrawer v-if="route.meta.appDrawer == 'MainDrawer'"></MainDrawer>
-      <EntryDrawer v-if="route.meta.appDrawer == 'EntryDrawer'"></EntryDrawer>
+    <q-drawer
+      v-model="leftDrawerOpen"
+      show-if-above
+      bordered
+      class="bg-drawer on-drawer"
+    >
+      <MainDrawer
+        v-if="route.meta.appDrawer == 'MainDrawer'"
+        class="bg-drawer-paper on-drawer-paper"
+      ></MainDrawer>
+      <EntryDrawer
+        v-if="route.meta.appDrawer == 'EntryDrawer'"
+        class="bg-drawer-paper on-drawer-paper"
+      ></EntryDrawer>
     </q-drawer>
 
-    <q-page-container>
+    <q-page-container class="bg-card-surround">
       <!--{{ basePrimaryColor }} {{ baseSecondaryColor }}
       {{ colorStore.primaryColor }} {{ colorStore.secondaryColor }} -->
       <router-view @notification="(event) => displayNotification(event)" />
@@ -135,6 +146,7 @@ const lt4 = ref(lighten(basePrimaryColor, 50));
 const lt3 = ref(lighten(basePrimaryColor, 35));
 const lt2 = ref(lighten(basePrimaryColor, 20));
 const lt1 = ref(lighten(basePrimaryColor, 10));
+
 // Calculate default secondary shades
 const sdk5 = ref(lighten(baseSecondaryColor, -65));
 const sdk4 = ref(lighten(baseSecondaryColor, -50));
@@ -147,6 +159,13 @@ const slt3 = ref(lighten(baseSecondaryColor, 35));
 const slt2 = ref(lighten(baseSecondaryColor, 20));
 const slt1 = ref(lighten(baseSecondaryColor, 10));
 
+// Primary card colors
+const cardPaper = ref(lighten(basePrimaryColor, 92));
+const cardSurround = ref(lighten(basePrimaryColor, 80));
+// Secondary card colors
+const scardPaper = ref(lighten(baseSecondaryColor, 92));
+const scardSurround = ref(lighten(baseSecondaryColor, 80));
+
 const lightText = "#FFF";
 const darkText = "#000";
 
@@ -154,6 +173,10 @@ const onPrimary = ref(lightText);
 const onSecondary = ref(lightText);
 const onAccent = ref(lightText);
 const onCta = ref(lightText);
+const onCardPaper = ref(darkText);
+const onCardSurround = ref(darkText);
+const onScardPaper = ref(darkText);
+const onScardSurround = ref(darkText);
 
 const onDk5 = ref(lightText);
 const onDk4 = ref(lightText);
@@ -176,6 +199,11 @@ const onSlt4 = ref(darkText);
 const onSlt3 = ref(darkText);
 const onSlt2 = ref(lightText);
 const onSlt1 = ref(lightText);
+
+const drawerColor = ref(lighten(basePrimaryColor, -30));
+const drawerPaper = ref(lighten(basePrimaryColor, -70));
+const onDrawerColor = ref(lightText);
+const onDrawerPaper = ref(darkText);
 
 // Change the primary color and shades
 const setPrimaryColor = (hexCode) => {
@@ -204,6 +232,40 @@ const setPrimaryColor = (hexCode) => {
   onLt3.value = brightness(lt3.value) > 128 ? darkText : lightText;
   onLt2.value = brightness(lt2.value) > 128 ? darkText : lightText;
   onLt1.value = brightness(lt1.value) > 128 ? darkText : lightText;
+
+  if (colorStore.darkMode) {
+    cardPaper.value = lighten(hexCode, -30);
+    cardSurround.value = lighten(hexCode, -55);
+
+    onCardPaper.value =
+      brightness(cardPaper.value) > 128 ? darkText : lightText;
+    onCardSurround.value =
+      brightness(cardSurround.value) > 128 ? darkText : lightText;
+
+    drawerColor.value = lighten(hexCode, -75);
+    console.log("DRAWER: " + drawerColor.value);
+    onDrawerColor.value =
+      brightness(drawerColor.value) > 128 ? darkText : lightText;
+    drawerPaper.value = lighten(hexCode, -65);
+    onDrawerPaper.value =
+      brightness(drawerPaper.value) > 128 ? darkText : lightText;
+  } else {
+    cardPaper.value = lighten(hexCode, 92);
+    cardSurround.value = lighten(hexCode, 80);
+
+    onCardPaper.value =
+      brightness(cardPaper.value) > 128 ? darkText : lightText;
+    onCardSurround.value =
+      brightness(cardSurround.value) > 128 ? darkText : lightText;
+
+    drawerColor.value = lighten(hexCode, 70);
+    console.log("DRAWER: " + drawerColor.value);
+    onDrawerColor.value =
+      brightness(drawerColor.value) > 128 ? darkText : lightText;
+    drawerPaper.value = lighten(hexCode, 73);
+    onDrawerPaper.value =
+      brightness(drawerPaper.value) > 128 ? darkText : lightText;
+  }
 };
 
 // Change the secondary color and shades
@@ -232,6 +294,24 @@ const setSecondaryColor = (hexCode) => {
   onSlt3.value = brightness(slt3.value) > 128 ? darkText : lightText;
   onSlt2.value = brightness(slt2.value) > 128 ? darkText : lightText;
   onSlt1.value = brightness(slt1.value) > 128 ? darkText : lightText;
+
+  if (colorStore.darkMode) {
+    scardPaper.value = lighten(hexCode, -30);
+    scardSurround.value = lighten(hexCode, -55);
+
+    onScardPaper.value =
+      brightness(scardPaper.value) > 128 ? darkText : lightText;
+    onScardSurround.value =
+      brightness(scardSurround.value) > 128 ? darkText : lightText;
+  } else {
+    scardPaper.value = lighten(hexCode, 92);
+    scardSurround.value = lighten(hexCode, 80);
+
+    onScardPaper.value =
+      brightness(scardPaper.value) > 128 ? darkText : lightText;
+    onScardSurround.value =
+      brightness(scardSurround.value) > 128 ? darkText : lightText;
+  }
 };
 
 if (!colorStore.primaryColor) {
@@ -329,6 +409,9 @@ import LanguageSwitcher from "components/LanguageSwitcher.vue";
 // Change the secondary color and shades
 const setAccentColor = (hexCode) => {
   setCssVar("accent", hexCode, document.documentElement);
+  onAccent.value = brightness(hexCode) > 128 ? darkText : lightText;
+  console.log("ACCENT: " + hexCode);
+  console.log(onAccent.value);
 };
 
 // Change the secondary color and shades
@@ -336,6 +419,7 @@ const setCtaColor = (hexCode) => {
   colorStore.setCtaColor(hexCode);
   setCssVar("cta", hexCode, document.documentElement);
   ctaColor.value = hexCode;
+  onCta.value = brightness(hexCode) > 128 ? darkText : lightText;
 };
 
 // COLORS CURRENT
@@ -405,6 +489,14 @@ watchEffect(() => {
   color: v-bind("onCta");
 }
 
+.on-drawer {
+  color: v-bind("onDrawerColor");
+}
+
+.on-drawer-paper {
+  color: v-bind("onDrawerPaper");
+}
+
 .on-dk5 {
   color: v-bind("onDk5");
 }
@@ -468,9 +560,31 @@ watchEffect(() => {
 }
 
 // BACKGROUND COLOR
+.bg-drawer {
+  background-color: v-bind("drawerColor");
+}
+
+.bg-drawer-paper {
+  background-color: v-bind("drawerPaper");
+}
+.bg-card-paper {
+  background-color: v-bind("cardPaper");
+}
+.bg-card-surround {
+  background-color: v-bind("cardSurround");
+}
+.bg-scard-paper {
+  background-color: v-bind("scardPaper");
+}
+.bg-scard-surround {
+  background-color: v-bind("scardSurround");
+}
 // CTA Color
 .bg-cta {
   background-color: v-bind("ctaColor");
+}
+.bg-accent {
+  background-color: v-bind("accentColor");
 }
 // Primary Dark
 .bg-dk5 {

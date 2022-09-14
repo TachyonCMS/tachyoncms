@@ -1,6 +1,6 @@
 <template>
   <q-list>
-    <q-item-label header> Join Now! </q-item-label>
+    <q-item-label header class="on-drawer-paper"> Join Now! </q-item-label>
 
     <EssentialLink
       v-for="link in essentialLinks"

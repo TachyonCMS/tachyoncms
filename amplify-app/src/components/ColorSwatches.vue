@@ -37,6 +37,13 @@
         <q-card class="bg-lt5 on-lt5 tach-card"
           ><q-card-section>{{ $t("colorLighter") }} - 5</q-card-section></q-card
         >
+
+        <q-card class="bg-card-paper on-bg-card-paper tach-card"
+          ><q-card-section>{{ $t("cardPaper") }}</q-card-section></q-card
+        >
+        <q-card class="bg-card-surround on-bg-card-surround tach-card"
+          ><q-card-section>{{ $t("cardSurround") }}</q-card-section></q-card
+        >
       </div>
 
       <div>
@@ -75,12 +82,18 @@
         <q-card class="bg-slt5 on-slt5 tach-card"
           ><q-card-section>{{ $t("colorLighter") }} - 5</q-card-section></q-card
         >
+        <q-card class="bg-scard-paper on-bg-scard-paper tach-card"
+          ><q-card-section>{{ $t("cardPaper") }}</q-card-section></q-card
+        >
+        <q-card class="bg-scard-surround on-bg-scard-surround tach-card"
+          ><q-card-section>{{ $t("cardSurround") }}</q-card-section></q-card
+        >
       </div>
 
-      <q-card class="bg-accent tach-card"
+      <q-card class="bg-accent on-accent tach-card"
         ><q-card-section>{{ $t("accentColor") }}</q-card-section></q-card
       >
-      <q-card class="bg-cta tach-card"
+      <q-card class="bg-cta on-cta tach-card"
         ><q-card-section>{{ $t("callToAction") }}</q-card-section></q-card
       >
     </div>

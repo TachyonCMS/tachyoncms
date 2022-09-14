@@ -2,7 +2,8 @@ const routes = [
   {
     path: "/",
     component: () => import("layouts/MainLayout.vue"),
-    children: [{ path: "", component: () => import("pages/IndexPage.vue") }]
+    children: [{ path: "", component: () => import("pages/IndexPage.vue") }],
+    meta: { appDrawer: "MainDrawer" }
   },
 
   {
@@ -59,7 +60,16 @@ const routes = [
     children: [
       { path: "", component: () => import("pages/policy/CrimePage.vue") }
     ],
-    meta: { appDrawer: "EntryDrawer", auth: true }
+    meta: { appDrawer: "EntryDrawer", requiresAuth: true }
+  },
+
+  {
+    path: "/auth",
+    component: () => import("layouts/MainLayout.vue"),
+    children: [
+      { path: "", component: () => import("pages/auth/AuthPage.vue") }
+    ],
+    meta: { appDrawer: "EntryDrawer" }
   },
 
   // Always leave this as last one,

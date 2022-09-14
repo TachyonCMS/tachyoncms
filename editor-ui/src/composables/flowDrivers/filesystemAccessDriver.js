@@ -99,16 +99,9 @@ export default () => {
     }
   };
 
-  const createFlow = async (flowData) => {
+  const createFlow = async (flowData, key = null) => {
     try {
       console.log("Creating Flow");
-
-      // Get passphrase out of object first
-      let passphrase = null;
-      if (flowData.passphrase) {
-        passphrase = flowData.passphrase;
-        flowData.delete("passphrase");
-      }
 
       // We leave "encrypted" set as  signal to the flow that it is encrypted
 
@@ -1121,8 +1114,8 @@ export default () => {
     }
   };
 
-  const keyFilename ='tcms-encryption-key.json'
-  const encConfigFilename ='tcms-encryption-settings.json'
+  const keyFilename = "tcms-encryption-key.json";
+  const encConfigFilename = "tcms-encryption-settings.json";
 
   const checkEncryption = async () => {
     const dirHandle = dirHandleMap.get("sourceDir");

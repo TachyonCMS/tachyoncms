@@ -1,0 +1,17 @@
+{
+  "trigger": true,
+  "modules": [
+    "custom"
+  ],
+  "parentResource": "tachyoncmsapp9123fec59123fec5",
+  "functionName": "tachyoncmsapp9123fec59123fec5PostConfirmation",
+  "resourceName": "tachyoncmsapp9123fec59123fec5PostConfirmation",
+  "parentStack": "auth",
+  "triggerEnvs": "[]",
+  "triggerDir": "/snapshot/repo/build/node_modules/@aws-amplify/amplify-category-auth/provider-utils/awscloudformation/triggers/PostConfirmation",
+  "triggerTemplate": "PostConfirmation.json.ejs",
+  "triggerEventPath": "PostConfirmation.event.json",
+  "roleName": "tachyoncmsapp9123fec59123fec5PostConfirmation",
+  "skipEdit": true,
+  "enableCors": false
+}
