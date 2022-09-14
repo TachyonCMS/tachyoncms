@@ -69,7 +69,7 @@ const routes = [
     children: [
       { path: "", component: () => import("pages/auth/AuthPage.vue") }
     ],
-    meta: { appDrawer: "EntryDrawer" }
+    meta: { appDrawer: "BenefitsDrawer" }
   },
 
   // Always leave this as last one,

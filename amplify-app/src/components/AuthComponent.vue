@@ -8,24 +8,24 @@
 
       <q-separator></q-separator>
 
-      <div class="text-h3 q-py-lg">
+      <div class="text-h4 q-py-lg">
         <span v-if="tab == 'signup'">Join Now!</span
-        ><span v-else>Welcome!</span>
+        ><span v-else>Welcome Back!</span>
       </div>
 
       <q-input label="Username" v-model="username"></q-input>
       <q-input label="Password" v-model="password" type="password"></q-input>
       <template v-if="tab == 'signup'">
         <q-input label="Confirm password" v-model="password2"></q-input>
-        <q-input label="Name" v-model="commonName"></q-input>
         <q-input label="Email" v-model="email"></q-input>
+        <q-input label="Full name" v-model="commonName"></q-input>
       </template>
       <q-tab-panels v-model="tab" animated>
         <q-tab-panel name="signup" class="bg-card-paper">
           <q-btn label="Sign Up"></q-btn>
         </q-tab-panel>
 
-        <q-tab-panel name="signin">
+        <q-tab-panel name="signin" class="bg-card-paper">
           <div>
             <q-btn label="Sign In"></q-btn>
           </div>

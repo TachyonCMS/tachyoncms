@@ -34,10 +34,24 @@
                 ></q-toggle>
               </q-item-section>
             </q-item>
+            <!-- Color switcher
             <q-item>
               <q-item-section class="text-no-wrap">
                 <ColorSwitcher></ColorSwitcher>
               </q-item-section>
+            </q-item> -->
+          </q-list>
+        </q-btn-dropdown>
+
+        <q-btn-dropdown dropdown-icon="mdi-user" size="sm" class="q-px-sm">
+          <q-list bordered padding>
+            <q-item-label header>{{ $t("account") }}</q-item-label>
+            <q-item>
+              <q-item-section class="text-no-wrap"> Logout </q-item-section>
+            </q-item>
+
+            <q-item>
+              <q-item-section class="text-no-wrap"> Password </q-item-section>
             </q-item>
           </q-list>
         </q-btn-dropdown>
@@ -58,6 +72,10 @@
         v-if="route.meta.appDrawer == 'EntryDrawer'"
         class="bg-drawer-paper on-drawer-paper"
       ></EntryDrawer>
+      <BenefitsDrawer
+        v-if="route.meta.appDrawer == 'BenefitsDrawer'"
+        class="bg-drawer-paper on-drawer-paper"
+      ></BenefitsDrawer>
     </q-drawer>
 
     <q-page-container class="bg-card-surround">
@@ -395,6 +413,7 @@ import { useRoute } from "vue-router";
 // Potential left drawer content
 import MainDrawer from "./drawers/MainDrawer.vue";
 import EntryDrawer from "./drawers/EntryDrawer.vue";
+import BenefitsDrawer from "./drawers/BenefitsDrawer.vue";
 const route = useRoute();
 console.log(route.meta.appDrawer);
 // Mange left drawer state
