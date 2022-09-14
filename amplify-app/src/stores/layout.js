@@ -1,14 +1,13 @@
-import { defineStore } from 'pinia';
+import { defineStore } from "pinia";
 
-export const useLayoutStore = defineStore('layout', {
+export const useLayoutStore = defineStore("layout", {
   state: () => ({
-    title: 'Tachyon App',
+    title: "Tachyon CMS"
   }),
   getters: {},
   actions: {
     setTitle(title) {
       this.title = title;
-    },
-
+    }
   }
 });

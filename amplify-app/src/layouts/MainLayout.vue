@@ -43,15 +43,23 @@
           </q-list>
         </q-btn-dropdown>
 
-        <q-btn-dropdown dropdown-icon="mdi-user" size="sm" class="q-px-sm">
+        <q-btn-dropdown
+          dropdown-icon="mdi-account-circle"
+          size="sm"
+          class="q-px-sm"
+        >
           <q-list bordered padding>
-            <q-item-label header>{{ $t("account") }}</q-item-label>
+            <q-item-label header>{{ $t("Account") }}</q-item-label>
             <q-item>
-              <q-item-section class="text-no-wrap"> Logout </q-item-section>
+              <q-item-section class="text-no-wrap">{{
+                $t("Logout")
+              }}</q-item-section>
             </q-item>
 
             <q-item>
-              <q-item-section class="text-no-wrap"> Password </q-item-section>
+              <q-item-section class="text-no-wrap">{{
+                $t("Password")
+              }}</q-item-section>
             </q-item>
           </q-list>
         </q-btn-dropdown>
