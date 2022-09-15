@@ -18,6 +18,11 @@
       <template v-if="tab == 'signup'">
         <q-input label="Confirm password" v-model="password2"></q-input>
         <q-input label="Email" v-model="email"></q-input>
+        <vue3-q-tel-input
+          label="Telephone"
+          v-model:tel="tel"
+          :required="false"
+        />
         <q-input label="Full name" v-model="commonName"></q-input>
       </template>
       <q-tab-panels v-model="tab" animated>
@@ -42,6 +47,9 @@ import { ref } from "vue";
 import { Authenticator, useAuthenticator } from "@aws-amplify/ui-vue";
 const auth = useAuthenticator();
 
+import Vue3QTelInput from "vue3-q-tel-input";
+import "../../node_modules/vue3-q-tel-input/dist/vue3-q-tel-input.esm.css";
+
 import { useLayoutStore } from "../stores/layout";
 const layoutStore = useLayoutStore();
 
@@ -53,6 +61,7 @@ const password = ref(null);
 const password2 = ref(null);
 const commonName = ref(null);
 const email = ref(null);
+const tel = ref("");
 </script>
 
 <style lang="scss">

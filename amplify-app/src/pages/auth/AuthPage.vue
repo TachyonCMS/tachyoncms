@@ -1,6 +1,6 @@
 <template>
   <q-page padding class="auth bg-card-surround">
-    <!-- <authenticator></authenticator> -->
+    <authenticator></authenticator>
     <AuthComponent></AuthComponent>
   </q-page>
 </template>

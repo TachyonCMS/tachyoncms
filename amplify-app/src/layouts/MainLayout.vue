@@ -14,6 +14,30 @@
         <q-toolbar-title>
           {{ layoutStore.title }}
         </q-toolbar-title>
+
+        {{ userStore.username }}
+
+        <q-btn-dropdown
+          dropdown-icon="mdi-account-circle"
+          size="sm"
+          class="q-px-sm"
+        >
+          <q-list bordered padding>
+            <q-item-label header>{{ $t("Account") }}</q-item-label>
+            <q-item>
+              <q-item-section class="text-no-wrap">{{
+                $t("Logout")
+              }}</q-item-section>
+            </q-item>
+
+            <q-item>
+              <q-item-section class="text-no-wrap">{{
+                $t("Password")
+              }}</q-item-section>
+            </q-item>
+          </q-list>
+        </q-btn-dropdown>
+
         <q-btn-dropdown dropdown-icon="mdi-cog" size="sm" class="q-px-sm">
           <q-list bordered padding>
             <q-item-label header>{{ $t("customize") }}</q-item-label>
@@ -40,27 +64,6 @@
                 <ColorSwitcher></ColorSwitcher>
               </q-item-section>
             </q-item> -->
-          </q-list>
-        </q-btn-dropdown>
-
-        <q-btn-dropdown
-          dropdown-icon="mdi-account-circle"
-          size="sm"
-          class="q-px-sm"
-        >
-          <q-list bordered padding>
-            <q-item-label header>{{ $t("Account") }}</q-item-label>
-            <q-item>
-              <q-item-section class="text-no-wrap">{{
-                $t("Logout")
-              }}</q-item-section>
-            </q-item>
-
-            <q-item>
-              <q-item-section class="text-no-wrap">{{
-                $t("Password")
-              }}</q-item-section>
-            </q-item>
           </q-list>
         </q-btn-dropdown>
       </q-toolbar>
@@ -97,16 +100,29 @@
 <script setup>
 import { ref, watch, watchEffect, computed } from "vue";
 import { useQuasar, setCssVar, colors } from "quasar";
+
+// USER Store - info about the auth user
+import { useUserStore } from "../stores/user";
+const userStore = useUserStore();
+
+import useAuth from "../composables/useAuth";
+const platformAuth = useAuth();
+const authUser = platformAuth.getAuthUser().then((user) => {
+  console.log(user.username);
+  userStore.setUsername = user.username;
+  console.log(userStore.username);
+});
+
 const $q = useQuasar();
 const { getPaletteColor, lighten, brightness } = colors;
 // CTA color
 const ctaColor = ref(null);
 
-// LAYOUT Store info about the layout
+// LAYOUT Store - info about the layout
 import { useLayoutStore } from "../stores/layout";
 const layoutStore = useLayoutStore();
 
-// I18N Store, info about the visitors selected language options
+// I18N Store - info about the visitors selected language options
 import { useI18nStore } from "../stores/i18n";
 const i18nStore = useI18nStore();
 
