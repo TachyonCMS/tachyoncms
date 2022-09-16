@@ -43,7 +43,7 @@ export default route(function (/* { store, ssrContext } */) {
         })
         .catch(() => {
           next({
-            path: "/auth"
+            path: "/auth/login"
           });
         });
     } else {

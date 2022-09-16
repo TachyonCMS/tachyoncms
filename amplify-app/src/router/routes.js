@@ -62,12 +62,39 @@ const routes = [
     ],
     meta: { appDrawer: "EntryDrawer", requiresAuth: true }
   },
-
+  /**
   {
     path: "/auth",
     component: () => import("layouts/MainLayout.vue"),
     children: [
       { path: "", component: () => import("pages/auth/AuthPage.vue") }
+    ],
+    meta: { appDrawer: "BenefitsDrawer" }
+  },
+ */
+  {
+    path: "/auth/login",
+    component: () => import("layouts/MainLayout.vue"),
+    children: [
+      { path: "", component: () => import("pages/auth/AuthPage.vue") }
+    ],
+    meta: { appDrawer: "BenefitsDrawer" }
+  },
+
+  {
+    path: "/auth/signup",
+    component: () => import("layouts/MainLayout.vue"),
+    children: [
+      { path: "", component: () => import("pages/auth/AuthPage.vue") }
+    ],
+    meta: { appDrawer: "BenefitsDrawer" }
+  },
+
+  {
+    path: "/auth/password_reset",
+    component: () => import("layouts/MainLayout.vue"),
+    children: [
+      { path: "", component: () => import("pages/auth/PasswordResetPage.vue") }
     ],
     meta: { appDrawer: "BenefitsDrawer" }
   },

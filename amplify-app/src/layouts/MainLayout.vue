@@ -12,33 +12,13 @@
         />
 
         <q-toolbar-title>
-          {{ layoutStore.title }}
+          <router-link to="/" class="nolink on-primary">{{
+            layoutStore.title
+          }}</router-link>
         </q-toolbar-title>
 
-        {{ userStore.username }}
-
-        <q-btn-dropdown
-          dropdown-icon="mdi-account-circle"
-          size="sm"
-          class="q-px-sm"
-        >
-          <q-list bordered padding>
-            <q-item-label header>{{ $t("Account") }}</q-item-label>
-            <q-item>
-              <q-item-section class="text-no-wrap">{{
-                $t("Logout")
-              }}</q-item-section>
-            </q-item>
-
-            <q-item>
-              <q-item-section class="text-no-wrap">{{
-                $t("Password")
-              }}</q-item-section>
-            </q-item>
-          </q-list>
-        </q-btn-dropdown>
-
-        <q-btn-dropdown dropdown-icon="mdi-cog" size="sm" class="q-px-sm">
+        <AccountButton></AccountButton>
+        <q-btn-dropdown dropdown-icon="mdi-cog" size="md" class="q-px-sm">
           <q-list bordered padding>
             <q-item-label header>{{ $t("customize") }}</q-item-label>
             <q-item>
@@ -108,9 +88,9 @@ const userStore = useUserStore();
 import useAuth from "../composables/useAuth";
 const platformAuth = useAuth();
 const authUser = platformAuth.getAuthUser().then((user) => {
-  console.log(user.username);
-  userStore.setUsername = user.username;
-  console.log(userStore.username);
+  if (user) {
+    userStore.setUsername(user.username);
+  }
 });
 
 const $q = useQuasar();
@@ -256,8 +236,8 @@ const setPrimaryColor = (hexCode) => {
   dk3.value = lighten(hexCode, -35);
   dk2.value = lighten(hexCode, -20);
   dk1.value = lighten(hexCode, -10);
-  lt5.value = lighten(hexCode, 65);
-  lt4.value = lighten(hexCode, 50);
+  lt5.value = lighten(hexCode, 75);
+  lt4.value = lighten(hexCode, 55);
   lt3.value = lighten(hexCode, 35);
   lt2.value = lighten(hexCode, 20);
   lt1.value = lighten(hexCode, 10);
@@ -513,11 +493,16 @@ watchEffect(() => {
   }
 });
 
-//const setShades(type, hexColor) =
+// Account Button - create account | login } logout | password change
+import AccountButton from "components/AccountButton.vue";
 </script>
 
 
 <style lang="scss">
+.nolink {
+  text-decoration: none;
+}
+
 // TEXT COLOR USED ON BACKGROUND
 .on-primary {
   color: v-bind("onPrimary");
@@ -759,5 +744,10 @@ watchEffect(() => {
 }
 .text-slt1 {
   background-color: v-bind("slt1");
+}
+
+.back-tab {
+  background-color: v-bind("lt5");
+  color: v-bind("dk3");
 }
 </style>

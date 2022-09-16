@@ -10,7 +10,12 @@ export const useUserStore = defineStore("user", {
     fullname: useStorage("fullname", null)
   }),
 
-  getters: {},
+  getters: {
+    isSignedIn: (state) => {
+      console.log(state.username);
+      return () => (state.username ? true : false);
+    }
+  },
 
   actions: {
     setUsername(val) {

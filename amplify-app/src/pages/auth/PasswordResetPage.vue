@@ -1,7 +1,7 @@
 <template>
   <q-page padding class="auth bg-card-surround">
     <authenticator></authenticator>
-    <AuthComponent view="access"></AuthComponent>
+    <AuthComponent view="passwdReset"></AuthComponent>
   </q-page>
 </template>
 
