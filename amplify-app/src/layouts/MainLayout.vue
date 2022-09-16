@@ -189,7 +189,11 @@ const scardPaper = ref(lighten(baseSecondaryColor, 92));
 const scardSurround = ref(lighten(baseSecondaryColor, 80));
 
 const lightText = "#FFF";
+const shadedText = ref(dk3.value);
 const darkText = "#000";
+
+const backTab = ref(lighten(basePrimaryColor, 65));
+const onBackTab = ref(dk3.value);
 
 const onPrimary = ref(lightText);
 const onSecondary = ref(lightText);
@@ -271,6 +275,9 @@ const setPrimaryColor = (hexCode) => {
     drawerPaper.value = lighten(hexCode, -65);
     onDrawerPaper.value =
       brightness(drawerPaper.value) > 128 ? darkText : lightText;
+
+    backTab.value = lighten(hexCode, 10);
+    onBackTab.value = lighten(hexCode, 70);
   } else {
     cardPaper.value = lighten(hexCode, 92);
     cardSurround.value = lighten(hexCode, 80);
@@ -287,6 +294,9 @@ const setPrimaryColor = (hexCode) => {
     drawerPaper.value = lighten(hexCode, 73);
     onDrawerPaper.value =
       brightness(drawerPaper.value) > 128 ? darkText : lightText;
+
+    backTab.value = lighten(hexCode, 70);
+    onBackTab.value = lighten(hexCode, 20);
   }
 };
 
@@ -746,8 +756,13 @@ import AccountButton from "components/AccountButton.vue";
   background-color: v-bind("slt1");
 }
 
-.back-tab {
+.back-tab2 {
   background-color: v-bind("lt5");
   color: v-bind("dk3");
+}
+
+.back-tab {
+  background-color: v-bind("backTab");
+  color: v-bind("onBackTab");
 }
 </style>

@@ -13,6 +13,24 @@ export default function useAuth() {
   const strategy = ref("amplify");
 
   /**
+   * Sign Out
+   *
+   */
+  const signOut = async () => {
+    console.debug("Signup");
+    try {
+      if (strategy.value) {
+        strategies[strategy.value].signOut().then(() => {
+          //
+        });
+      }
+    } catch (e) {
+      console.error("Error signing up user");
+      console.error(e);
+    }
+  };
+
+  /**
    * Sign Up
    *
    * @param {*} userObject
@@ -53,6 +71,7 @@ export default function useAuth() {
   };
 
   return {
+    signOut,
     signUp,
     getAuthUser
   };

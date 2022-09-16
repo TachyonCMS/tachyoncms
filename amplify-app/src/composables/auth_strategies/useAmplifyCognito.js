@@ -6,8 +6,19 @@ export default function useAuth() {
   const strategy = ref("aws");
 
   // Get all flows, @todo add pagination
+  const signOut = async () => {
+    console.debug("Amplify Cognito Sign out");
+    await Auth.signOut();
+    try {
+    } catch (e) {
+      console.error("Error signing out Amplify Cognito user");
+      console.error(e);
+    }
+  };
+
+  // Get all flows, @todo add pagination
   const signUp = async (userObject) => {
-    console.debug("Amplify Cognito Signup");
+    console.debug("Amplify Cognito Sign up");
     try {
     } catch (e) {
       console.error("Error signing up Amplify Cognito user");
@@ -36,6 +47,7 @@ export default function useAuth() {
   };
 
   return {
+    signOut,
     signUp,
     getAuthUser
   };

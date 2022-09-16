@@ -19,7 +19,7 @@
             $t("Password")
           }}</q-item-section>
         </q-item>
-        <q-item>
+        <q-item clickable @click="this.signOut()">
           <q-item-section class="text-no-wrap">{{
             $t("Logout")
           }}</q-item-section>
@@ -50,6 +50,9 @@ const userStore = useUserStore();
 
 import { Authenticator, useAuthenticator } from "@aws-amplify/ui-vue";
 const auth = useAuthenticator();
+
+import useAuth from "../composables/useAuth";
+const { signOut } = useAuth();
 </script>
 
 <style lang="scss">
