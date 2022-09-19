@@ -7,28 +7,15 @@ export const useUserStore = defineStore("user", {
     username: useStorage("username", null),
     email: useStorage("email", null),
     telephone: useStorage("telephone", null),
-    fullname: useStorage("fullname", null)
+    fullname: useStorage("fullname", null),
+    authenticated: useStorage("authenticated", false)
   }),
 
   getters: {
     isSignedIn: (state) => {
-      console.log(state.username);
-      return () => (state.username ? true : false);
+      return () => state.authenticated;
     }
   },
 
-  actions: {
-    setUsername(val) {
-      this.username = val;
-    },
-    setEmail(val) {
-      this.email = val;
-    },
-    setTelephone(val) {
-      this.telephone = val;
-    },
-    setFullname(val) {
-      this.fullname = val;
-    }
-  }
+  actions: {}
 });

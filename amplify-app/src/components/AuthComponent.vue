@@ -66,7 +66,7 @@
             <q-btn
               label="Sign In"
               class="bg-primary on-primary"
-              @onclick="platformSignIn()"
+              @click="platformSignIn()"
             ></q-btn>
           </div>
           <q-btn
@@ -91,8 +91,8 @@
       class="text-center justify-center"
       v-if="view == 'passwdReset' && resetStage == 'enterUsername'"
     >
-      <div class="q-mx-md">
-        Enter your username, we will send a reset code to the email address on
+      <div class="q-mx-md q-mb-lg text-body1">
+        Enter your username, a reset code will be sent to the email address on
         file.
       </div>
       <q-input label="Username" v-model="username"></q-input>
@@ -189,15 +189,17 @@ const props = defineProps({
 });
 
 // ONLY FOR DEMO, NOT REQUIRED FOR PROD
-import { Authenticator, useAuthenticator } from "@aws-amplify/ui-vue";
-const auth = useAuthenticator();
+//import { Authenticator, useAuthenticator } from "@aws-amplify/ui-vue";
+//const auth = useAuthenticator();
 
 import Vue3QTelInput from "vue3-q-tel-input";
 import "../../node_modules/vue3-q-tel-input/dist/vue3-q-tel-input.esm.css";
 
-import { useLayoutStore } from "../stores/layout";
+import { useUserStore } from "../stores/user";
+const userStore = useUserStore();
 
-const layoutStore = useLayoutStore();
+import useAuth from "../composables/useAuth";
+const { signIn, requestResetCode } = useAuth();
 
 const authTab = ref(""); // Tied to router, this cannot have a default value not
 
@@ -220,11 +222,29 @@ const resetCode = ref(null);
 
 const resetStage = ref("enterUsername");
 
-const platformSignIn = async () => {};
+const platformSignIn = async () => {
+  const credentials = {
+    username: username.value,
+    password: password.value,
+  };
 
-const sendResetCode = async () => {
+  const user = await signIn(credentials);
+  if (user) {
+    userStore.$patch({
+      username: user.username,
+      email: user.email,
+      fullname: user.name,
+      authenticated: true,
+    });
+    // Redirect to CMS
+  }
+};
+
+const sendResetCode = async (username) => {
   console.log("Sending reset code");
   resetStage.value = "enterCode";
+
+  requestResetCode(username);
 };
 </script>
 

@@ -86,10 +86,16 @@ import { useUserStore } from "../stores/user";
 const userStore = useUserStore();
 
 import useAuth from "../composables/useAuth";
-const platformAuth = useAuth();
-const authUser = platformAuth.getAuthUser().then((user) => {
+const { getAuthUser } = useAuth();
+const authUser = getAuthUser().then((user) => {
   if (user) {
-    userStore.setUsername(user.username);
+    userStore.$patch({
+      username: user.username,
+      email: user.attributes.email,
+      fullname: user.attributes.name,
+      userId: user.attributes.sub,
+      authenticated: true,
+    });
   }
 });
 
@@ -361,8 +367,8 @@ if (!colorStore.secondaryColor) {
 if (!colorStore.accentColor) {
   colorStore.setAccentColor(baseAccentColor);
 }
-// DARK MODE - Enable Quasar dark mode toggling
 
+// DARK MODE - Enable Quasar dark mode toggling
 const setColors = () => {
   if (colorStore.darkMode) {
     console.log("turning dark");
@@ -375,7 +381,6 @@ const setColors = () => {
   }
   $q.dark.set(colorStore.darkMode);
 };
-
 setColors();
 
 // Update navbar in dark mode
@@ -773,5 +778,13 @@ import AccountButton from "components/AccountButton.vue";
 .top-tab {
   background-color: v-bind("cardPaper");
   color: v-bind("onCardPaper");
+}
+
+// BODY - LIGHT / DARK
+.body--light {
+  background: v-bind("cardPaper");
+}
+.body--dark {
+  background: #000;
 }
 </style>

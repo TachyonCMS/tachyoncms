@@ -3,7 +3,7 @@
     dropdown-icon="mdi-account-circle"
     size="md"
     class="q-px-sm"
-    :label="userStore.username"
+    :label="userStore.authenticated ? userStore.username : ''"
   >
     <q-list bordered padding dense>
       <q-item-label header>{{ $t("Account") }}</q-item-label>
@@ -48,8 +48,8 @@ import { ref, computed } from "vue";
 import { useUserStore } from "../stores/user";
 const userStore = useUserStore();
 
-import { Authenticator, useAuthenticator } from "@aws-amplify/ui-vue";
-const auth = useAuthenticator();
+//import { Authenticator, useAuthenticator } from "@aws-amplify/ui-vue";
+//const auth = useAuthenticator();
 
 import useAuth from "../composables/useAuth";
 const { signOut } = useAuth();
