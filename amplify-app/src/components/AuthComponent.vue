@@ -52,6 +52,7 @@
           label="Telephone"
           v-model:tel="tel"
           :required="false"
+          class="q-py-sm"
         />
         <q-input label="Full name" v-model="commonName"></q-input>
       </template>
@@ -68,7 +69,11 @@
               @onclick="platformSignIn()"
             ></q-btn>
           </div>
-          <q-btn class="q-mt-lg" flat no-caps to="/auth/password_reset"
+          <q-btn
+            class="q-mt-lg text-lt3 text-body1"
+            flat
+            no-caps
+            to="/auth/password_reset"
             >Reset password</q-btn
           >
         </q-tab-panel>
@@ -139,24 +144,34 @@
       <div v-if="view == 'passwdReset'">
         <div v-if="resetStage == 'enterUsername'">
           <div class="row col-12 justify-center text-center">
-            <q-btn class="q-mt-sm" color="primary" @click="sendResetCode()"
+            <q-btn
+              class="q-mt-sm bg-primary on-primary"
+              @click="sendResetCode()"
               >Send Reset Code</q-btn
             >
           </div>
           <div>
-            <q-btn class="q-my-lg" flat no-caps to="/auth/login"
+            <q-btn
+              class="q-my-lg text-lt3 text-body1"
+              flat
+              no-caps
+              to="/auth/login"
               >Back to Login</q-btn
             >
           </div>
         </div>
         <div v-if="resetStage == 'enterCode'">
           <div class="row col-12 justify-center text-center">
-            <q-btn class="q-mt-sm" color="primary" @click="savePassword()"
+            <q-btn class="q-mt-sm bg-primary on-primary" @click="savePassword()"
               >Save new password</q-btn
             >
           </div>
           <div>
-            <q-btn class="q-my-lg" flat no-caps @click="resendCode()"
+            <q-btn
+              class="q-my-lg text-lt3 text-body1"
+              flat
+              no-caps
+              @click="resendCode()"
               >Resend code</q-btn
             >
           </div>

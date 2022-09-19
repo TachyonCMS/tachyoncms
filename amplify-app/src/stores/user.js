@@ -19,7 +19,6 @@ export const useUserStore = defineStore("user", {
 
   actions: {
     setUsername(val) {
-      console.log(val);
       this.username = val;
     },
     setEmail(val) {

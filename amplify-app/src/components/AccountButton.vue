@@ -19,7 +19,7 @@
             $t("Password")
           }}</q-item-section>
         </q-item>
-        <q-item clickable @click="this.signOut()">
+        <q-item clickable @click="platformSignOut()">
           <q-item-section class="text-no-wrap">{{
             $t("Logout")
           }}</q-item-section>
@@ -53,6 +53,11 @@ const auth = useAuthenticator();
 
 import useAuth from "../composables/useAuth";
 const { signOut } = useAuth();
+
+const platformSignOut = async () => {
+  console.log("LOGOUT");
+  await signOut();
+};
 </script>
 
 <style lang="scss">

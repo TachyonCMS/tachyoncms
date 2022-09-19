@@ -199,7 +199,7 @@ const onPrimary = ref(lightText);
 const onSecondary = ref(lightText);
 const onAccent = ref(lightText);
 const onCta = ref(lightText);
-const onCardPaper = ref(darkText);
+const onCardPaper = ref(dk5.value);
 const onCardSurround = ref(darkText);
 const onScardPaper = ref(darkText);
 const onScardSurround = ref(darkText);
@@ -283,7 +283,7 @@ const setPrimaryColor = (hexCode) => {
     cardSurround.value = lighten(hexCode, 80);
 
     onCardPaper.value =
-      brightness(cardPaper.value) > 128 ? darkText : lightText;
+      brightness(cardPaper.value) > 128 ? dk5.value : lt5.value;
     onCardSurround.value =
       brightness(cardSurround.value) > 128 ? darkText : lightText;
 
@@ -535,6 +535,10 @@ import AccountButton from "components/AccountButton.vue";
   color: v-bind("onDrawerPaper");
 }
 
+.on-card-paper {
+  color: v-bind("onCardPaper");
+}
+
 .on-dk5 {
   color: v-bind("onDk5");
 }
@@ -692,68 +696,68 @@ import AccountButton from "components/AccountButton.vue";
 // TEXT COLOR
 // CTA Color
 .text-cta {
-  background-color: v-bind("ctaColor");
+  color: v-bind("ctaColor");
 }
 .text-dk5 {
-  background-color: v-bind("dk5");
+  color: v-bind("dk5");
 }
 .text-dk4 {
-  background-color: v-bind("dk4");
+  color: v-bind("dk4");
 }
 .text-dk3 {
-  background-color: v-bind("dk3");
+  color: v-bind("dk3");
 }
 .text-dk2 {
-  background-color: v-bind("dk2");
+  color: v-bind("dk2");
 }
 .text-dk1 {
-  background-color: v-bind("dk1");
+  color: v-bind("dk1");
 }
 .text-lt5 {
-  background-color: v-bind("lt5");
+  color: v-bind("lt5");
 }
 .text-lt4 {
-  background-color: v-bind("lt4");
+  color: v-bind("lt4");
 }
 .text-lt3 {
-  background-color: v-bind("lt3");
+  color: v-bind("lt3");
 }
 .text-lt2 {
-  background-color: v-bind("lt2");
+  color: v-bind("lt2");
 }
 .text-lt1 {
-  background-color: v-bind("lt1");
+  color: v-bind("lt1");
 }
 
 .text-sdk5 {
-  background-color: v-bind("sdk5");
+  color: v-bind("sdk5");
 }
 .text-sdk4 {
-  background-color: v-bind("sdk4");
+  color: v-bind("sdk4");
 }
 .text-sdk3 {
-  background-color: v-bind("sdk3");
+  color: v-bind("sdk3");
 }
 .text-sdk2 {
-  background-color: v-bind("sdk2");
+  color: v-bind("sdk2");
 }
 .text-sdk1 {
-  background-color: v-bind("sdk1");
+  color: v-bind("sdk1");
 }
 .text-slt5 {
-  background-color: v-bind("slt5");
+  color: v-bind("slt5");
 }
 .text-slt4 {
-  background-color: v-bind("slt4");
+  color: v-bind("slt4");
 }
 .text-slt3 {
-  background-color: v-bind("slt3");
+  color: v-bind("slt3");
 }
 .text-slt2 {
-  background-color: v-bind("slt2");
+  color: v-bind("slt2");
 }
 .text-slt1 {
-  background-color: v-bind("slt1");
+  color: v-bind("slt1");
 }
 
 .back-tab2 {
@@ -764,5 +768,10 @@ import AccountButton from "components/AccountButton.vue";
 .back-tab {
   background-color: v-bind("backTab");
   color: v-bind("onBackTab");
+}
+
+.top-tab {
+  background-color: v-bind("cardPaper");
+  color: v-bind("onCardPaper");
 }
 </style>
