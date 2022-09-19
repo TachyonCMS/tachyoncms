@@ -1,23 +1,8 @@
 import { ref } from "vue";
 
-import AmplifyCognito from "./auth_strategies/useAmplifyCognito.js";
-
 // USER Store - info about the auth user
 import { useUserStore } from "../stores/user";
 const userStore = useUserStore();
-// COLOR Store
-import { useColorStore } from "../stores/color";
-const colorStore = useColorStore();
-
-import { colors } from "quasar";
-const { getPaletteColor } = colors;
-
-// Stratgies object, this does not need to be reactive
-const strategies = {};
-
-strategies.amplify = new AmplifyCognito();
-
-console.log(strategies);
 
 export default function useAuth() {
   const strategy = ref("amplify");
