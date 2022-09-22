@@ -163,12 +163,21 @@ export default function useAuth() {
     }
   }
 
+  async function resendResetCode(username) {
+    try {
+      await Auth.resendResetCode(username);
+    } catch (error) {
+      console.error("error resending reset code:", error);
+    }
+  }
+
   return {
     trackAuth,
     signIn,
     signOut,
     signUp,
     requestResetCode,
-    submitResetCode
+    submitResetCode,
+    resendResetCode
   };
 }

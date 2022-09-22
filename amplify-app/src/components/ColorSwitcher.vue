@@ -3,9 +3,9 @@
     <q-item>
       <q-item-section class="text-no-wrap">
         <q-input
-          filled
           v-model="colorStore.primaryColor"
           :disable="colorStore.darkMode"
+          :readonly="colorStore.darkMode"
           :rules="['anyColor']"
           :label="$t('primaryColor')"
         >
@@ -23,7 +23,7 @@
         </q-input>
       </q-item-section>
     </q-item>
-
+    <!--
     <q-item>
       <q-input
         filled
@@ -91,6 +91,7 @@
         </q-input>
       </q-item-section>
     </q-item>
+    -->
   </div>
 </template>
 

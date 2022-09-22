@@ -23,7 +23,9 @@
 
       <div v-if="errors.length > 0">
         <ul class="text-negative justify-left text-left">
-          <li v-for="(error, ix) in errors" :key="ix">{{ error }}</li>
+          <li v-for="(error, ix) in errors" :key="ix" class="text-body1">
+            {{ error }}
+          </li>
         </ul>
       </div>
 
@@ -104,7 +106,13 @@
       </div>
       <div v-if="errors.length > 0">
         <ul class="text-negative justify-left text-left">
-          <li v-for="(error, ix) in errors" :key="ix">{{ error }}</li>
+          <li
+            v-for="(error, ix) in errors"
+            :key="ix"
+            class="text-body1 text-weight-bold"
+          >
+            {{ error }}
+          </li>
         </ul>
       </div>
       <q-input label="Username" v-model="username"></q-input>
@@ -213,7 +221,8 @@ import { useUserStore } from "../stores/user";
 const userStore = useUserStore();
 
 import useAuth from "../composables/useAuth";
-const { signIn, requestResetCode, submitResetCode } = useAuth();
+const { signIn, requestResetCode, submitResetCode, resendResetCode } =
+  useAuth();
 
 const authTab = ref(""); // Tied to router, this cannot have a default value not
 
@@ -269,6 +278,16 @@ const resetPassword = async () => {
   console.log("Sending reset code");
   try {
     await submitResetCode(userStore.username, resetCode.value, password.value);
+  } catch (e) {
+    console.error(e);
+    errors.value = [e];
+  }
+};
+
+const resendCode = async () => {
+  console.log("Re-sending reset code");
+  try {
+    await resendResetCode(userStore.username);
   } catch (e) {
     console.error(e);
     errors.value = [e];

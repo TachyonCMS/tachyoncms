@@ -38,12 +38,12 @@
                 ></q-toggle>
               </q-item-section>
             </q-item>
-            <!-- Color switcher
+            <!-- Color switcher -->
             <q-item>
               <q-item-section class="text-no-wrap">
-                <ColorSwitcher></ColorSwitcher>
+                <ColorSwitcher disabled="true"></ColorSwitcher>
               </q-item-section>
-            </q-item> -->
+            </q-item>
           </q-list>
         </q-btn-dropdown>
       </q-toolbar>
@@ -199,49 +199,49 @@ const cardSurround = ref(lighten(basePrimaryColor, 80));
 const scardPaper = ref(lighten(baseSecondaryColor, 92));
 const scardSurround = ref(lighten(baseSecondaryColor, 80));
 
-const lightText = "#FFF";
+const lightText = ref("#FFF");
 const shadedText = ref(dk3.value);
-const darkText = "#000";
+const darkText = ref("#000");
 
 const backTab = ref(lighten(basePrimaryColor, 65));
 const onBackTab = ref(dk3.value);
 
-const onPrimary = ref(lightText);
-const onSecondary = ref(lightText);
-const onAccent = ref(lightText);
-const onCta = ref(lightText);
+const onPrimary = ref(lightText.value);
+const onSecondary = ref(lightText.value);
+const onAccent = ref(lightText.value);
+const onCta = ref(lightText.value);
 const onCardPaper = ref(dk5.value);
 const subOnCardPaper = ref(lt1.value);
-const onCardSurround = ref(darkText);
-const onScardPaper = ref(darkText);
-const onScardSurround = ref(darkText);
+const onCardSurround = ref(darkText.value);
+const onScardPaper = ref(darkText.value);
+const onScardSurround = ref(darkText.value);
 
-const onDk5 = ref(lightText);
-const onDk4 = ref(lightText);
-const onDk3 = ref(lightText);
-const onDk2 = ref(lightText);
-const onDk1 = ref(lightText);
-const onLt5 = ref(darkText);
-const onLt4 = ref(darkText);
-const onLt3 = ref(darkText);
-const onLt2 = ref(lightText);
-const onLt1 = ref(lightText);
+const onDk5 = ref(lightText.value);
+const onDk4 = ref(lightText.value);
+const onDk3 = ref(lightText.value);
+const onDk2 = ref(lightText.value);
+const onDk1 = ref(lightText.value);
+const onLt5 = ref(darkText.value);
+const onLt4 = ref(darkText.value);
+const onLt3 = ref(darkText.value);
+const onLt2 = ref(lightText.value);
+const onLt1 = ref(lightText.value);
 
-const onSdk5 = ref(lightText);
-const onSdk4 = ref(lightText);
-const onSdk3 = ref(lightText);
-const onSdk2 = ref(lightText);
-const onSdk1 = ref(lightText);
-const onSlt5 = ref(darkText);
-const onSlt4 = ref(darkText);
-const onSlt3 = ref(darkText);
-const onSlt2 = ref(lightText);
-const onSlt1 = ref(lightText);
+const onSdk5 = ref(lightText.value);
+const onSdk4 = ref(lightText.value);
+const onSdk3 = ref(lightText.value);
+const onSdk2 = ref(lightText.value);
+const onSdk1 = ref(lightText.value);
+const onSlt5 = ref(darkText.value);
+const onSlt4 = ref(darkText.value);
+const onSlt3 = ref(darkText.value);
+const onSlt2 = ref(lightText.value);
+const onSlt1 = ref(lightText.value);
 
 const drawerColor = ref(lighten(basePrimaryColor, -30));
 const drawerPaper = ref(lighten(basePrimaryColor, -70));
-const onDrawerColor = ref(lightText);
-const onDrawerPaper = ref(darkText);
+const onDrawerColor = ref(lightText.value);
+const onDrawerPaper = ref(darkText.value);
 
 // Change the primary color and shades
 const setPrimaryColor = (hexCode) => {
@@ -258,35 +258,37 @@ const setPrimaryColor = (hexCode) => {
   lt2.value = lighten(hexCode, 20);
   lt1.value = lighten(hexCode, 10);
 
-  onPrimary.value = brightness(hexCode) > 128 ? darkText : lightText;
+  onPrimary.value =
+    brightness(hexCode) > 128 ? darkText.value : lightText.value;
 
-  onDk5.value = brightness(dk5.value) > 128 ? darkText : lightText;
-  onDk4.value = brightness(dk4.value) > 128 ? darkText : lightText;
-  onDk3.value = brightness(dk3.value) > 128 ? darkText : lightText;
-  onDk2.value = brightness(dk2.value) > 128 ? darkText : lightText;
-  onDk1.value = brightness(dk1.value) > 128 ? darkText : lightText;
-  onLt5.value = brightness(lt5.value) > 128 ? darkText : lightText;
-  onLt4.value = brightness(lt4.value) > 128 ? darkText : lightText;
-  onLt3.value = brightness(lt3.value) > 128 ? darkText : lightText;
-  onLt2.value = brightness(lt2.value) > 128 ? darkText : lightText;
-  onLt1.value = brightness(lt1.value) > 128 ? darkText : lightText;
+  onDk5.value = brightness(dk5.value) > 128 ? darkText.value : lightText.value;
+  onDk4.value = brightness(dk4.value) > 128 ? darkText.value : lightText.value;
+  onDk3.value = brightness(dk3.value) > 128 ? darkText.value : lightText.value;
+  onDk2.value = brightness(dk2.value) > 128 ? darkText.value : lightText.value;
+  onDk1.value = brightness(dk1.value) > 128 ? darkText.value : lightText.value;
+  onLt5.value = brightness(lt5.value) > 128 ? darkText.value : lightText.value;
+  onLt4.value = brightness(lt4.value) > 128 ? darkText.value : lightText.value;
+  onLt3.value = brightness(lt3.value) > 128 ? darkText.value : lightText.value;
+  onLt2.value = brightness(lt2.value) > 128 ? darkText.value : lightText.value;
+  onLt1.value = brightness(lt1.value) > 128 ? darkText.value : lightText.value;
 
   if (colorStore.darkMode) {
+    lightText.value = "#EEE";
     cardPaper.value = lighten(hexCode, -30);
     cardSurround.value = lighten(hexCode, -55);
 
     onCardPaper.value =
-      brightness(cardPaper.value) > 128 ? darkText : lightText;
+      brightness(cardPaper.value) > 128 ? darkText.value : lightText.value;
     onCardSurround.value =
-      brightness(cardSurround.value) > 128 ? darkText : lightText;
+      brightness(cardSurround.value) > 128 ? darkText.value : lightText.value;
 
     drawerColor.value = lighten(hexCode, -75);
     console.log("DRAWER: " + drawerColor.value);
     onDrawerColor.value =
-      brightness(drawerColor.value) > 128 ? darkText : lightText;
+      brightness(drawerColor.value) > 128 ? darkText.value : lightText.value;
     drawerPaper.value = lighten(hexCode, -65);
     onDrawerPaper.value =
-      brightness(drawerPaper.value) > 128 ? darkText : lightText;
+      brightness(drawerPaper.value) > 128 ? darkText.value : lightText.value;
 
     backTab.value = lighten(hexCode, 10);
     onBackTab.value = lighten(hexCode, 85);
@@ -298,15 +300,15 @@ const setPrimaryColor = (hexCode) => {
     onCardPaper.value =
       brightness(cardPaper.value) > 128 ? dk5.value : lt5.value;
     onCardSurround.value =
-      brightness(cardSurround.value) > 128 ? darkText : lightText;
+      brightness(cardSurround.value) > 128 ? darkText.value : lightText.value;
 
     drawerColor.value = lighten(hexCode, 70);
     console.log("DRAWER: " + drawerColor.value);
     onDrawerColor.value =
-      brightness(drawerColor.value) > 128 ? darkText : lightText;
+      brightness(drawerColor.value) > 128 ? darkText.value : lightText.value;
     drawerPaper.value = lighten(hexCode, 73);
     onDrawerPaper.value =
-      brightness(drawerPaper.value) > 128 ? darkText : lightText;
+      brightness(drawerPaper.value) > 128 ? darkText.value : lightText.value;
 
     backTab.value = lighten(hexCode, 70);
     onBackTab.value = lighten(hexCode, 20);
@@ -328,35 +330,46 @@ const setSecondaryColor = (hexCode) => {
   slt2.value = lighten(hexCode, 20);
   slt1.value = lighten(hexCode, 10);
 
-  onSecondary.value = brightness(hexCode) > 128 ? darkText : lightText;
+  onSecondary.value =
+    brightness(hexCode) > 128 ? darkText.value : lightText.value;
 
-  onSdk5.value = brightness(sdk5.value) > 128 ? darkText : lightText;
-  onSdk4.value = brightness(sdk4.value) > 128 ? darkText : lightText;
-  onSdk3.value = brightness(sdk3.value) > 128 ? darkText : lightText;
-  onSdk2.value = brightness(sdk2.value) > 128 ? darkText : lightText;
-  onSdk1.value = brightness(sdk1.value) > 128 ? darkText : lightText;
-  onSlt5.value = brightness(slt5.value) > 128 ? darkText : lightText;
-  onSlt4.value = brightness(slt4.value) > 128 ? darkText : lightText;
-  onSlt3.value = brightness(slt3.value) > 128 ? darkText : lightText;
-  onSlt2.value = brightness(slt2.value) > 128 ? darkText : lightText;
-  onSlt1.value = brightness(slt1.value) > 128 ? darkText : lightText;
+  onSdk5.value =
+    brightness(sdk5.value) > 128 ? darkText.value : lightText.value;
+  onSdk4.value =
+    brightness(sdk4.value) > 128 ? darkText.value : lightText.value;
+  onSdk3.value =
+    brightness(sdk3.value) > 128 ? darkText.value : lightText.value;
+  onSdk2.value =
+    brightness(sdk2.value) > 128 ? darkText.value : lightText.value;
+  onSdk1.value =
+    brightness(sdk1.value) > 128 ? darkText.value : lightText.value;
+  onSlt5.value =
+    brightness(slt5.value) > 128 ? darkText.value : lightText.value;
+  onSlt4.value =
+    brightness(slt4.value) > 128 ? darkText.value : lightText.value;
+  onSlt3.value =
+    brightness(slt3.value) > 128 ? darkText.value : lightText.value;
+  onSlt2.value =
+    brightness(slt2.value) > 128 ? darkText.value : lightText.value;
+  onSlt1.value =
+    brightness(slt1.value) > 128 ? darkText.value : lightText.value;
 
   if (colorStore.darkMode) {
     scardPaper.value = lighten(hexCode, -30);
     scardSurround.value = lighten(hexCode, -55);
 
     onScardPaper.value =
-      brightness(scardPaper.value) > 128 ? darkText : lightText;
+      brightness(scardPaper.value) > 128 ? darkText.value : lightText.value;
     onScardSurround.value =
-      brightness(scardSurround.value) > 128 ? darkText : lightText;
+      brightness(scardSurround.value) > 128 ? darkText.value : lightText.value;
   } else {
     scardPaper.value = lighten(hexCode, 92);
     scardSurround.value = lighten(hexCode, 80);
 
     onScardPaper.value =
-      brightness(scardPaper.value) > 128 ? darkText : lightText;
+      brightness(scardPaper.value) > 128 ? darkText.value : lightText.value;
     onScardSurround.value =
-      brightness(scardSurround.value) > 128 ? darkText : lightText;
+      brightness(scardSurround.value) > 128 ? darkText.value : lightText.value;
   }
 };
 
@@ -455,7 +468,7 @@ import LanguageSwitcher from "components/LanguageSwitcher.vue";
 // Change the secondary color and shades
 const setAccentColor = (hexCode) => {
   setCssVar("accent", hexCode, document.documentElement);
-  onAccent.value = brightness(hexCode) > 128 ? darkText : lightText;
+  onAccent.value = brightness(hexCode) > 128 ? darkText.value : lightText.value;
   console.log("ACCENT: " + hexCode);
   console.log(onAccent.value);
 };
@@ -465,7 +478,7 @@ const setCtaColor = (hexCode) => {
   colorStore.setCtaColor(hexCode);
   setCssVar("cta", hexCode, document.documentElement);
   ctaColor.value = hexCode;
-  onCta.value = brightness(hexCode) > 128 ? darkText : lightText;
+  onCta.value = brightness(hexCode) > 128 ? darkText.value : lightText.value;
 };
 
 // COLORS CURRENT
