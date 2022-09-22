@@ -1,0 +1,26 @@
+version: '3.8'
+services:
+  api_service:
+    container_name: api_service
+    image: alpine:3.14
+    build:
+      context: .
+    ports:
+      - '3000:3000'
+    env_file: .env
+    depends_on: 
+      - postgres
+
+  postgres:
+    container_name: postgres
+    hostname: postgres
+    image: 'postgres:13'
+    ports:
+      - '5432:5432'
+    restart: always
+    env_file: .env
+    volumes:
+      - api_volume:/var/lib/postgres/data
+
+volumes:
+  api_volume: {}

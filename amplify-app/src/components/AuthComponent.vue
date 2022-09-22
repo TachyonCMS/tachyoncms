@@ -20,6 +20,13 @@
           :class="authTab != 'signup' ? 'back-tab' : 'top-tab'"
         ></q-route-tab>
       </q-tabs>
+
+      <div v-if="errors.length > 0">
+        <ul class="text-negative justify-left text-left">
+          <li v-for="(error, ix) in errors" :key="ix">{{ error }}</li>
+        </ul>
+      </div>
+
       <q-input label="Username" v-model="username"></q-input>
       <q-input
         label="Password"
@@ -50,7 +57,7 @@
         <q-input label="Email" v-model="email"></q-input>
         <vue3-q-tel-input
           label="Telephone"
-          v-model:tel="tel"
+          v-model:tel="telephone"
           :required="false"
           class="q-py-sm"
         />
@@ -70,7 +77,7 @@
             ></q-btn>
           </div>
           <q-btn
-            class="q-mt-lg text-lt3 text-body1"
+            class="q-mt-lg text-card-subdued text-body1"
             flat
             no-caps
             to="/auth/password_reset"
@@ -94,6 +101,11 @@
       <div class="q-mx-md q-mb-lg text-body1">
         Enter your username, a reset code will be sent to the email address on
         file.
+      </div>
+      <div v-if="errors.length > 0">
+        <ul class="text-negative justify-left text-left">
+          <li v-for="(error, ix) in errors" :key="ix">{{ error }}</li>
+        </ul>
       </div>
       <q-input label="Username" v-model="username"></q-input>
     </q-card-section>
@@ -152,23 +164,25 @@
           </div>
           <div>
             <q-btn
-              class="q-my-lg text-lt3 text-body1"
+              class="q-my-lg text-card-subdued text-body1"
               flat
               no-caps
               to="/auth/login"
-              >Back to Login</q-btn
+              >Back to Sign In</q-btn
             >
           </div>
         </div>
         <div v-if="resetStage == 'enterCode'">
           <div class="row col-12 justify-center text-center">
-            <q-btn class="q-mt-sm bg-primary on-primary" @click="savePassword()"
+            <q-btn
+              class="q-mt-sm bg-primary on-primary"
+              @click="resetPassword()"
               >Save new password</q-btn
             >
           </div>
           <div>
             <q-btn
-              class="q-my-lg text-lt3 text-body1"
+              class="q-my-lg text-card-subdued text-body1"
               flat
               no-caps
               @click="resendCode()"
@@ -199,18 +213,20 @@ import { useUserStore } from "../stores/user";
 const userStore = useUserStore();
 
 import useAuth from "../composables/useAuth";
-const { signIn, requestResetCode } = useAuth();
+const { signIn, requestResetCode, submitResetCode } = useAuth();
 
 const authTab = ref(""); // Tied to router, this cannot have a default value not
 
 const passwdResetSubview = ref("enter-username");
+
+const errors = ref([]);
 
 const username = ref(null);
 const password = ref(null);
 const password2 = ref(null);
 const commonName = ref(null);
 const email = ref(null);
-const tel = ref("");
+const telephone = ref("");
 
 const isPwd = ref(true);
 const isResetPwd = ref(true);
@@ -223,28 +239,40 @@ const resetCode = ref(null);
 const resetStage = ref("enterUsername");
 
 const platformSignIn = async () => {
-  const credentials = {
-    username: username.value,
-    password: password.value,
-  };
-
-  const user = await signIn(credentials);
-  if (user) {
-    userStore.$patch({
-      username: user.username,
-      email: user.email,
-      fullname: user.name,
-      authenticated: true,
-    });
-    // Redirect to CMS
+  try {
+    const user = await signIn(username.value, password.value);
+    if (user) {
+      userStore.$patch({
+        username: user.username,
+        email: user.email,
+        fullname: user.name,
+        authenticated: true,
+      });
+    }
+  } catch (e) {
+    console.error(e);
   }
 };
 
-const sendResetCode = async (username) => {
+const sendResetCode = async () => {
   console.log("Sending reset code");
-  resetStage.value = "enterCode";
+  try {
+    await requestResetCode(username.value);
+    resetStage.value = "enterCode";
+  } catch (e) {
+    console.error(e);
+    errors.value = [e];
+  }
+};
 
-  requestResetCode(username);
+const resetPassword = async () => {
+  console.log("Sending reset code");
+  try {
+    await submitResetCode(userStore.username, resetCode.value, password.value);
+  } catch (e) {
+    console.error(e);
+    errors.value = [e];
+  }
 };
 </script>
 

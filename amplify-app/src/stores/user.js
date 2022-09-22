@@ -17,5 +17,9 @@ export const useUserStore = defineStore("user", {
     }
   },
 
-  actions: {}
+  actions: {
+    setUsername(val) {
+      this.username = val;
+    }
+  }
 });

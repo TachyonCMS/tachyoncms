@@ -86,6 +86,10 @@ import { useUserStore } from "../stores/user";
 const userStore = useUserStore();
 
 import useAuth from "../composables/useAuth";
+const { trackAuth } = useAuth();
+trackAuth();
+
+/*
 const { getAuthUser } = useAuth();
 const authUser = getAuthUser().then((user) => {
   if (user) {
@@ -98,6 +102,7 @@ const authUser = getAuthUser().then((user) => {
     });
   }
 });
+*/
 
 const $q = useQuasar();
 const { getPaletteColor, lighten, brightness } = colors;
@@ -206,6 +211,7 @@ const onSecondary = ref(lightText);
 const onAccent = ref(lightText);
 const onCta = ref(lightText);
 const onCardPaper = ref(dk5.value);
+const subOnCardPaper = ref(lt1.value);
 const onCardSurround = ref(darkText);
 const onScardPaper = ref(darkText);
 const onScardSurround = ref(darkText);
@@ -283,7 +289,8 @@ const setPrimaryColor = (hexCode) => {
       brightness(drawerPaper.value) > 128 ? darkText : lightText;
 
     backTab.value = lighten(hexCode, 10);
-    onBackTab.value = lighten(hexCode, 70);
+    onBackTab.value = lighten(hexCode, 85);
+    subOnCardPaper.value = lighten(hexCode, 75);
   } else {
     cardPaper.value = lighten(hexCode, 92);
     cardSurround.value = lighten(hexCode, 80);
@@ -303,6 +310,7 @@ const setPrimaryColor = (hexCode) => {
 
     backTab.value = lighten(hexCode, 70);
     onBackTab.value = lighten(hexCode, 20);
+    subOnCardPaper.value = lighten(hexCode, -5);
   }
 };
 
@@ -780,9 +788,13 @@ import AccountButton from "components/AccountButton.vue";
   color: v-bind("onCardPaper");
 }
 
+.text-card-subdued {
+  color: v-bind("subOnCardPaper");
+}
+
 // BODY - LIGHT / DARK
 .body--light {
-  background: v-bind("cardPaper");
+  background: #fff;
 }
 .body--dark {
   background: #000;

@@ -91,6 +91,15 @@ const routes = [
   },
 
   {
+    path: "/auth/logout",
+    component: () => import("layouts/MainLayout.vue"),
+    children: [
+      { path: "", component: () => import("pages/auth/LogoutPage.vue") }
+    ],
+    meta: { appDrawer: "BenefitsDrawer" }
+  },
+
+  {
     path: "/auth/password_reset",
     component: () => import("layouts/MainLayout.vue"),
     children: [

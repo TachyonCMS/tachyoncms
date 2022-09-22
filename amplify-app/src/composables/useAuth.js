@@ -1,23 +1,27 @@
-import { ref } from "vue";
+/**
+ * Implements AWS Amplify Cognito Auth
+ */
+import { Auth, Hub, Logger } from "aws-amplify";
+const logger = new Logger("AuthLogger");
 
 // USER Store - info about the auth user
 import { useUserStore } from "../stores/user";
 const userStore = useUserStore();
 
 export default function useAuth() {
-  const strategy = ref("amplify");
-
-  /**
-   * Sign Out
-   *
-   */
-  const signOut = async () => {
-    console.debug("Signup");
-    try {
-      if (strategy.value) {
-        strategies[strategy.value].signOut().then(() => {
-          console.log("LOGGED OUT");
-          // Clear stores
+  const trackAuth = () => {
+    const authListener = (data) => {
+      switch (data.payload.event) {
+        case "signIn":
+          logger.info("User signed in");
+          patchUser(data.payload.data);
+          break;
+        case "signUp":
+          logger.info("user signed up");
+          patchUser(data.payload.data);
+          break;
+        case "signOut":
+          logger.info("user signed out");
           userStore.$patch({
             username: null,
             email: null,
@@ -25,53 +29,100 @@ export default function useAuth() {
             userId: null,
             authenticated: false
           });
-
-          colorStore.$patch({
-            primaryColor: "#1976D2",
-            secondaryColor: "#26A69A",
-            accentColor: "#9C27B0",
-            ctaColor: "#F00",
-            gloss: false
-          });
-        });
+          break;
+        case "signIn_failure":
+          logger.error("user sign in failed");
+          break;
+        case "tokenRefresh":
+          logger.info("token refresh succeeded");
+          break;
+        case "tokenRefresh_failure":
+          logger.error("token refresh failed");
+          break;
+        case "autoSignIn":
+          logger.info("Auto Sign In after Sign Up succeeded");
+          patchUser(data.payload.data);
+          break;
+        case "autoSignIn_failure":
+          logger.error("Auto Sign In after Sign Up failed");
+          break;
+        case "configured":
+          logger.info("the Auth module is configured");
       }
-    } catch (e) {
-      console.error("Error signing up user");
-      console.error(e);
-    }
+    };
+
+    Hub.listen("auth", authListener);
   };
 
-  /**
-   * Sign In
-   *
-   * @param {*} userObject
-   */
-  const signIn = async (credentials) => {
-    console.debug("Signin/Login");
+  function patchUser(data) {
+    userStore.$patch({
+      username: data.username,
+      email: data.attributes.email,
+      fullname: data.attributes.name,
+      userId: data.attributes.sub,
+      authenticated: true
+    });
+  }
+
+  async function signIn(username, password) {
     try {
-      return strategies[strategy.value].signIn(credentials).then((user) => {
-        return user;
-      });
-    } catch (e) {
-      console.error("Error Signing In");
+      Auth.signIn(username, password)
+        .then((user) => {
+          console.info(user);
+          if (user.challengeName === "NEW_PASSWORD_REQUIRED") {
+            const { requiredAttributes } = user.challengeParam; // the array of required attributes, e.g ['email', 'phone_number']
+            Auth.completeNewPassword(
+              user, // the Cognito User Object
+              newPassword, // the new password
+              // OPTIONAL, the required attributes
+              {
+                email: "xxxx@example.com",
+                phone_number: "1234567890"
+              }
+            )
+              .then((user) => {
+                // at this time the user is logged in if no MFA required
+                console.info(user);
+                patchUser(user.payload.data);
+              })
+              .catch((e) => {
+                console.error(e);
+              });
+          } else {
+          }
+        })
+        .catch((e) => {
+          console.error(e);
+        });
+    } catch (error) {
       console.error(e);
-      return null;
+      logger.error("error signing in:", error);
     }
-  };
+  }
 
-  /**
-   * Sign Up
-   *
-   * @param {*} userObject
-   */
-  const signUp = async (userObject) => {
+  async function signOut() {
+    try {
+      await Auth.signOut();
+      userStore.$patch({
+        username: null,
+        email: null,
+        fullname: null,
+        userId: null,
+        authenticated: false
+      });
+    } catch (error) {
+      logger.log("error signing out: ", error);
+    }
+  }
+
+  async function signUp() {
     try {
       const { user } = await Auth.signUp({
-        username: userObject.username,
-        password: userObject.password,
+        username,
+        password,
         attributes: {
-          email: userObject.email, // optional
-          phone_number: userObject.telephone // optional - E.164 number convention
+          email, // optional
+          phone_number // optional - E.164 number convention
           // other custom attributes
         },
         autoSignIn: {
@@ -79,46 +130,45 @@ export default function useAuth() {
           enabled: true
         }
       });
-      console.log(user);
+      console.info(user);
     } catch (error) {
-      console.log("error signing up:", error);
+      console.info("error signing up:", error);
     }
-  };
+  }
 
-  /**
-   * Get Authenticated User Info
-   *
-   */
-  const getAuthUser = async () => {
-    console.debug("Get auth user info");
+  async function requestResetCode(username) {
     try {
-      return strategies[strategy.value].getAuthUser().then((user) => {
-        console.log(user);
-        return user;
-      });
-    } catch (e) {
-      console.error("Error getting user info");
-      console.error(e);
-      return null;
+      const result = await Auth.forgotPassword(username);
+      userStore.setUsername(username);
+      return username;
+    } catch (error) {
+      console.error("error requesting reset code:", error.name);
+      if (error.name === "UserNotFoundException") {
+        throw "Username not found";
+      }
+      throw "Error requesting password reset";
     }
-  };
+  }
 
-  const requestResetCode = async (username) => {
-    console.debug("Request Reset Code");
+  async function submitResetCode(username, code, new_password) {
     try {
-      return strategies[strategy.value].requestResetCode().then((result) => {
-        return result;
-      });
-    } catch (e) {
-      return false;
+      const result = await Auth.forgotPasswordSubmit(
+        username,
+        code,
+        new_password
+      );
+      console.info(result);
+    } catch (error) {
+      console.error("error resetting password:", error);
     }
-  };
+  }
 
   return {
+    trackAuth,
     signIn,
     signOut,
     signUp,
-    getAuthUser,
-    requestResetCode
+    requestResetCode,
+    submitResetCode
   };
 }
