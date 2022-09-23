@@ -7,7 +7,7 @@ export const useUserStore = defineStore("user", {
     username: useStorage("username", null),
     email: useStorage("email", null),
     telephone: useStorage("telephone", null),
-    fullname: useStorage("fullname", null),
+    commonName: useStorage("commonName", null),
     authenticated: useStorage("authenticated", false)
   }),
 

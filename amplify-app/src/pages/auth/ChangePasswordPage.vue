@@ -1,11 +1,14 @@
 <template>
   <q-page padding class="auth bg-card-surround">
-    <AuthComponent view="passwdReset"></AuthComponent>
+    <AuthComponent view="changePassword"></AuthComponent>
   </q-page>
 </template>
 
 <script setup>
 import { computed } from "vue";
+
+import "@aws-amplify/ui-vue/styles.css";
+
 import AuthComponent from "../../components/AuthComponent.vue";
 </script>
 

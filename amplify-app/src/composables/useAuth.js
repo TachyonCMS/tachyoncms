@@ -4,6 +4,8 @@
 import { Auth, Hub, Logger } from "aws-amplify";
 const logger = new Logger("AuthLogger");
 
+import { computed } from "vue";
+
 // USER Store - info about the auth user
 import { useUserStore } from "../stores/user";
 const userStore = useUserStore();
@@ -18,7 +20,8 @@ export default function useAuth() {
           break;
         case "signUp":
           logger.info("user signed up");
-          patchUser(data.payload.data);
+          console.log(data);
+          //patchUser(data.payload.data);
           break;
         case "signOut":
           logger.info("user signed out");
@@ -115,24 +118,38 @@ export default function useAuth() {
     }
   }
 
-  async function signUp() {
+  async function signUp(userObj) {
     try {
-      const { user } = await Auth.signUp({
-        username,
-        password,
+      const awsUserObj = {
+        username: userObj.username,
+        password: userObj.password,
         attributes: {
-          email, // optional
-          phone_number // optional - E.164 number convention
+          email: userObj.email,
+          name: userObj.commonName
           // other custom attributes
         },
         autoSignIn: {
           // optional - enables auto sign in after user is confirmed
           enabled: true
         }
-      });
+      };
+      if (validateTelephone(userObj.telephone)) {
+        awsUserObj.attributes.phone_number = userObj.telephone; // optional - E.164 number convention
+      }
+      const { user } = await Auth.signUp(awsUserObj);
       console.info(user);
     } catch (error) {
       console.info("error signing up:", error);
+      let msg = "Error creating account";
+      switch (error.name) {
+        case "InvalidParameterException":
+        case "InvalidPasswordException":
+          msg = "The password is invalid, it must be at least 12 characters.";
+          break;
+        case "UsernameExistsException":
+          msg = "The username is not available.";
+      }
+      throw msg;
     }
   }
 
@@ -150,25 +167,76 @@ export default function useAuth() {
     }
   }
 
-  async function submitResetCode(username, code, new_password) {
+  async function submitResetCode(username, code, NewPassword) {
     try {
       const result = await Auth.forgotPasswordSubmit(
         username,
         code,
-        new_password
+        NewPassword
       );
       console.info(result);
     } catch (error) {
       console.error("error resetting password:", error);
+      let msg = "Password reset failed";
+      switch (error.name) {
+        case "InvalidParameterException":
+        case "InvalidPasswordException":
+          msg =
+            "The new password is invalid, it must be at least 12 characters.";
+          break;
+        case "NotAuthorizedException":
+          msg = "Incorrect reset code";
+      }
+      throw msg;
     }
   }
 
-  async function resendResetCode(username) {
+  async function getCurrentUser() {
     try {
-      await Auth.resendResetCode(username);
+      const userData = await Auth.currentAuthenticatedUser();
+      console.info(userData);
+      return userData;
     } catch (error) {
-      console.error("error resending reset code:", error);
+      console.error("error getting current user:", error);
     }
+  }
+
+  async function changePassword(userObj, currentPassword, NewPassword) {
+    try {
+      const result = await Auth.changePassword(
+        userObj,
+        currentPassword,
+        NewPassword
+      );
+      console.info(result);
+    } catch (error) {
+      console.error("error changing password:", error);
+      let msg = "Password change failed";
+      switch (error.name) {
+        case "InvalidParameterException":
+        case "InvalidPasswordException":
+          msg =
+            "The new password is invalid, it must be at least 12 characters.";
+          break;
+        case "NotAuthorizedException":
+          msg = "Incorrect current password";
+      }
+      throw msg;
+    }
+  }
+
+  function validatePassword(password) {
+    return password && password.length >= 12 ? true : false;
+  }
+
+  function validateEmail(email) {
+    logger.info("Validate email");
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  function validateTelephone(telephone) {
+    logger.info("Validate telephone");
+    return /^\+[1-9]\d{10,14}$/.test(telephone);
   }
 
   return {
@@ -178,6 +246,9 @@ export default function useAuth() {
     signUp,
     requestResetCode,
     submitResetCode,
-    resendResetCode
+    changePassword,
+    getCurrentUser,
+    validatePassword,
+    validateEmail
   };
 }

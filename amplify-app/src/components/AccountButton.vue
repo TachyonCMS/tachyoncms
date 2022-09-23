@@ -14,7 +14,7 @@
             $t("Profile")
           }}</q-item-section>
         </q-item>
-        <q-item>
+        <q-item clickable v-close-popup to="/auth/change_password">
           <q-item-section class="text-no-wrap">{{
             $t("Password")
           }}</q-item-section>

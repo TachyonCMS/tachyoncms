@@ -108,6 +108,15 @@ const routes = [
     meta: { appDrawer: "BenefitsDrawer" }
   },
 
+  {
+    path: "/auth/change_password",
+    component: () => import("layouts/MainLayout.vue"),
+    children: [
+      { path: "", component: () => import("pages/auth/ChangePasswordPage.vue") }
+    ],
+    meta: { appDrawer: "BenefitsDrawer" }
+  },
+
   // Always leave this as last one,
   // but you can also remove it
   {
