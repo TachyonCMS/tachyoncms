@@ -55,10 +55,18 @@ const routes = [
   },
 
   {
-    path: "/user",
+    path: "/user/profile",
     component: () => import("layouts/MainLayout.vue"),
     children: [
-      { path: "", component: () => import("pages/policy/CrimePage.vue") }
+      { path: "", component: () => import("pages/user/ProfilePage.vue") }
+    ],
+    meta: { appDrawer: "EntryDrawer", requiresAuth: true }
+  },
+  {
+    path: "/user/dashboard",
+    component: () => import("layouts/MainLayout.vue"),
+    children: [
+      { path: "", component: () => import("pages/user/DashboardPage.vue") }
     ],
     meta: { appDrawer: "EntryDrawer", requiresAuth: true }
   },
@@ -113,6 +121,15 @@ const routes = [
     component: () => import("layouts/MainLayout.vue"),
     children: [
       { path: "", component: () => import("pages/auth/ChangePasswordPage.vue") }
+    ],
+    meta: { appDrawer: "BenefitsDrawer" }
+  },
+
+  {
+    path: "/auth/signup/confirm",
+    component: () => import("layouts/MainLayout.vue"),
+    children: [
+      { path: "", component: () => import("pages/auth/ConfirmSignUpPage.vue") }
     ],
     meta: { appDrawer: "BenefitsDrawer" }
   },

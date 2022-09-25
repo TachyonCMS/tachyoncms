@@ -3,13 +3,22 @@
     dropdown-icon="mdi-account-circle"
     size="md"
     class="q-px-sm"
-    :label="userStore.authenticated ? userStore.username : ''"
+    :label="
+      userStore.authenticated && $q.screen.gt.xs ? userStore.username : ''
+    "
   >
     <q-list bordered padding dense>
-      <q-item-label header>{{ $t("Account") }}</q-item-label>
+      <q-item-label header
+        >{{ $t("Account") }}<br />{{ userStore.username }}</q-item-label
+      >
 
       <template v-if="userStore.isSignedIn()">
-        <q-item>
+        <q-item clickable v-close-popup to="/user/dashboard">
+          <q-item-section class="text-no-wrap">{{
+            $t("Dashboard")
+          }}</q-item-section>
+        </q-item>
+        <q-item clickable v-close-popup to="/user/profile">
           <q-item-section class="text-no-wrap">{{
             $t("Profile")
           }}</q-item-section>
@@ -21,7 +30,7 @@
         </q-item>
         <q-item clickable @click="platformSignOut()">
           <q-item-section class="text-no-wrap">{{
-            $t("Logout")
+            $t("Sign Out")
           }}</q-item-section>
         </q-item>
       </template>
@@ -42,7 +51,8 @@
 </template>
 
 <script  setup>
-import { ref, computed } from "vue";
+import { useQuasar } from "quasar";
+const $q = useQuasar();
 
 // USER Store - info about the auth user
 import { useUserStore } from "../stores/user";

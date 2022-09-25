@@ -20,7 +20,7 @@ export default function useAuth() {
           break;
         case "signUp":
           logger.info("user signed up");
-          console.log(data);
+          logger.log(data);
           //patchUser(data.payload.data);
           break;
         case "signOut":
@@ -43,8 +43,9 @@ export default function useAuth() {
           logger.error("token refresh failed");
           break;
         case "autoSignIn":
+          logger.info(data);
           logger.info("Auto Sign In after Sign Up succeeded");
-          patchUser(data.payload.data);
+          //patchUser(data.payload.data);
           break;
         case "autoSignIn_failure":
           logger.error("Auto Sign In after Sign Up failed");
@@ -69,37 +70,56 @@ export default function useAuth() {
 
   async function signIn(username, password) {
     try {
-      Auth.signIn(username, password)
-        .then((user) => {
-          console.info(user);
-          if (user.challengeName === "NEW_PASSWORD_REQUIRED") {
-            const { requiredAttributes } = user.challengeParam; // the array of required attributes, e.g ['email', 'phone_number']
-            Auth.completeNewPassword(
-              user, // the Cognito User Object
-              newPassword, // the new password
-              // OPTIONAL, the required attributes
-              {
-                email: "xxxx@example.com",
-                phone_number: "1234567890"
-              }
-            )
-              .then((user) => {
-                // at this time the user is logged in if no MFA required
-                console.info(user);
-                patchUser(user.payload.data);
-              })
-              .catch((e) => {
-                console.error(e);
-              });
-          } else {
+      const user = await Auth.signIn(username, password);
+      if (user.challengeName === "NEW_PASSWORD_REQUIRED") {
+        const { requiredAttributes } = user.challengeParam; // the array of required attributes, e.g ['email', 'phone_number']
+        Auth.completeNewPassword(
+          user, // the Cognito User Object
+          newPassword, // the new password
+          // OPTIONAL, the required attributes
+          {
+            email: "xxxx@example.com",
+            phone_number: "1234567890"
           }
-        })
-        .catch((e) => {
-          console.error(e);
-        });
+        )
+          .then((user) => {
+            // at this time the user is logged in if no MFA required
+            logger.info(user);
+            // patchUser(user.payload.data);
+            //router.push("/auth/login");
+          })
+          .catch((e) => {
+            logger.error(e);
+          });
+      } else {
+        console.log(user);
+        patchUser(user);
+      }
     } catch (error) {
-      console.error(e);
       logger.error("error signing in:", error);
+      let msg = "Error signing in";
+      if (
+        error.message.indexOf(
+          "Cannot read properties of null (reading 'username')"
+        ) !== -1
+      ) {
+        msg = "You must provide a username";
+      } else if (
+        error.message.indexOf(
+          "Custom auth lambda trigger is not configured"
+        ) !== -1
+      ) {
+        msg = "You must provide a password of 12 characters or more";
+      } else if (error.message.indexOf("User does not exist") !== -1) {
+        console.log("throw this");
+        msg = "The username was not found";
+      } else if (
+        error.message.indexOf("Incorrect username or password") !== -1
+      ) {
+        console.log("throw this");
+        msg = "Incorrect username or password";
+      }
+      throw msg;
     }
   }
 
@@ -130,16 +150,24 @@ export default function useAuth() {
         },
         autoSignIn: {
           // optional - enables auto sign in after user is confirmed
-          enabled: true
+          enabled: false
         }
       };
       if (validateTelephone(userObj.telephone)) {
         awsUserObj.attributes.phone_number = userObj.telephone; // optional - E.164 number convention
       }
       const { user } = await Auth.signUp(awsUserObj);
-      console.info(user);
+
+      if (user) {
+        userStore.$patch({
+          username: user.username,
+          email: userObj.email,
+          fullname: userObj.fullname,
+          authenticated: false
+        });
+      }
     } catch (error) {
-      console.info("error signing up:", error);
+      logger.info("error signing up:", error);
       let msg = "Error creating account";
       switch (error.name) {
         case "InvalidParameterException":
@@ -153,13 +181,52 @@ export default function useAuth() {
     }
   }
 
+  async function confirmSignUp(username, code) {
+    try {
+      logger.debug(username, code);
+      const result = await Auth.confirmSignUp(username, code);
+      return result;
+    } catch (error) {
+      logger.error("error confirming signup:", error);
+      let msg = "Confirmation failed";
+      if (error.message.indexOf("Current status is CONFIRMED") !== -1) {
+        msg = "The username has already been confirmed";
+      } else if (
+        error.message.indexOf("Invalid verification code provided") !== -1
+      ) {
+        msg = "The confirmation code is incorrect";
+      } else if (
+        error.message.indexOf("Username/client id combination not found") !== -1
+      ) {
+        msg = "The username was not found";
+      }
+      throw msg;
+    }
+  }
+
+  async function resendConfirmationCode(username) {
+    try {
+      await Auth.resendSignUp(username);
+      console.log("code resent successfully");
+    } catch (error) {
+      console.log("error resending code: ", error);
+      let msg = "Resending the code failed";
+      if (error.name == "UserNotFoundException") {
+        msg = "The username was not found";
+      } else if (error.message.indexOf("User is already confirmed") !== -1) {
+        msg = "The username is already confirmed";
+      }
+      throw msg;
+    }
+  }
+
   async function requestResetCode(username) {
     try {
       const result = await Auth.forgotPassword(username);
       userStore.setUsername(username);
       return username;
     } catch (error) {
-      console.error("error requesting reset code:", error.name);
+      logger.error("error requesting reset code:", error.name);
       if (error.name === "UserNotFoundException") {
         throw "Username not found";
       }
@@ -174,9 +241,9 @@ export default function useAuth() {
         code,
         NewPassword
       );
-      console.info(result);
+      logger.info(result);
     } catch (error) {
-      console.error("error resetting password:", error);
+      logger.error("error resetting password:", error);
       let msg = "Password reset failed";
       switch (error.name) {
         case "InvalidParameterException":
@@ -194,10 +261,10 @@ export default function useAuth() {
   async function getCurrentUser() {
     try {
       const userData = await Auth.currentAuthenticatedUser();
-      console.info(userData);
+      logger.info(userData);
       return userData;
     } catch (error) {
-      console.error("error getting current user:", error);
+      logger.error("error getting current user:", error);
     }
   }
 
@@ -208,9 +275,9 @@ export default function useAuth() {
         currentPassword,
         NewPassword
       );
-      console.info(result);
+      logger.info(result);
     } catch (error) {
-      console.error("error changing password:", error);
+      logger.error("error changing password:", error);
       let msg = "Password change failed";
       switch (error.name) {
         case "InvalidParameterException":
@@ -239,16 +306,30 @@ export default function useAuth() {
     return /^\+[1-9]\d{10,14}$/.test(telephone);
   }
 
+  function obscureEmail(email) {
+    const parts = email.split("@");
+    const safeParts = parts.map((part) => {
+      const len = part.length;
+      const startStr = part.substr(0, 3);
+      return startStr.padEnd(len, "*");
+    });
+    console.log(safeParts);
+    return safeParts.join("@");
+  }
+
   return {
     trackAuth,
     signIn,
     signOut,
     signUp,
+    confirmSignUp,
+    resendConfirmationCode,
     requestResetCode,
     submitResetCode,
     changePassword,
     getCurrentUser,
     validatePassword,
-    validateEmail
+    validateEmail,
+    obscureEmail
   };
 }
