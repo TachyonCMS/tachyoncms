@@ -1,27 +1,33 @@
 {
-  "prod": {
-    "awscloudformation": {
-      "AuthRoleName": "amplify-tachyoncmsapp-prod-12755-authRole",
-      "UnauthRoleArn": "arn:aws:iam::913351700303:role/amplify-tachyoncmsapp-prod-12755-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::913351700303:role/amplify-tachyoncmsapp-prod-12755-authRole",
-      "Region": "us-east-1",
-      "DeploymentBucketName": "amplify-tachyoncmsapp-prod-12755-deployment",
-      "UnauthRoleName": "amplify-tachyoncmsapp-prod-12755-unauthRole",
-      "StackName": "amplify-tachyoncmsapp-prod-12755",
-      "StackId": "arn:aws:cloudformation:us-east-1:913351700303:stack/amplify-tachyoncmsapp-prod-12755/ce163370-3274-11ed-a01a-0aa952b183d1",
-      "AmplifyAppId": "d9fwka1vn0u1r",
-      "AuthTriggerTemplateURL": "https://s3.amazonaws.com/amplify-tachyoncmsapp-prod-12755-deployment/amplify-cfn-templates/auth/auth-trigger-cloudformation-template.json"
-    },
-    "categories": {
-      "auth": {
-        "tachyoncmsapp9123fec59123fec5": {}
-      },
-      "function": {
-        "tachyoncmsapp9123fec59123fec5PostConfirmation": {
-          "deploymentBucketName": "amplify-tachyoncmsapp-prod-12755-deployment",
-          "s3Key": "amplify-builds/tachyoncmsapp9123fec59123fec5PostConfirmation-79707556347a596f342b-build.zip"
+    "prod": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-tachyoncmsapp-prod-12755-authRole",
+            "UnauthRoleArn": "arn:aws:iam::913351700303:role/amplify-tachyoncmsapp-prod-12755-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::913351700303:role/amplify-tachyoncmsapp-prod-12755-authRole",
+            "Region": "us-east-1",
+            "DeploymentBucketName": "amplify-tachyoncmsapp-prod-12755-deployment",
+            "UnauthRoleName": "amplify-tachyoncmsapp-prod-12755-unauthRole",
+            "StackName": "amplify-tachyoncmsapp-prod-12755",
+            "StackId": "arn:aws:cloudformation:us-east-1:913351700303:stack/amplify-tachyoncmsapp-prod-12755/ce163370-3274-11ed-a01a-0aa952b183d1",
+            "AmplifyAppId": "d9fwka1vn0u1r",
+            "AuthTriggerTemplateURL": "https://s3.amazonaws.com/amplify-tachyoncmsapp-prod-12755-deployment/amplify-cfn-templates/auth/auth-trigger-cloudformation-template.json"
+        },
+        "categories": {
+            "auth": {
+                "tachyoncmsapp9123fec59123fec5": {}
+            },
+            "function": {
+                "tachyoncmsapp9123fec59123fec5PostConfirmation": {
+                    "deploymentBucketName": "amplify-tachyoncmsapp-prod-12755-deployment",
+                    "s3Key": "amplify-builds/tachyoncmsapp9123fec59123fec5PostConfirmation-79707556347a596f342b-build.zip"
+                }
+            },
+            "hosting": {
+                "amplifyhosting": {
+                    "appId": "d9fwka1vn0u1r",
+                    "type": "cicd"
+                }
+            }
         }
-      }
     }
-  }
 }
