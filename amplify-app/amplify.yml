@@ -7,7 +7,7 @@ applications:
             - yarn install
         build:
           commands:
-            - quasar build
+            - quasar build -m spa
             - "# Execute Amplify CLI with the helper script"
             - amplifyPush --simple
     frontend:

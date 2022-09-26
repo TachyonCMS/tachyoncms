@@ -70,7 +70,10 @@ module.exports = configure(function (/* ctx */) {
       // polyfillModulePreload: true,
       // distDir
 
-      // extendViteConf (viteConf) {},
+      extendViteConf(viteConf) {
+        viteConf.resolve.alias["./runtimeConfig"] = "./runtimeConfig.browser";
+        console.log(viteConf);
+      },
       // viteVuePluginOptions: {},
 
       vitePlugins: [
