@@ -242,6 +242,7 @@ const drawerColor = ref(lighten(basePrimaryColor, -30));
 const drawerPaper = ref(lighten(basePrimaryColor, -70));
 const onDrawerColor = ref(lightText.value);
 const onDrawerPaper = ref(darkText.value);
+const onDrawerPaperVisited = ref(lighten(darkText.value, 15));
 
 // Change the primary color and shades
 const setPrimaryColor = (hexCode) => {
@@ -293,6 +294,8 @@ const setPrimaryColor = (hexCode) => {
     backTab.value = lighten(hexCode, 10);
     onBackTab.value = lighten(hexCode, 85);
     subOnCardPaper.value = lighten(hexCode, 75);
+
+    onDrawerPaperVisited.value = lighten(hexCode, 65);
   } else {
     cardPaper.value = lighten(hexCode, 92);
     cardSurround.value = lighten(hexCode, 80);
@@ -313,6 +316,8 @@ const setPrimaryColor = (hexCode) => {
     backTab.value = lighten(hexCode, 70);
     onBackTab.value = lighten(hexCode, 20);
     subOnCardPaper.value = lighten(hexCode, -5);
+
+    onDrawerPaperVisited.value = lighten(onDrawerPaper.value, 30);
   }
 };
 
@@ -537,6 +542,9 @@ import AccountButton from "components/AccountButton.vue";
 <style lang="scss">
 .nolink {
   text-decoration: none;
+}
+.on-drawer-paper a:visited {
+  color: v-bind("onDrawerPaperVisited");
 }
 
 // TEXT COLOR USED ON BACKGROUND

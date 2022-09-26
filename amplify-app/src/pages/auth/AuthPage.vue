@@ -1,14 +1,14 @@
 <template>
   <q-page padding class="auth bg-card-surround">
-    <!-- <authenticator></authenticator> -->
+    <authenticator></authenticator>
     <AuthComponent view="access"></AuthComponent>
   </q-page>
 </template>
 
 <script setup>
 import { computed } from "vue";
-//import { Authenticator } from "@aws-amplify/ui-vue";
-//import "@aws-amplify/ui-vue/styles.css";
+import { Authenticator } from "@aws-amplify/ui-vue";
+import "@aws-amplify/ui-vue/styles.css";
 
 import AuthComponent from "../../components/AuthComponent.vue";
 </script>

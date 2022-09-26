@@ -1,6 +1,6 @@
 <template>
   <q-page class="row items-center justify-evenly">
-    <ColorSwatches></ColorSwatches>
+    <!-- <ColorSwatches></ColorSwatches> -->
   </q-page>
 </template>
 
