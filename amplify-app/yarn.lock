@@ -64,6 +64,15 @@
   dependencies:
     "@aws-amplify/core" "4.7.4"
 
+"@aws-amplify/cli@^10.0.0":
+  version "10.0.0"
+  resolved "https://registry.yarnpkg.com/@aws-amplify/cli/-/cli-10.0.0.tgz#3e6bd63459695f7ea5d27446fa14a430e517606c"
+  integrity sha512-TvySgiz16vM/nujUu0oX6hlL6oQPNHOdoJsWlZFuIHNKeSeo3J7z0OTDRiy2Wttm7cKPXyzqZGt/V4xVzkxMfg==
+  dependencies:
+    axios "^0.26.0"
+    rimraf "^3.0.2"
+    tar-stream "^2.2.0"
+
 "@aws-amplify/core@4.7.4":
   version "4.7.4"
   resolved "https://registry.yarnpkg.com/@aws-amplify/core/-/core-4.7.4.tgz#84e081c8451d183bf6db8e4c1f1a7f7c2ad7f3e5"
@@ -4369,6 +4378,13 @@ axios@0.26.0:
   version "0.26.0"
   resolved "https://registry.yarnpkg.com/axios/-/axios-0.26.0.tgz#9a318f1c69ec108f8cd5f3c3d390366635e13928"
   integrity sha512-lKoGLMYtHvFrPVt3r+RBMp9nh34N0M8zEfCWqdWZx6phynIEhQqAdydpyBAAG211zlhX9Rgu08cOamy6XjE5Og==
+  dependencies:
+    follow-redirects "^1.14.8"
+
+axios@^0.26.0:
+  version "0.26.1"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.26.1.tgz#1ede41c51fcf51bbbd6fd43669caaa4f0495aaa9"
+  integrity sha512-fPwcX4EvnSHuInCMItEhAGnaSEXRBjtzh9fOtsE6E1G6p7vl7edEeZe11QHf18+6+9gR5PbKV/sGKNaD8YaMeA==
   dependencies:
     follow-redirects "^1.14.8"
 
