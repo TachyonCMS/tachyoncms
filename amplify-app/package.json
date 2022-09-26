@@ -29,7 +29,8 @@
     "eslint": "^8.10.0",
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-vue": "^9.0.0",
-    "prettier": "^2.5.1"
+    "prettier": "^2.5.1",
+    "quasar-cli": "^0.17.26"
   },
   "engines": {
     "node": "^18 || ^16 || ^14.19",
