@@ -2,6 +2,9 @@ version: 1
 applications:
   - backend:
       phases:
+        prebuild:
+          commands:
+            - yarn install
         build:
           commands:
             - quasar build
