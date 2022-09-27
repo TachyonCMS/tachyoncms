@@ -2,9 +2,6 @@
 .thumbs.db
 node_modules
 
-# Amplify environment
-/amplify/team-provider-info.json
-
 # Quasar core related directories
 .quasar
 /dist
@@ -51,3 +48,6 @@ amplifytools.xcconfig
 .secret-*
 **.sample
 #amplify-do-not-edit-end
+
+# Amplify environment
+/amplify/team-provider-info.json
