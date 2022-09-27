@@ -1,7 +1,7 @@
 {
   "name": "cloudapp",
   "version": "0.0.1",
-  "description": "TahcyonCMS Editor and Amplify App",
+  "description": "TachyonCMS",
   "productName": "TachyonCMS",
   "author": "Brian Winkers <bwinkers@gmail.com>",
   "private": true,

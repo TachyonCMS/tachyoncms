@@ -16,6 +16,10 @@ cloudappdevwebpackauth
 cloudapp_devwebpack_identity_pool
 cloudapp_devwebpack_user_pool
 
+cloudappdevviteauth
+cloudapp_devvite_identity_pool
+cloudapp_devvite_user_pool
+
 Your TachyonCMS authentication code is {####}
 Your TachyonCMS verification code
 Your TachyonCMS verification code is {####}
@@ -57,3 +61,20 @@ Do you want to use an OAuth flow? No
 ? Do you want to configure Lambda Triggers for Cognito? No
 
 amplify push
+
+Create Amplify boot file
+
+```js
+import { boot } from "quasar/wrappers";
+
+import { Amplify } from "aws-amplify";
+import awsExports from "../aws-exports";
+Amplify.configure(awsExports);
+
+import AmplifyVue from "@aws-amplify/ui-vue";
+
+export default boot(({ app }) => {
+  app.use(AmplifyVue);
+});
+
+```

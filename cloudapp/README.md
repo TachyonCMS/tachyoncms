@@ -1,6 +1,6 @@
 # TachyonCMS (cloudapp)
 
-TahcyonCMS Editor and Amplify App
+TachyonCMS
 
 ## Install the dependencies
 ```bash

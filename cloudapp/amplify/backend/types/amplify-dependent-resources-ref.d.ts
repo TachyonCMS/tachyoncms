@@ -4,7 +4,7 @@ export type AmplifyDependentResourcesAttributes = {
             "adminGroupRole": "string",
             "techGroupRole": "string"
         },
-        "cloudappdevauth": {
+        "cloudappdevviteauth": {
             "IdentityPoolId": "string",
             "IdentityPoolName": "string",
             "UserPoolId": "string",

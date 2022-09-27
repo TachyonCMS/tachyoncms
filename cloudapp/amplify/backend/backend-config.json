@@ -6,7 +6,7 @@
       "dependsOn": [
         {
           "category": "auth",
-          "resourceName": "cloudappdevauth",
+          "resourceName": "cloudappdevviteauth",
           "attributes": [
             "UserPoolId",
             "AppClientIDWeb",
@@ -16,7 +16,7 @@
         }
       ]
     },
-    "cloudappdevauth": {
+    "cloudappdevviteauth": {
       "service": "Cognito",
       "providerPlugin": "awscloudformation",
       "dependsOn": [],

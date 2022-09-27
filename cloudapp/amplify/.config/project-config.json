@@ -8,7 +8,7 @@
       "SourceDir": "src",
       "DistributionDir": "dist/spa",
       "BuildCommand": "quasar build -m spa",
-      "StartCommand": "quasar serve -m spa --history"
+      "StartCommand": "quasar serve dist/spa"
     }
   },
   "providers": [
