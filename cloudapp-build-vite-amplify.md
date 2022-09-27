@@ -3,7 +3,6 @@ yarn global add @aws-amplify/cli
 
 yarn create quasar
 
-
 yarn add @aws-amplify/ui-vue aws-amplify
 
 amplify configure (skip if you already have the AWS AMplify user you will use)
@@ -76,5 +75,8 @@ import AmplifyVue from "@aws-amplify/ui-vue";
 export default boot(({ app }) => {
   app.use(AmplifyVue);
 });
-
 ```
+
+amplify add hosting
+
+amplify publish
