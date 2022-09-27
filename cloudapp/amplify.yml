@@ -11,7 +11,7 @@ applications:
         preBuild:
           commands:
             - yarn install
-            - yarn global add @vue/cli
+            - yarn global add @quasar/cli
         build:
           commands: [- quasar build -m spa]
       artifacts:
