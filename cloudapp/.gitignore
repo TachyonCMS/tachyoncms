@@ -2,6 +2,9 @@
 .thumbs.db
 node_modules
 
+# Amplify environment
+/amplify/team-provider-info.json
+
 # Quasar core related directories
 .quasar
 /dist
