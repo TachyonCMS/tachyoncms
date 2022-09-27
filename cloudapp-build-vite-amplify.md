@@ -1,6 +1,9 @@
 yarn global add @vue/cli
 yarn global add @aws-amplify/cli
 
+yarn create quasar
+
+
 yarn add @aws-amplify/ui-vue aws-amplify
 
 amplify configure (skip if you already have the AWS AMplify user you will use)
