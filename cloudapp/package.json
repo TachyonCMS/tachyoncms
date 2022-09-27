@@ -1,8 +1,8 @@
 {
-  "name": "tachyon-amplify-app",
+  "name": "cloudapp",
   "version": "0.0.1",
-  "description": "Tachyon CMS Amplify App",
-  "productName": "Tachyon CMS ",
+  "description": "TahcyonCMS Editor and Amplify App",
+  "productName": "TachyonCMS",
   "author": "Brian Winkers <bwinkers@gmail.com>",
   "private": true,
   "scripts": {
@@ -11,16 +11,14 @@
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
-    "@aws-amplify/ui-vue": "^2.4.20",
+    "@aws-amplify/ui-vue": "^2.4.22",
     "@quasar/extras": "^1.0.0",
-    "@vueuse/core": "^9.2.0",
-    "aws-amplify": "^4.3.35",
+    "aws-amplify": "^4.3.36",
     "pinia": "^2.0.11",
     "quasar": "^2.6.0",
     "vue": "^3.0.0",
     "vue-i18n": "^9.0.0",
-    "vue-router": "^4.0.0",
-    "vue3-q-tel-input": "^1.0.21"
+    "vue-router": "^4.0.0"
   },
   "devDependencies": {
     "@intlify/vite-plugin-vue-i18n": "^3.3.1",
@@ -29,8 +27,8 @@
     "eslint": "^8.10.0",
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-vue": "^9.0.0",
-    "prettier": "^2.5.1",
-    "quasar-cli": "^0.17.26"
+    "postcss": "^8.4.14",
+    "prettier": "^2.5.1"
   },
   "engines": {
     "node": "^18 || ^16 || ^14.19",
