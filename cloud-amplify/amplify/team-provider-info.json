@@ -1,0 +1,20 @@
+{
+  "devwebpack": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-cloudamplify-devwebpack-20052-authRole",
+      "UnauthRoleArn": "arn:aws:iam::053244131887:role/amplify-cloudamplify-devwebpack-20052-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::053244131887:role/amplify-cloudamplify-devwebpack-20052-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-cloudamplify-devwebpack-20052-deployment",
+      "UnauthRoleName": "amplify-cloudamplify-devwebpack-20052-unauthRole",
+      "StackName": "amplify-cloudamplify-devwebpack-20052",
+      "StackId": "arn:aws:cloudformation:us-east-1:053244131887:stack/amplify-cloudamplify-devwebpack-20052/e4b9aa10-3e42-11ed-9ed5-0edde177ea3f",
+      "AmplifyAppId": "dtgbzlj9ln7lt"
+    },
+    "categories": {
+      "auth": {
+        "cloudappdevwebpackauth": {}
+      }
+    }
+  }
+}

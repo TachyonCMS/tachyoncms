@@ -1,0 +1,86 @@
+{
+  "version": "1",
+  "cognitoConfig": {
+    "identityPoolName": "cloudapp_devwebpack_identity_pool",
+    "allowUnauthenticatedIdentities": false,
+    "resourceNameTruncated": "clouda8735ca89",
+    "userPoolName": "cloudapp_devwebpack_user_pool",
+    "autoVerifiedAttributes": [
+      "email"
+    ],
+    "mfaConfiguration": "OPTIONAL",
+    "mfaTypes": [
+      "SMS Text Message",
+      "TOTP"
+    ],
+    "smsAuthenticationMessage": "Your TachyonCMS authentication code is {####}",
+    "smsVerificationMessage": "Your verification code is {####}",
+    "emailVerificationSubject": "Your TachyonCMS verification code",
+    "emailVerificationMessage": "Your TachyonCMS verification code is {####}",
+    "defaultPasswordPolicy": true,
+    "passwordPolicyMinLength": "12",
+    "passwordPolicyCharacters": [],
+    "requiredAttributes": [
+      "email"
+    ],
+    "aliasAttributes": [],
+    "userpoolClientGenerateSecret": false,
+    "userpoolClientRefreshTokenValidity": 30,
+    "userpoolClientWriteAttributes": [
+      "address",
+      "birthdate",
+      "family_name",
+      "middle_name",
+      "gender",
+      "locale",
+      "given_name",
+      "name",
+      "nickname",
+      "phone_number",
+      "picture",
+      "profile",
+      "updated_at",
+      "website",
+      "zoneinfo",
+      "email"
+    ],
+    "userpoolClientReadAttributes": [
+      "address",
+      "birthdate",
+      "email",
+      "family_name",
+      "middle_name",
+      "gender",
+      "locale",
+      "given_name",
+      "name",
+      "nickname",
+      "phone_number",
+      "picture",
+      "profile",
+      "updated_at",
+      "website",
+      "zoneinfo",
+      "email_verified",
+      "phone_number_verified"
+    ],
+    "userpoolClientLambdaRole": "clouda8735ca89_userpoolclient_lambda_role",
+    "userpoolClientSetAttributes": true,
+    "sharedId": "8735ca89",
+    "resourceName": "cloudappdevwebpackauth",
+    "authSelections": "identityPoolAndUserPool",
+    "useDefault": "manual",
+    "thirdPartyAuth": false,
+    "userPoolGroups": true,
+    "adminQueries": false,
+    "triggers": {},
+    "hostedUI": false,
+    "userPoolGroupList": [
+      "admin",
+      "tech"
+    ],
+    "serviceName": "Cognito",
+    "usernameCaseSensitive": false,
+    "useEnabledMfas": true
+  }
+}

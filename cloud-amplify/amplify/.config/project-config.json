@@ -1,0 +1,17 @@
+{
+  "projectName": "cloudamplify",
+  "version": "3.1",
+  "frontend": "javascript",
+  "javascript": {
+    "framework": "vue",
+    "config": {
+      "SourceDir": "src",
+      "DistributionDir": "dist/spa",
+      "BuildCommand": "quasar build -m spa",
+      "StartCommand": "quasar serve dist/spa --history"
+    }
+  },
+  "providers": [
+    "awscloudformation"
+  ]
+}
