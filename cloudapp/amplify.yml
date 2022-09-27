@@ -13,7 +13,8 @@ applications:
             - yarn install
             - yarn global add @quasar/cli
         build:
-          commands: [- quasar build -m spa]
+          commands:
+            - quasar build -m spa
       artifacts:
         baseDirectory: dist/spa
         files:
