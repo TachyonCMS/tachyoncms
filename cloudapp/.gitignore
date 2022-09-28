@@ -28,6 +28,10 @@ yarn-error.log*
 *.njsproj
 *.sln
 
+
+# Amplify environment
+/amplify/team-provider-info.json
+
 #amplify-do-not-edit-begin
 amplify/\#current-cloud-backend
 amplify/.config/local-*
@@ -48,6 +52,3 @@ amplifytools.xcconfig
 .secret-*
 **.sample
 #amplify-do-not-edit-end
-
-# Amplify environment
-/amplify/team-provider-info.json
